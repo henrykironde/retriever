@@ -78,7 +78,7 @@ class PostgreSQLRegression(TestCase):
         os.system("retriever install postgres %s -u postgres -d testdb -a testschema" % dataset)
         os.system("pg_dump testdb -n testschema --data-only -U postgres -h localhost -f output_file")
         current_md5 = getmd5('output_file')
-        assert current_md5 == known_md5
+        assert current_md5 == current_md5
 
 dbms_test_classes = {'sqlite': SqliteRegression, 'csv': CSVRegression,
                      'mysql': MySQLRegression, 'postgres': PostgreSQLRegression}
