@@ -2,7 +2,11 @@ sudo: false
 language: python
 python:
   - "2.7"
+addons:
+  postgresql: "9.3"
 
+services:
+  - postgresql
 install:
   - pip install -r requirements.txt --use-mirrors
   - python setup.py -q install

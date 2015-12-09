@@ -37,7 +37,7 @@ def getmd5(filename):
     return sum.hexdigest()
 
 def unixfileformat(inputfile):
-    unix_outfilename = 'outputfileunix'
+    unix_outfilename = 'output_fileunix'
     content = ''
     try:
         with open(inputfile, 'rb') as infile:
@@ -66,7 +66,6 @@ class SqliteRegression(TestCase):
         current_md5 = getmd5(unixfileformat("output_file")) 
         assert current_md5 == known_md5
 
-
 class CSVRegression(TestCase):
     def check_csv_regression(self, dataset, known_md5):
         """Check for regression for a particular dataset imported to csv"""
@@ -76,7 +75,6 @@ class CSVRegression(TestCase):
         os.system("cat output_file_* > output_file")
         current_md5 = getmd5('output_file')
         assert current_md5 == known_md5
-
 
 class MySQLRegression(TestCase):
     def check_mysql_regression(self, dataset, known_md5):
@@ -88,7 +86,6 @@ class MySQLRegression(TestCase):
         os.system("mysqldump testdb -u travis --compact --compatible=no_table_options --no-create-db --no-create-info --result-file=output_file")
         current_md5 = getmd5(unixfileformat("output_file")) 
         assert current_md5 == known_md5
-
 
 class PostgreSQLRegression(TestCase):
     def check_postgres_regression(self, dataset, known_md5):
