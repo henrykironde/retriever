@@ -1,0 +1,281 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>retriever.engines.mysql &mdash; retriever  documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="retriever  documentation" href="../../../index.html"/>
+        <link rel="up" title="retriever" href="../../retriever.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> retriever
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../retriever.html">retriever package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">retriever</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+          <li><a href="../../retriever.html">retriever</a> &raquo;</li>
+      
+    <li>retriever.engines.mysql</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for retriever.engines.mysql</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">platform</span>
+<span class="kn">from</span> <span class="nn">retriever.lib.models</span> <span class="kn">import</span> <span class="n">Engine</span><span class="p">,</span> <span class="n">no_cleanup</span>
+
+
+<div class="viewcode-block" id="engine"><a class="viewcode-back" href="../../../retriever.engines.html#retriever.engines.mysql.engine">[docs]</a><span class="k">class</span> <span class="nc">engine</span><span class="p">(</span><span class="n">Engine</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Engine instance for MySQL.&quot;&quot;&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s">&quot;MySQL&quot;</span>
+    <span class="n">abbreviation</span> <span class="o">=</span> <span class="s">&quot;mysql&quot;</span>
+    <span class="n">datatypes</span> <span class="o">=</span> <span class="p">{</span>
+                 <span class="s">&quot;auto&quot;</span><span class="p">:</span> <span class="s">&quot;INT(5) NOT NULL AUTO_INCREMENT&quot;</span><span class="p">,</span>
+                 <span class="s">&quot;int&quot;</span><span class="p">:</span> <span class="s">&quot;INT&quot;</span><span class="p">,</span>
+                 <span class="s">&quot;bigint&quot;</span><span class="p">:</span> <span class="s">&quot;BIGINT&quot;</span><span class="p">,</span>
+                 <span class="s">&quot;double&quot;</span><span class="p">:</span> <span class="s">&quot;DOUBLE&quot;</span><span class="p">,</span>
+                 <span class="s">&quot;decimal&quot;</span><span class="p">:</span> <span class="s">&quot;DECIMAL&quot;</span><span class="p">,</span>
+                 <span class="s">&quot;char&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s">&quot;TEXT&quot;</span><span class="p">,</span> <span class="s">&quot;VARCHAR&quot;</span><span class="p">),</span>
+                 <span class="s">&quot;bool&quot;</span><span class="p">:</span> <span class="s">&quot;BOOL&quot;</span><span class="p">,</span>
+                 <span class="p">}</span>
+    <span class="n">max_int</span> <span class="o">=</span> <span class="mi">4294967295</span>
+    <span class="n">required_opts</span> <span class="o">=</span> <span class="p">[(</span><span class="s">&quot;user&quot;</span><span class="p">,</span>
+                      <span class="s">&quot;Enter your MySQL username&quot;</span><span class="p">,</span>
+                      <span class="s">&quot;root&quot;</span><span class="p">),</span>
+                     <span class="p">(</span><span class="s">&quot;password&quot;</span><span class="p">,</span>
+                      <span class="s">&quot;Enter your password&quot;</span><span class="p">,</span>
+                      <span class="s">&quot;&quot;</span><span class="p">),</span>
+                     <span class="p">(</span><span class="s">&quot;host&quot;</span><span class="p">,</span>
+                      <span class="s">&quot;Enter your MySQL host&quot;</span><span class="p">,</span>
+                      <span class="s">&quot;localhost&quot;</span><span class="p">),</span>
+                     <span class="p">(</span><span class="s">&quot;port&quot;</span><span class="p">,</span>
+                      <span class="s">&quot;Enter your MySQL port&quot;</span><span class="p">,</span>
+                      <span class="mi">3306</span><span class="p">),</span>
+                     <span class="p">(</span><span class="s">&quot;database_name&quot;</span><span class="p">,</span>
+                      <span class="s">&quot;Format of database name&quot;</span><span class="p">,</span>
+                      <span class="s">&quot;{db}&quot;</span><span class="p">),</span>
+                     <span class="p">(</span><span class="s">&quot;table_name&quot;</span><span class="p">,</span>
+                      <span class="s">&quot;Format of table name&quot;</span><span class="p">,</span>
+                      <span class="s">&quot;{db}.{table}&quot;</span><span class="p">),</span>
+                     <span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">create_db_statement</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">createstatement</span> <span class="o">=</span> <span class="s">&quot;CREATE DATABASE IF NOT EXISTS &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">database_name</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">createstatement</span>
+
+<div class="viewcode-block" id="engine.insert_data_from_file"><a class="viewcode-back" href="../../../retriever.engines.html#retriever.engines.mysql.engine.insert_data_from_file">[docs]</a>    <span class="k">def</span> <span class="nf">insert_data_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calls MySQL &quot;LOAD DATA LOCAL INFILE&quot; statement to perform a bulk</span>
+<span class="sd">        insert.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_cursor</span><span class="p">()</span>
+        <span class="n">ct</span> <span class="o">=</span> <span class="nb">len</span><span class="p">([</span><span class="bp">True</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">][:</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;ct-&quot;</span><span class="p">])</span> <span class="o">!=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">cleanup</span><span class="o">.</span><span class="n">function</span> <span class="o">==</span> <span class="n">no_cleanup</span>
+            <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">fixed_width</span>
+            <span class="ow">and</span> <span class="ow">not</span> <span class="n">ct</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">,</span> <span class="s">&quot;do_not_bulk_insert&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">do_not_bulk_insert</span><span class="p">)</span>
+            <span class="p">):</span>
+            <span class="k">print</span> <span class="p">(</span><span class="s">&quot;Inserting data from &quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;...&quot;</span><span class="p">)</span>
+
+            <span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">get_insert_columns</span><span class="p">()</span>
+            <span class="n">statement</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
+<span class="s">LOAD DATA LOCAL INFILE &#39;&quot;&quot;&quot;</span> <span class="o">+</span> <span class="n">filename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\\</span><span class="s">&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\\\\</span><span class="s">&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;&quot;&quot;&#39;</span>
+<span class="s">INTO TABLE &quot;&quot;&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="p">()</span> <span class="o">+</span> <span class="s">&quot;&quot;&quot;</span>
+<span class="s">FIELDS TERMINATED BY &#39;&quot;&quot;&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">delimiter</span> <span class="o">+</span> <span class="s">&quot;&quot;&quot;&#39;</span>
+<span class="s">OPTIONALLY ENCLOSED BY &#39;&quot;&#39;</span>
+<span class="s">LINES TERMINATED BY &#39;</span><span class="se">\\</span><span class="s">n&#39;</span>
+<span class="s">IGNORE &quot;&quot;&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">header_rows</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;&quot;&quot; LINES</span>
+<span class="s">(&quot;&quot;&quot;</span> <span class="o">+</span> <span class="n">columns</span> <span class="o">+</span> <span class="s">&quot;)&quot;</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">statement</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">print</span> <span class="s">&quot;Failed bulk insert (</span><span class="si">%s</span><span class="s">), inserting manually&quot;</span> <span class="o">%</span> <span class="n">e</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span> <span class="c"># If the execute fails the database connection can get hung up</span>
+                <span class="k">return</span> <span class="n">Engine</span><span class="o">.</span><span class="n">insert_data_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Engine</span><span class="o">.</span><span class="n">insert_data_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="engine.table_exists"><a class="viewcode-back" href="../../../retriever.engines.html#retriever.engines.mysql.engine.table_exists">[docs]</a>    <span class="k">def</span> <span class="nf">table_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">tablename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Checks to see if the given table exists&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;existing_table_names&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;SELECT table_schema, table_name FROM information_schema.tables WHERE table_schema NOT IN (&#39;mysql&#39;, &#39;information_schema&#39;, &#39;performance_schema&#39;);&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">existing_table_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">schema</span><span class="p">,</span> <span class="n">table</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">existing_table_names</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">schema</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">table</span><span class="o">.</span><span class="n">lower</span><span class="p">()))</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">dbname</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">tablename</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">existing_table_names</span></div>
+
+<div class="viewcode-block" id="engine.get_connection"><a class="viewcode-back" href="../../../retriever.engines.html#retriever.engines.mysql.engine.get_connection">[docs]</a>    <span class="k">def</span> <span class="nf">get_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Gets the db connection.&quot;&quot;&quot;</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;host&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s">&#39;host&#39;</span><span class="p">],</span>
+                <span class="s">&#39;port&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s">&#39;port&#39;</span><span class="p">]),</span>
+                <span class="s">&#39;user&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s">&#39;user&#39;</span><span class="p">],</span>
+                <span class="s">&#39;passwd&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s">&#39;password&#39;</span><span class="p">]}</span>
+        <span class="kn">import</span> <span class="nn">pymysql</span> <span class="kn">as</span> <span class="nn">dbapi</span>
+        <span class="kn">import</span> <span class="nn">pymysql.constants.CLIENT</span> <span class="kn">as</span> <span class="nn">client</span>
+        <span class="n">args</span><span class="p">[</span><span class="s">&#39;client_flag&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">LOCAL_FILES</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_input</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">dbapi</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="o">**</span><span class="n">args</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Author.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

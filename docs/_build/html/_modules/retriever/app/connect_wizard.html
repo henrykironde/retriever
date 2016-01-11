@@ -1,0 +1,404 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>retriever.app.connect_wizard &mdash; retriever  documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="retriever  documentation" href="../../../index.html"/>
+        <link rel="up" title="retriever" href="../../retriever.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> retriever
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../retriever.html">retriever package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">retriever</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+          <li><a href="../../retriever.html">retriever</a> &raquo;</li>
+      
+    <li>retriever.app.connect_wizard</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for retriever.app.connect_wizard</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;Connection setup wizard.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">wx</span>
+<span class="kn">import</span> <span class="nn">wx.html</span>
+<span class="kn">import</span> <span class="nn">wx.wizard</span>
+<span class="kn">from</span> <span class="nn">retriever.lib.models</span> <span class="kn">import</span> <span class="n">Engine</span>
+<span class="kn">from</span> <span class="nn">retriever.lib.tools</span> <span class="kn">import</span> <span class="n">get_saved_connection</span><span class="p">,</span> <span class="n">save_connection</span>
+<span class="kn">from</span> <span class="nn">retriever.app.controls</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">retriever.app.images</span> <span class="kn">import</span> <span class="n">icon</span>
+
+<span class="kn">from</span> <span class="nn">retriever</span> <span class="kn">import</span> <span class="n">VERSION</span>
+
+
+<span class="k">class</span> <span class="nc">ConnectWizard</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">wizard</span><span class="o">.</span><span class="n">Wizard</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lists</span><span class="p">,</span> <span class="n">engine_list</span><span class="p">,</span> <span class="n">selected</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="n">wx</span><span class="o">.</span><span class="n">wizard</span><span class="o">.</span><span class="n">Wizard</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;EcoData Retriever&quot;</span><span class="p">)</span>
+
+        <span class="c">#self.SetIcon(icon.GetIcon())</span>
+
+        <span class="n">welcome</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;&lt;h2&gt;Connection Wizard&lt;/h2&gt;</span>
+
+<span class="s">        &lt;p&gt;The EcoData Retriever downloads raw data files, stores them on your</span>
+<span class="s">        computer, and imports the data into your own local database.&lt;/p&gt;</span>
+<span class="s">        &lt;p&gt;To begin, you&#39;ll need to set up your own database. Once you&#39;ve done</span>
+<span class="s">        that, this wizard will walk you through the steps to connect to your</span>
+<span class="s">        database.&lt;/p&gt;</span>
+<span class="s">        &lt;p&gt;Supported database systems currently include:&lt;/p&gt;</span>
+<span class="s">        &lt;ul&gt;&quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">db</span> <span class="ow">in</span> <span class="n">engine_list</span><span class="p">:</span>
+            <span class="n">welcome</span> <span class="o">+=</span> <span class="s">&quot;&lt;li&gt;&quot;</span> <span class="o">+</span> <span class="n">db</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s">&quot;&lt;/li&gt;&quot;</span>
+
+        <span class="n">welcome</span> <span class="o">+=</span> <span class="s">&quot;&lt;/ul&gt;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pages</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lists</span> <span class="o">=</span> <span class="n">lists</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">engine_list</span> <span class="o">=</span> <span class="n">engine_list</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">selected</span> <span class="o">=</span> <span class="n">selected</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TitledPage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ChooseDbPage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&quot;Database&quot;</span><span class="p">,</span>
+                                       <span class="s">&quot;What kind of database are you using?&quot;</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ConnectPage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                      <span class="s">&quot;Connection Info&quot;</span><span class="p">,</span>
+                                      <span class="s">&quot;&quot;</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ConfirmPage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&quot;Connection&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">))</span>
+
+        <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">TITLE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">CHOOSEDB</span><span class="p">,</span>
+         <span class="bp">self</span><span class="o">.</span><span class="n">CONNECTION</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">CONFIRM</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pages</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                                           <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pages</span><span class="p">))]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">TITLE</span><span class="o">.</span><span class="n">welcome</span> <span class="o">=</span> <span class="n">HtmlWindow</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">TITLE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TITLE</span><span class="o">.</span><span class="n">welcome</span><span class="o">.</span><span class="n">SetSize</span><span class="p">((</span><span class="mi">450</span><span class="p">,</span><span class="mi">400</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TITLE</span><span class="o">.</span><span class="n">welcome</span><span class="o">.</span><span class="n">SetHtml</span><span class="p">(</span><span class="n">welcome</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">TITLE</span><span class="o">.</span><span class="n">sizer</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">TITLE</span><span class="o">.</span><span class="n">welcome</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">wx</span><span class="o">.</span><span class="n">EXPAND</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">CHOOSEDB</span><span class="o">.</span><span class="n">Bind</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">wizard</span><span class="o">.</span><span class="n">EVT_WIZARD_PAGE_CHANGING</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">CONNECTION</span><span class="o">.</span><span class="n">Draw</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">CONNECTION</span><span class="o">.</span><span class="n">Bind</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">wizard</span><span class="o">.</span><span class="n">EVT_WIZARD_PAGE_CHANGING</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">CONFIRM</span><span class="o">.</span><span class="n">Draw</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">CONFIRM</span><span class="o">.</span><span class="n">Bind</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">wizard</span><span class="o">.</span><span class="n">EVT_WIZARD_PAGE_CHANGING</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">CONNECTION</span><span class="o">.</span><span class="n">Draw</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pages</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">wx</span><span class="o">.</span><span class="n">wizard</span><span class="o">.</span><span class="n">WizardPageSimple_Chain</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pages</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">pages</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
+
+        <span class="k">for</span> <span class="n">page</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pages</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">FitToPage</span><span class="p">(</span><span class="n">page</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">check_for_updates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">reload</span><span class="p">(</span><span class="n">retriever</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">ChooseDbPage</span><span class="p">(</span><span class="n">TitledPage</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">label</span><span class="p">):</span>
+        <span class="n">TitledPage</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span>
+        <span class="n">engine_list</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">engine_list</span>
+
+        <span class="n">dblist</span> <span class="o">=</span> <span class="n">ListBox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                         <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="n">db</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">db</span> <span class="ow">in</span> <span class="n">engine_list</span><span class="p">],</span>
+                         <span class="n">style</span><span class="o">=</span><span class="n">wx</span><span class="o">.</span><span class="n">LB_SINGLE</span><span class="p">,</span>
+                         <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">150</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dblist</span> <span class="o">=</span> <span class="n">dblist</span>
+        <span class="k">if</span> <span class="n">parent</span><span class="o">.</span><span class="n">selected</span><span class="p">:</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">engine_list</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="n">engine_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">parent</span><span class="o">.</span><span class="n">selected</span><span class="p">:</span>
+                    <span class="n">index</span> <span class="o">=</span> <span class="n">i</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dblist</span><span class="o">.</span><span class="n">SetSelection</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dblist</span><span class="o">.</span><span class="n">SetSelection</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sizer</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dblist</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">wx</span><span class="o">.</span><span class="n">EXPAND</span><span class="p">)</span>
+
+        <span class="c">#TODO: This is a hack to force the wizard to be large enough to not hide</span>
+        <span class="c">#the Choose button on the Connect Page when the engine has a file</span>
+        <span class="c">#attribute. This should be fixed properly by figuring out how to make wx</span>
+        <span class="c">#work with the fact that the connect page has varying fields depending</span>
+        <span class="c">#on the engine.</span>
+        <span class="n">longspace</span> <span class="o">=</span> <span class="n">StaticText</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">wx</span><span class="o">.</span><span class="n">Size</span><span class="p">(</span><span class="mi">375</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sizer</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="n">longspace</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">dirbtn_click</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">evt</span><span class="p">):</span>
+        <span class="n">dialog</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">DirDialog</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s">&quot;Choose a directory to &quot;</span> <span class="o">+</span>
+                                <span class="s">&quot;download your data files.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dialog</span><span class="o">.</span><span class="n">ShowModal</span><span class="p">()</span> <span class="o">==</span> <span class="n">wx</span><span class="o">.</span><span class="n">ID_OK</span><span class="p">:</span>
+           <span class="bp">self</span><span class="o">.</span><span class="n">raw_data_dir</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="n">dialog</span><span class="o">.</span><span class="n">GetPath</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+           <span class="k">pass</span>
+        <span class="n">dialog</span><span class="o">.</span><span class="n">Destroy</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="ConnectPage"><a class="viewcode-back" href="../../../retriever.app.html#retriever.app.connect_wizard.ConnectPage">[docs]</a><span class="k">class</span> <span class="nc">ConnectPage</span><span class="p">(</span><span class="n">TitledPage</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The connection info page.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">label</span><span class="p">):</span>
+        <span class="n">TitledPage</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">option</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sel</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fields</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">BoxSizer</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">VERTICAL</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
+
+<div class="viewcode-block" id="ConnectPage.Draw"><a class="viewcode-back" href="../../../retriever.app.html#retriever.app.connect_wizard.ConnectPage.Draw">[docs]</a>    <span class="k">def</span> <span class="nf">Draw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">evt</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;When the page is drawn, it may need to update its fields if</span>
+<span class="sd">        the selected database has changed.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">evt</span><span class="o">.</span><span class="n">GetDirection</span><span class="p">():</span>
+            <span class="n">btn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">FindWindowById</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">ID_FORWARD</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">btn</span><span class="p">:</span> <span class="n">btn</span><span class="o">.</span><span class="n">Enable</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Parent</span><span class="o">.</span><span class="n">CHOOSEDB</span><span class="o">.</span><span class="n">dblist</span><span class="o">.</span><span class="n">GetStringSelection</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">evt</span><span class="o">.</span><span class="n">Direction</span><span class="p">:</span>
+            <span class="n">evt</span><span class="o">.</span><span class="n">Veto</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sel</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Parent</span><span class="o">.</span><span class="n">CHOOSEDB</span><span class="o">.</span><span class="n">dblist</span><span class="o">.</span><span class="n">GetStringSelection</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Parent</span><span class="o">.</span><span class="n">CHOOSEDB</span><span class="o">.</span><span class="n">dblist</span><span class="o">.</span><span class="n">GetStringSelection</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="o">=</span> <span class="n">Engine</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">db</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">Parent</span><span class="o">.</span><span class="n">engine_list</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">db</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">sel</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="o">=</span> <span class="n">db</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="o">.</span><span class="n">Clear</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fields</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">BoxSizer</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">VERTICAL</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">instructions</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="n">StaticText</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">instructions</span> <span class="o">+</span> <span class="s">&#39;</span><span class="se">\n\n</span><span class="s">&#39;</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fieldset</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">option</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+                <span class="n">saved_opts</span> <span class="o">=</span> <span class="n">get_saved_connection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">opt</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">required_opts</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">opt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">saved_opts</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                        <span class="n">default</span> <span class="o">=</span> <span class="n">saved_opts</span><span class="p">[</span><span class="n">opt</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">default</span> <span class="o">=</span> <span class="n">opt</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">fieldset</span><span class="p">[</span><span class="n">opt</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">BoxSizer</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">HORIZONTAL</span><span class="p">)</span>
+                    <span class="n">label</span> <span class="o">=</span> <span class="n">StaticText</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">opt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s">&quot;: &quot;</span><span class="p">,</span>
+                                          <span class="n">size</span><span class="o">=</span><span class="n">wx</span><span class="o">.</span><span class="n">Size</span><span class="p">(</span><span class="mi">90</span><span class="p">,</span><span class="mi">35</span><span class="p">))</span>
+                    <span class="n">style</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">TE_PASSWORD</span> <span class="k">if</span> <span class="n">opt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;password&quot;</span> <span class="k">else</span> <span class="mi">0</span>
+                    <span class="n">txt</span> <span class="o">=</span> <span class="n">TextCtrl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">default</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="n">wx</span><span class="o">.</span><span class="n">Size</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">style</span><span class="o">=</span><span class="n">style</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">option</span><span class="p">[</span><span class="n">opt</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">txt</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">fieldset</span><span class="p">[</span><span class="n">opt</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">AddMany</span><span class="p">([</span><span class="n">label</span><span class="p">,</span>
+                                                   <span class="bp">self</span><span class="o">.</span><span class="n">option</span><span class="p">[</span><span class="n">opt</span><span class="p">[</span><span class="mi">0</span><span class="p">]]])</span>
+                    <span class="k">if</span> <span class="n">opt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;file&quot;</span><span class="p">:</span>
+                        <span class="n">file_opt</span> <span class="o">=</span> <span class="n">opt</span>
+                        <span class="k">def</span> <span class="nf">open_file_dialog</span><span class="p">(</span><span class="n">evt</span><span class="p">):</span>
+                            <span class="nb">filter</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+                            <span class="k">if</span> <span class="n">file_opt</span><span class="p">[</span><span class="mi">3</span><span class="p">]:</span>
+                                <span class="nb">filter</span> <span class="o">=</span> <span class="n">file_opt</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="s">&quot;|&quot;</span>
+                            <span class="nb">filter</span> <span class="o">+=</span> <span class="s">&quot;All files (*.*)|*.*&quot;</span>
+                            <span class="n">dialog</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">FileDialog</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">style</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">OPEN</span><span class="p">,</span>
+                                                   <span class="n">wildcard</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="n">dialog</span><span class="o">.</span><span class="n">ShowModal</span><span class="p">()</span> <span class="o">==</span> <span class="n">wx</span><span class="o">.</span><span class="n">ID_OK</span><span class="p">:</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">option</span><span class="p">[</span><span class="n">file_opt</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="n">dialog</span><span class="o">.</span><span class="n">GetPath</span><span class="p">())</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">browse</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">Button</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;Choose...&quot;</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">fieldset</span><span class="p">[</span><span class="n">file_opt</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">browse</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">browse</span><span class="o">.</span><span class="n">Bind</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">EVT_BUTTON</span><span class="p">,</span> <span class="n">open_file_dialog</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">fieldset</span><span class="p">[</span><span class="n">opt</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">Layout</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fieldset</span><span class="p">[</span><span class="n">opt</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sizer</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sizer</span><span class="o">.</span><span class="n">Layout</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="ConfirmPage"><a class="viewcode-back" href="../../../retriever.app.html#retriever.app.connect_wizard.ConfirmPage">[docs]</a><span class="k">class</span> <span class="nc">ConfirmPage</span><span class="p">(</span><span class="n">TitledPage</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The final confirmation page.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">label</span><span class="p">):</span>
+        <span class="n">TitledPage</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
+
+    <span class="k">def</span> <span class="nf">Draw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">evt</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">evt</span><span class="o">.</span><span class="n">GetDirection</span><span class="p">():</span> <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">values_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">connect</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">CONNECTION</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">connect</span><span class="o">.</span><span class="n">option</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">values_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">connect</span><span class="o">.</span><span class="n">option</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">Value</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">connect</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">opts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">values_dict</span>
+            <span class="n">connect</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">force_reconnect</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="s">&#39;&#39;&#39;&lt;p&gt;&lt;b&gt;Success!&lt;/b&gt; Your connection has been saved.&lt;/p&gt;</span>
+<span class="s">            &lt;p&gt;Click Finish to continue.&lt;/p&gt;&#39;&#39;&#39;</span>
+            <span class="n">save_connection</span><span class="p">(</span><span class="n">connect</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">values_dict</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">=</span> <span class="n">message</span> <span class="o">=</span> <span class="s">&#39;&#39;&#39;&lt;p&gt;&lt;b&gt;Error.&lt;/b&gt; There was a problem with your</span>
+<span class="s">            connection:&lt;/p&gt;&lt;p&gt;</span><span class="si">%s</span><span class="s">&lt;/p&gt;</span>
+<span class="s">            &lt;p&gt;Click Back to try again, or Cancel.&lt;/p&gt;&#39;&#39;&#39;</span> <span class="o">%</span> <span class="n">e</span>
+
+            <span class="n">btn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">FindWindowById</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">ID_FORWARD</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">btn</span><span class="p">:</span> <span class="n">btn</span><span class="o">.</span><span class="n">Disable</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">HtmlWindow</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">SetSize</span><span class="p">((</span><span class="mi">450</span><span class="p">,</span><span class="mi">400</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">SetHtml</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sizer</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">wx</span><span class="o">.</span><span class="n">EXPAND</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sizer</span><span class="o">.</span><span class="n">Layout</span><span class="p">()</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Author.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

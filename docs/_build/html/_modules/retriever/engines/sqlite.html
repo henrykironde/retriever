@@ -1,0 +1,237 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>retriever.engines.sqlite &mdash; retriever  documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="retriever  documentation" href="../../../index.html"/>
+        <link rel="up" title="retriever" href="../../retriever.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> retriever
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../retriever.html">retriever package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">retriever</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+          <li><a href="../../retriever.html">retriever</a> &raquo;</li>
+      
+    <li>retriever.engines.sqlite</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for retriever.engines.sqlite</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">platform</span>
+<span class="kn">from</span> <span class="nn">retriever.lib.models</span> <span class="kn">import</span> <span class="n">Engine</span><span class="p">,</span> <span class="n">no_cleanup</span>
+<span class="kn">from</span> <span class="nn">retriever</span> <span class="kn">import</span> <span class="n">DATA_DIR</span>
+
+<div class="viewcode-block" id="engine"><a class="viewcode-back" href="../../../retriever.engines.html#retriever.engines.sqlite.engine">[docs]</a><span class="k">class</span> <span class="nc">engine</span><span class="p">(</span><span class="n">Engine</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Engine instance for SQLite.&quot;&quot;&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s">&quot;SQLite&quot;</span>
+    <span class="n">abbreviation</span> <span class="o">=</span> <span class="s">&quot;sqlite&quot;</span>
+    <span class="n">datatypes</span> <span class="o">=</span> <span class="p">{</span>
+                 <span class="s">&quot;auto&quot;</span><span class="p">:</span> <span class="s">&quot;INTEGER&quot;</span><span class="p">,</span>
+                 <span class="s">&quot;int&quot;</span><span class="p">:</span> <span class="s">&quot;INTEGER&quot;</span><span class="p">,</span>
+                 <span class="s">&quot;bigint&quot;</span><span class="p">:</span> <span class="s">&quot;INTEGER&quot;</span><span class="p">,</span>
+                 <span class="s">&quot;double&quot;</span><span class="p">:</span> <span class="s">&quot;REAL&quot;</span><span class="p">,</span>
+                 <span class="s">&quot;decimal&quot;</span><span class="p">:</span> <span class="s">&quot;REAL&quot;</span><span class="p">,</span>
+                 <span class="s">&quot;char&quot;</span><span class="p">:</span> <span class="s">&quot;TEXT&quot;</span><span class="p">,</span>
+                 <span class="s">&quot;bool&quot;</span><span class="p">:</span> <span class="s">&quot;INTEGER&quot;</span><span class="p">,</span>
+                 <span class="p">}</span>
+    <span class="n">required_opts</span> <span class="o">=</span> <span class="p">[(</span><span class="s">&quot;file&quot;</span><span class="p">,</span>
+                      <span class="s">&quot;Enter the filename of your SQLite database&quot;</span><span class="p">,</span>
+                      <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATA_DIR</span><span class="p">,</span> <span class="s">&quot;sqlite.db&quot;</span><span class="p">),</span>
+                      <span class="s">&quot;&quot;</span><span class="p">),</span>
+                     <span class="p">(</span><span class="s">&quot;table_name&quot;</span><span class="p">,</span>
+                      <span class="s">&quot;Format of table name&quot;</span><span class="p">,</span>
+                      <span class="s">&quot;{db}_{table}&quot;</span><span class="p">),</span>
+                     <span class="p">]</span>
+
+<div class="viewcode-block" id="engine.create_db"><a class="viewcode-back" href="../../../retriever.engines.html#retriever.engines.sqlite.engine.create_db">[docs]</a>    <span class="k">def</span> <span class="nf">create_db</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;SQLite doesn&#39;t create databases; each database is a file and needs</span>
+<span class="sd">        a separate connection.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">None</span></div>
+
+    <span class="k">def</span> <span class="nf">escape_single_quotes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s">&quot;&#39;&#39;&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="engine.table_exists"><a class="viewcode-back" href="../../../retriever.engines.html#retriever.engines.sqlite.engine.table_exists">[docs]</a>    <span class="k">def</span> <span class="nf">table_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">tablename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Determine if the table already exists in the database&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;existing_table_names&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&quot;SELECT name FROM sqlite_master WHERE type=&#39;table&#39;;&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">existing_table_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">existing_table_names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">tablename</span><span class="p">,</span> <span class="n">dbname</span><span class="o">=</span><span class="n">dbname</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">existing_table_names</span></div>
+
+<div class="viewcode-block" id="engine.get_connection"><a class="viewcode-back" href="../../../retriever.engines.html#retriever.engines.sqlite.engine.get_connection">[docs]</a>    <span class="k">def</span> <span class="nf">get_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Gets the db connection.&quot;&quot;&quot;</span>
+        <span class="kn">import</span> <span class="nn">sqlite3</span> <span class="kn">as</span> <span class="nn">dbapi</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_input</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">dbapi</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s">&quot;file&quot;</span><span class="p">])</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Author.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

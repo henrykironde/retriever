@@ -1,0 +1,722 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>retriever.lib package &mdash; retriever  documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="retriever  documentation" href="index.html"/>
+        <link rel="up" title="retriever package" href="retriever.html"/>
+        <link rel="prev" title="retriever.engines package" href="retriever.engines.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> retriever
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="retriever.html">retriever package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="retriever.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="retriever.app.html">retriever.app package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="retriever.engines.html">retriever.engines package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="">retriever.lib package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-retriever.lib.cleanup">retriever.lib.cleanup module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-retriever.lib.compile">retriever.lib.compile module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-retriever.lib.download">retriever.lib.download module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-retriever.lib.engine">retriever.lib.engine module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-retriever.lib.excel">retriever.lib.excel module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-retriever.lib.get_opts">retriever.lib.get_opts module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-retriever.lib.lists">retriever.lib.lists module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-retriever.lib.models">retriever.lib.models module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-retriever.lib.repository">retriever.lib.repository module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-retriever.lib.table">retriever.lib.table module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-retriever.lib.templates">retriever.lib.templates module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-retriever.lib.tools">retriever.lib.tools module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-retriever.lib.warning">retriever.lib.warning module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-retriever.lib">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="retriever.html#module-retriever">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">retriever</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="retriever.html">retriever package</a> &raquo;</li>
+      
+    <li>retriever.lib package</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/retriever.lib.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="retriever-lib-package">
+<h1>retriever.lib package<a class="headerlink" href="#retriever-lib-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-retriever.lib.cleanup">
+<span id="retriever-lib-cleanup-module"></span><h2>retriever.lib.cleanup module<a class="headerlink" href="#module-retriever.lib.cleanup" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="retriever.lib.cleanup.Cleanup">
+<em class="property">class </em><code class="descclassname">retriever.lib.cleanup.</code><code class="descname">Cleanup</code><span class="sig-paren">(</span><em>function=&lt;function no_cleanup at 0x0000000005F280B8&gt;</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/cleanup.html#Cleanup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.cleanup.Cleanup" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class represents a custom cleanup function and a dictionary of
+arguments to be passed to that function.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="retriever.lib.cleanup.correct_invalid_value">
+<code class="descclassname">retriever.lib.cleanup.</code><code class="descname">correct_invalid_value</code><span class="sig-paren">(</span><em>value</em>, <em>args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/cleanup.html#correct_invalid_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.cleanup.correct_invalid_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>This cleanup function replaces null indicators with None.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="retriever.lib.cleanup.no_cleanup">
+<code class="descclassname">retriever.lib.cleanup.</code><code class="descname">no_cleanup</code><span class="sig-paren">(</span><em>value</em>, <em>args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/cleanup.html#no_cleanup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.cleanup.no_cleanup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default cleanup function, returns the unchanged value.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-retriever.lib.compile">
+<span id="retriever-lib-compile-module"></span><h2>retriever.lib.compile module<a class="headerlink" href="#module-retriever.lib.compile" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-retriever.lib.download">
+<span id="retriever-lib-download-module"></span><h2>retriever.lib.download module<a class="headerlink" href="#module-retriever.lib.download" title="Permalink to this headline">¶</a></h2>
+<p>A function to begin dataset downloads in a separate thread.</p>
+</div>
+<div class="section" id="module-retriever.lib.engine">
+<span id="retriever-lib-engine-module"></span><h2>retriever.lib.engine module<a class="headerlink" href="#module-retriever.lib.engine" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="retriever.lib.engine.Engine">
+<em class="property">class </em><code class="descclassname">retriever.lib.engine.</code><code class="descname">Engine</code><a class="reference internal" href="_modules/retriever/lib/engine.html#Engine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.engine.Engine" title="Permalink to this definition">¶</a></dt>
+<dd><p>A generic database system. Specific database platforms will inherit
+from this class.</p>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="38%" />
+<col width="63%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>db</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>script</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>table</td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<dl class="method">
+<dt id="retriever.lib.engine.Engine.add_to_table">
+<code class="descname">add_to_table</code><span class="sig-paren">(</span><em>data_source</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/engine.html#Engine.add_to_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.engine.Engine.add_to_table" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function adds data to a table from one or more lines specified
+in engine.table.source.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.lib.engine.Engine.auto_create_table">
+<code class="descname">auto_create_table</code><span class="sig-paren">(</span><em>table</em>, <em>url=None</em>, <em>filename=None</em>, <em>pk=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/engine.html#Engine.auto_create_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.engine.Engine.auto_create_table" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a table automatically by analyzing a data source and
+predicting column names, data types, delimiter, etc.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.lib.engine.Engine.auto_get_datatypes">
+<code class="descname">auto_get_datatypes</code><span class="sig-paren">(</span><em>pk</em>, <em>source</em>, <em>columns</em>, <em>column_values</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/engine.html#Engine.auto_get_datatypes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.engine.Engine.auto_get_datatypes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determines data types for each column.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.lib.engine.Engine.convert_data_type">
+<code class="descname">convert_data_type</code><span class="sig-paren">(</span><em>datatype</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/engine.html#Engine.convert_data_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.engine.Engine.convert_data_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts Retriever generic data types to database platform specific
+data types</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.lib.engine.Engine.create_db">
+<code class="descname">create_db</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/engine.html#Engine.create_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.engine.Engine.create_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a new database based on settings supplied in Database object
+engine.db</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.lib.engine.Engine.create_db_statement">
+<code class="descname">create_db_statement</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/engine.html#Engine.create_db_statement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.engine.Engine.create_db_statement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a SQL statement to create a database.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.lib.engine.Engine.create_raw_data_dir">
+<code class="descname">create_raw_data_dir</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/engine.html#Engine.create_raw_data_dir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.engine.Engine.create_raw_data_dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks to see if the archive directory exists and creates it if
+necessary.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.lib.engine.Engine.create_table">
+<code class="descname">create_table</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/engine.html#Engine.create_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.engine.Engine.create_table" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a new database table based on settings supplied in Table
+object engine.table.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.lib.engine.Engine.create_table_statement">
+<code class="descname">create_table_statement</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/engine.html#Engine.create_table_statement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.engine.Engine.create_table_statement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a SQL statement to create a table.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="retriever.lib.engine.Engine.cursor">
+<code class="descname">cursor</code><a class="headerlink" href="#retriever.lib.engine.Engine.cursor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the db cursor.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.lib.engine.Engine.download_file">
+<code class="descname">download_file</code><span class="sig-paren">(</span><em>url</em>, <em>filename</em>, <em>clean_line_endings=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/engine.html#Engine.download_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.engine.Engine.download_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Downloads a file to the raw data directory.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.lib.engine.Engine.download_files_from_archive">
+<code class="descname">download_files_from_archive</code><span class="sig-paren">(</span><em>url</em>, <em>filenames</em>, <em>filetype='zip'</em>, <em>keep_in_dir=False</em>, <em>archivename=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/engine.html#Engine.download_files_from_archive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.engine.Engine.download_files_from_archive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Downloads files from an archive into the raw data directory.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.lib.engine.Engine.drop_statement">
+<code class="descname">drop_statement</code><span class="sig-paren">(</span><em>objecttype</em>, <em>objectname</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/engine.html#Engine.drop_statement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.engine.Engine.drop_statement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a drop table or database SQL statement.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.lib.engine.Engine.final_cleanup">
+<code class="descname">final_cleanup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/engine.html#Engine.final_cleanup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.engine.Engine.final_cleanup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close the database connection.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.lib.engine.Engine.format_data_dir">
+<code class="descname">format_data_dir</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/engine.html#Engine.format_data_dir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.engine.Engine.format_data_dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the correctly formatted raw data directory location.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.lib.engine.Engine.format_filename">
+<code class="descname">format_filename</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/engine.html#Engine.format_filename"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.engine.Engine.format_filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the full path of a file in the archive directory.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.lib.engine.Engine.format_insert_value">
+<code class="descname">format_insert_value</code><span class="sig-paren">(</span><em>value</em>, <em>datatype</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/engine.html#Engine.format_insert_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.engine.Engine.format_insert_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Formats a value for an insert statement, for example by surrounding
+it in single quotes.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.lib.engine.Engine.get_connection">
+<code class="descname">get_connection</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/engine.html#Engine.get_connection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.engine.Engine.get_connection" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method should be overloaded by specific implementations
+of Engine.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.lib.engine.Engine.get_cursor">
+<code class="descname">get_cursor</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/engine.html#Engine.get_cursor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.engine.Engine.get_cursor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the db cursor.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.lib.engine.Engine.get_input">
+<code class="descname">get_input</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/engine.html#Engine.get_input"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.engine.Engine.get_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Manually get user input for connection information when script is
+run from terminal.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.lib.engine.Engine.insert_data_from_archive">
+<code class="descname">insert_data_from_archive</code><span class="sig-paren">(</span><em>url</em>, <em>filenames</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/engine.html#Engine.insert_data_from_archive"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.engine.Engine.insert_data_from_archive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert data from files located in an online archive. This function
+extracts the file, inserts the data, and deletes the file if raw data
+archiving is not set.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.lib.engine.Engine.insert_data_from_file">
+<code class="descname">insert_data_from_file</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/engine.html#Engine.insert_data_from_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.engine.Engine.insert_data_from_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>The default function to insert data from a file. This function
+simply inserts the data row by row. Database platforms with support
+for inserting bulk data from files can override this function.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.lib.engine.Engine.insert_data_from_url">
+<code class="descname">insert_data_from_url</code><span class="sig-paren">(</span><em>url</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/engine.html#Engine.insert_data_from_url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.engine.Engine.insert_data_from_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert data from a web resource, such as a text file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.lib.engine.Engine.insert_statement">
+<code class="descname">insert_statement</code><span class="sig-paren">(</span><em>values</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/engine.html#Engine.insert_statement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.engine.Engine.insert_statement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a SQL statement to insert a set of values.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.lib.engine.Engine.table_exists">
+<code class="descname">table_exists</code><span class="sig-paren">(</span><em>dbname</em>, <em>tablename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/engine.html#Engine.table_exists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.engine.Engine.table_exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>This can be overridden to return True if a table exists. It
+returns False by default.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.lib.engine.Engine.table_name">
+<code class="descname">table_name</code><span class="sig-paren">(</span><em>name=None</em>, <em>dbname=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/engine.html#Engine.table_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.engine.Engine.table_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the full tablename.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="retriever.lib.engine.file_exists">
+<code class="descclassname">retriever.lib.engine.</code><code class="descname">file_exists</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/engine.html#file_exists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.engine.file_exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns true if a file exists and its size is greater than 0.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="retriever.lib.engine.gen_from_source">
+<code class="descclassname">retriever.lib.engine.</code><code class="descname">gen_from_source</code><span class="sig-paren">(</span><em>source</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/engine.html#gen_from_source"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.engine.gen_from_source" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a generator from a source tuple.
+Source tuples are of the form (callable, args) where callable(<a href="#id1"><span class="problematic" id="id2">*</span></a>args)
+returns either a generator or another source tuple.
+This allows indefinite regeneration of data sources.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="retriever.lib.engine.skip_rows">
+<code class="descclassname">retriever.lib.engine.</code><code class="descname">skip_rows</code><span class="sig-paren">(</span><em>rows</em>, <em>source</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/engine.html#skip_rows"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.engine.skip_rows" title="Permalink to this definition">¶</a></dt>
+<dd><p>Skip over the header lines by reading them before processing.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-retriever.lib.excel">
+<span id="retriever-lib-excel-module"></span><h2>retriever.lib.excel module<a class="headerlink" href="#module-retriever.lib.excel" title="Permalink to this headline">¶</a></h2>
+<p>EcoData Retriever Excel Functions</p>
+<p>This module contains optional functions for importing data from Excel.</p>
+</div>
+<div class="section" id="module-retriever.lib.get_opts">
+<span id="retriever-lib-get-opts-module"></span><h2>retriever.lib.get_opts module<a class="headerlink" href="#module-retriever.lib.get_opts" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-retriever.lib.lists">
+<span id="retriever-lib-lists-module"></span><h2>retriever.lib.lists module<a class="headerlink" href="#module-retriever.lib.lists" title="Permalink to this headline">¶</a></h2>
+<p>Contains code for getting dataset lists from available datasets/categories.</p>
+<dl class="class">
+<dt id="retriever.lib.lists.Category">
+<em class="property">class </em><code class="descclassname">retriever.lib.lists.</code><code class="descname">Category</code><span class="sig-paren">(</span><em>name</em>, <em>scripts</em>, <em>children=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/lists.html#Category"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.lists.Category" title="Permalink to this definition">¶</a></dt>
+<dd><p>A categorical list of scripts.</p>
+<p class="rubric">Methods</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-retriever.lib.models">
+<span id="retriever-lib-models-module"></span><h2>retriever.lib.models module<a class="headerlink" href="#module-retriever.lib.models" title="Permalink to this headline">¶</a></h2>
+<p>EcoData Retriever Data Model</p>
+<p>This module contains basic class definitions for the Retriever platform.</p>
+</div>
+<div class="section" id="module-retriever.lib.repository">
+<span id="retriever-lib-repository-module"></span><h2>retriever.lib.repository module<a class="headerlink" href="#module-retriever.lib.repository" title="Permalink to this headline">¶</a></h2>
+<p>Checks the repository for updates.</p>
+<dl class="class">
+<dt id="retriever.lib.repository.InitThread">
+<em class="property">class </em><code class="descclassname">retriever.lib.repository.</code><code class="descname">InitThread</code><span class="sig-paren">(</span><em>group=None</em>, <em>target=None</em>, <em>name=None</em>, <em>args=()</em>, <em>kwargs=None</em>, <em>verbose=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/repository.html#InitThread"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.repository.InitThread" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">threading.Thread</span></code></p>
+<p>This thread performs all of the necessary updates while the splash screen
+is shown.</p>
+<ol class="arabic simple">
+<li>Check master/version.txt to get the latest version (Windows only).</li>
+<li>Prompt for update if necessary (Windows only).</li>
+<li>Download latest versions of scripts from current branch.</li>
+</ol>
+<p class="rubric">Attributes</p>
+<p class="rubric">Methods</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="retriever.lib.repository.check_for_updates">
+<code class="descclassname">retriever.lib.repository.</code><code class="descname">check_for_updates</code><span class="sig-paren">(</span><em>graphical=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/repository.html#check_for_updates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.repository.check_for_updates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check for updates to scripts and executable.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="retriever.lib.repository.download_from_repository">
+<code class="descclassname">retriever.lib.repository.</code><code class="descname">download_from_repository</code><span class="sig-paren">(</span><em>filepath</em>, <em>newpath</em>, <em>repo='https://raw.github.com/weecology/retriever/master/'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/repository.html#download_from_repository"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.repository.download_from_repository" title="Permalink to this definition">¶</a></dt>
+<dd><p>Downloads the latest version of a file from the repository.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="retriever.lib.repository.more_recent">
+<code class="descclassname">retriever.lib.repository.</code><code class="descname">more_recent</code><span class="sig-paren">(</span><em>latest</em>, <em>current</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/repository.html#more_recent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.repository.more_recent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given two version number strings, returns True if the first is more recent.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-retriever.lib.table">
+<span id="retriever-lib-table-module"></span><h2>retriever.lib.table module<a class="headerlink" href="#module-retriever.lib.table" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="retriever.lib.table.Table">
+<em class="property">class </em><code class="descclassname">retriever.lib.table.</code><code class="descname">Table</code><span class="sig-paren">(</span><em>name</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/table.html#Table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.table.Table" title="Permalink to this definition">¶</a></dt>
+<dd><p>Information about a database table.</p>
+<p class="rubric">Methods</p>
+<dl class="method">
+<dt id="retriever.lib.table.Table.auto_get_columns">
+<code class="descname">auto_get_columns</code><span class="sig-paren">(</span><em>header</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/table.html#Table.auto_get_columns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.table.Table.auto_get_columns" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the column names from the header row</p>
+<p>Identifies the column names from the header row.
+Replaces database keywords with alternatives.
+Replaces special characters and spaces.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.lib.table.Table.clean_column_name">
+<code class="descname">clean_column_name</code><span class="sig-paren">(</span><em>column_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/table.html#Table.clean_column_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.table.Table.clean_column_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes sure a column name is formatted correctly by removing reserved
+words, symbols, numbers, etc.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.lib.table.Table.combine_on_delimiter">
+<code class="descname">combine_on_delimiter</code><span class="sig-paren">(</span><em>line_as_list</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/table.html#Table.combine_on_delimiter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.table.Table.combine_on_delimiter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Combine a list of values into a line of csv data</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.lib.table.Table.extract_values">
+<code class="descname">extract_values</code><span class="sig-paren">(</span><em>line</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/table.html#Table.extract_values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.table.Table.extract_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a line of data, this function returns a list of the individual
+data values.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.lib.table.Table.get_column_datatypes">
+<code class="descname">get_column_datatypes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/table.html#Table.get_column_datatypes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.table.Table.get_column_datatypes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a set of column names for insert statements.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.lib.table.Table.get_insert_columns">
+<code class="descname">get_insert_columns</code><span class="sig-paren">(</span><em>join=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/table.html#Table.get_insert_columns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.table.Table.get_insert_columns" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a set of column names for insert statements.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-retriever.lib.templates">
+<span id="retriever-lib-templates-module"></span><h2>retriever.lib.templates module<a class="headerlink" href="#module-retriever.lib.templates" title="Permalink to this headline">¶</a></h2>
+<p>Class models for dataset scripts from various locations. Scripts should
+inherit from the most specific class available.</p>
+<dl class="class">
+<dt id="retriever.lib.templates.BasicTextTemplate">
+<em class="property">class </em><code class="descclassname">retriever.lib.templates.</code><code class="descname">BasicTextTemplate</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/templates.html#BasicTextTemplate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.templates.BasicTextTemplate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#retriever.lib.templates.Script" title="retriever.lib.templates.Script"><code class="xref py py-class docutils literal"><span class="pre">retriever.lib.templates.Script</span></code></a></p>
+<p>Script template based on data files from Ecological Archives.</p>
+<p class="rubric">Methods</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="retriever.lib.templates.DownloadOnlyTemplate">
+<em class="property">class </em><code class="descclassname">retriever.lib.templates.</code><code class="descname">DownloadOnlyTemplate</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/templates.html#DownloadOnlyTemplate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.templates.DownloadOnlyTemplate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#retriever.lib.templates.Script" title="retriever.lib.templates.Script"><code class="xref py py-class docutils literal"><span class="pre">retriever.lib.templates.Script</span></code></a></p>
+<p>Script template for non-tabular data that are only for download</p>
+<p class="rubric">Methods</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="retriever.lib.templates.HtmlTableTemplate">
+<em class="property">class </em><code class="descclassname">retriever.lib.templates.</code><code class="descname">HtmlTableTemplate</code><span class="sig-paren">(</span><em>name=''</em>, <em>description=''</em>, <em>shortname=''</em>, <em>urls={}</em>, <em>tables={}</em>, <em>ref=''</em>, <em>public=True</em>, <em>addendum=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/templates.html#HtmlTableTemplate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.templates.HtmlTableTemplate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#retriever.lib.templates.Script" title="retriever.lib.templates.Script"><code class="xref py py-class docutils literal"><span class="pre">retriever.lib.templates.Script</span></code></a></p>
+<p>Script template for parsing data in HTML tables</p>
+<p class="rubric">Methods</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="retriever.lib.templates.Script">
+<em class="property">class </em><code class="descclassname">retriever.lib.templates.</code><code class="descname">Script</code><span class="sig-paren">(</span><em>name=''</em>, <em>description=''</em>, <em>shortname=''</em>, <em>urls={}</em>, <em>tables={}</em>, <em>ref=''</em>, <em>public=True</em>, <em>addendum=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/templates.html#Script"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.templates.Script" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class represents a database toolkit script. Scripts should inherit
+from this class and execute their code in the download method.</p>
+<p class="rubric">Methods</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-retriever.lib.tools">
+<span id="retriever-lib-tools-module"></span><h2>retriever.lib.tools module<a class="headerlink" href="#module-retriever.lib.tools" title="Permalink to this headline">¶</a></h2>
+<p>EcoData Retriever Tools</p>
+<p>This module contains miscellaneous classes and functions used in Retriever
+scripts.</p>
+<dl class="class">
+<dt id="retriever.lib.tools.ScriptTest">
+<em class="property">class </em><code class="descclassname">retriever.lib.tools.</code><code class="descname">ScriptTest</code><span class="sig-paren">(</span><em>methodName='runTest'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/tools.html#ScriptTest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.tools.ScriptTest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">unittest.case.TestCase</span></code></p>
+<p>Automates the process of creating unit tests for Retriever scripts.
+Uses the Python unittest module.</p>
+<p class="rubric">Methods</p>
+<dl class="method">
+<dt id="retriever.lib.tools.ScriptTest.default_test">
+<code class="descname">default_test</code><span class="sig-paren">(</span><em>script</em>, <em>tables</em>, <em>include_pk=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/tools.html#ScriptTest.default_test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.tools.ScriptTest.default_test" title="Permalink to this definition">¶</a></dt>
+<dd><p>The default unit test. Tests in ScriptTest classes can simply call
+this function with the appropriate paramaters. The &#8220;script&#8221; property
+should be an instance of Script, and tables is a list consisting of
+tuples in the following format:</p>
+<p>(table name, MD5 sum, [order by statement])</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.lib.tools.ScriptTest.strvalue">
+<code class="descname">strvalue</code><span class="sig-paren">(</span><em>value</em>, <em>col_num</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/tools.html#ScriptTest.strvalue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.tools.ScriptTest.strvalue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a string representing the cleaned value from a SELECT
+statement, for use in tests.</p>
+<dl class="docutils">
+<dt>Arguments: value &#8211; the value to be converted,</dt>
+<dd><p class="first">col_num &#8211; the column number of the value (starting from 0)</p>
+<p class="last">col_num is not used in this function, but may be
+useful when overriding this function</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="retriever.lib.tools.checkagainstfile">
+<code class="descclassname">retriever.lib.tools.</code><code class="descname">checkagainstfile</code><span class="sig-paren">(</span><em>lines</em>, <em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/tools.html#checkagainstfile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.tools.checkagainstfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks a set of lines against a file, and prints all lines that don&#8217;t
+match.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="retriever.lib.tools.choose_engine">
+<code class="descclassname">retriever.lib.tools.</code><code class="descname">choose_engine</code><span class="sig-paren">(</span><em>opts</em>, <em>choice=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/tools.html#choose_engine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.tools.choose_engine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prompts the user to select a database engine</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="retriever.lib.tools.final_cleanup">
+<code class="descclassname">retriever.lib.tools.</code><code class="descname">final_cleanup</code><span class="sig-paren">(</span><em>engine</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/tools.html#final_cleanup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.tools.final_cleanup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform final cleanup operations after all scripts have run.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="retriever.lib.tools.get_default_connection">
+<code class="descclassname">retriever.lib.tools.</code><code class="descname">get_default_connection</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/tools.html#get_default_connection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.tools.get_default_connection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the first (most recently used) stored connection from
+connections.config.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="retriever.lib.tools.get_saved_connection">
+<code class="descclassname">retriever.lib.tools.</code><code class="descname">get_saved_connection</code><span class="sig-paren">(</span><em>engine_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/tools.html#get_saved_connection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.tools.get_saved_connection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given the name of an engine, returns the stored connection for that engine
+from connections.config.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="retriever.lib.tools.getmd5">
+<code class="descclassname">retriever.lib.tools.</code><code class="descname">getmd5</code><span class="sig-paren">(</span><em>lines</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/tools.html#getmd5"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.tools.getmd5" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get MD5 value of a set of lines.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="retriever.lib.tools.reset_retriever">
+<code class="descclassname">retriever.lib.tools.</code><code class="descname">reset_retriever</code><span class="sig-paren">(</span><em>scope</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/tools.html#reset_retriever"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.tools.reset_retriever" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove stored information on scripts, data, and connections</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="retriever.lib.tools.save_connection">
+<code class="descclassname">retriever.lib.tools.</code><code class="descname">save_connection</code><span class="sig-paren">(</span><em>engine_name</em>, <em>values_dict</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/lib/tools.html#save_connection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.lib.tools.save_connection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves connection information for an engine in connections.config.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-retriever.lib.warning">
+<span id="retriever-lib-warning-module"></span><h2>retriever.lib.warning module<a class="headerlink" href="#module-retriever.lib.warning" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-retriever.lib">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-retriever.lib" title="Permalink to this headline">¶</a></h2>
+<p>retriever.lib contains the core EcoData Retriever modules.</p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="retriever.engines.html" class="btn btn-neutral" title="retriever.engines package" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Author.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

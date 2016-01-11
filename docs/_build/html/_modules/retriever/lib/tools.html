@@ -1,0 +1,481 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>retriever.lib.tools &mdash; retriever  documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="retriever  documentation" href="../../../index.html"/>
+        <link rel="up" title="retriever" href="../../retriever.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> retriever
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../retriever.html">retriever package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">retriever</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+          <li><a href="../../retriever.html">retriever</a> &raquo;</li>
+      
+    <li>retriever.lib.tools</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for retriever.lib.tools</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;EcoData Retriever Tools</span>
+
+<span class="sd">This module contains miscellaneous classes and functions used in Retriever</span>
+<span class="sd">scripts.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">difflib</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">decimal</span> <span class="kn">import</span> <span class="n">Decimal</span>
+<span class="kn">from</span> <span class="nn">hashlib</span> <span class="kn">import</span> <span class="n">md5</span>
+<span class="kn">from</span> <span class="nn">retriever</span> <span class="kn">import</span> <span class="n">HOME_DIR</span>
+<span class="kn">from</span> <span class="nn">retriever.lib.models</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s">&quot;ignore&quot;</span><span class="p">)</span>
+
+<span class="n">TEST_ENGINES</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="ScriptTest"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.tools.ScriptTest">[docs]</a><span class="k">class</span> <span class="nc">ScriptTest</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Automates the process of creating unit tests for Retriever scripts.</span>
+<span class="sd">    Uses the Python unittest module.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ScriptTest.strvalue"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.tools.ScriptTest.strvalue">[docs]</a>    <span class="k">def</span> <span class="nf">strvalue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">col_num</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a string representing the cleaned value from a SELECT</span>
+<span class="sd">        statement, for use in tests.</span>
+
+<span class="sd">        Arguments: value -- the value to be converted,</span>
+<span class="sd">                   col_num -- the column number of the value (starting from 0)</span>
+
+<span class="sd">                   col_num is not used in this function, but may be</span>
+<span class="sd">                   useful when overriding this function</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">unicode</span><span class="p">):</span>
+                <span class="c"># If the value is a string or unicode, it&#39;s not a number and</span>
+                <span class="c"># should be surrounded by quotes.</span>
+                <span class="k">return</span> <span class="s">&#39;&quot;&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;&quot;&#39;</span>
+            <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s">&quot;0.00&quot;</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Decimal</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">Decimal</span><span class="p">(</span><span class="s">&quot;-0.01&quot;</span><span class="p">)</span> <span class="o">&lt;</span>
+                                                <span class="n">Decimal</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span> <span class="o">&lt;</span>
+                                                <span class="n">Decimal</span><span class="p">(</span><span class="s">&quot;0.01&quot;</span><span class="p">)):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">Decimal</span><span class="p">(</span><span class="s">&quot;-0.01&quot;</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">Decimal</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span> <span class="o">&lt;</span> <span class="n">Decimal</span><span class="p">(</span><span class="s">&quot;0.01&quot;</span><span class="p">):</span>
+                        <span class="n">dec</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s">&#39;0&#39;</span><span class="p">))</span> <span class="o">-</span> <span class="mi">1</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;%.&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">dec</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;e&quot;</span><span class="p">)</span> <span class="o">%</span> <span class="n">value</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                        <span class="n">strippedvalue</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;e&quot;</span><span class="p">)</span>
+                        <span class="k">return</span> <span class="p">(</span><span class="n">strippedvalue</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s">&quot;0&quot;</span><span class="p">)</span> <span class="o">+</span>
+                                <span class="s">&quot;e&quot;</span> <span class="o">+</span> <span class="n">strippedvalue</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+                <span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s">&#39;0&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="s">&#39;.&#39;</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                    <span class="n">value</span> <span class="o">+=</span> <span class="s">&quot;.0&quot;</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">))</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span> <span class="o">+</span> <span class="s">&quot;0&quot;</span>
+                <span class="k">return</span> <span class="n">value</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="k">if</span> <span class="s">&#39;.&#39;</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s">&#39;0&#39;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">value</span> <span class="o">+=</span> <span class="s">&quot;.0&quot;</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">))</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;0&quot;</span>
+                    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s">&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="ScriptTest.default_test"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.tools.ScriptTest.default_test">[docs]</a>    <span class="k">def</span> <span class="nf">default_test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">script</span><span class="p">,</span> <span class="n">tables</span><span class="p">,</span> <span class="n">include_pk</span> <span class="o">=</span> <span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The default unit test. Tests in ScriptTest classes can simply call</span>
+<span class="sd">        this function with the appropriate paramaters. The &quot;script&quot; property</span>
+<span class="sd">        should be an instance of Script, and tables is a list consisting of</span>
+<span class="sd">        tuples in the following format:</span>
+
+<span class="sd">        (table name, MD5 sum, [order by statement])</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">engine_letter</span> <span class="ow">in</span> <span class="p">[</span><span class="n">engine</span><span class="o">.</span><span class="n">abbreviation</span> <span class="k">for</span> <span class="n">engine</span> <span class="ow">in</span> <span class="n">ENGINES_TO_TEST</span><span class="p">]:</span>
+            <span class="n">engine</span> <span class="o">=</span> <span class="n">TEST_ENGINES</span><span class="p">[</span><span class="n">engine_letter</span><span class="p">]</span>
+            <span class="n">engine</span><span class="o">.</span><span class="n">script</span> <span class="o">=</span> <span class="n">script</span>
+
+            <span class="k">print</span> <span class="s">&quot;Testing with &quot;</span> <span class="o">+</span> <span class="n">engine</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">script</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="n">engine</span><span class="p">)</span>
+
+            <span class="k">print</span> <span class="s">&quot;Testing data . . .&quot;</span>
+
+            <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">tables</span><span class="p">:</span>
+                <span class="n">tablename</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">checksum</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">table</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="n">orderby</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+                <span class="n">cursor</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+                <span class="n">engine</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">table_name</span> <span class="o">=</span> <span class="n">tablename</span>
+                <span class="n">select_statement</span> <span class="o">=</span> <span class="s">&quot;SELECT * FROM &quot;</span> <span class="o">+</span> <span class="n">engine</span><span class="o">.</span><span class="n">table_name</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">orderby</span><span class="p">:</span>
+                    <span class="n">select_statement</span> <span class="o">+=</span> <span class="s">&quot; ORDER BY &quot;</span> <span class="o">+</span> <span class="n">orderby</span>
+                <span class="n">select_statement</span> <span class="o">+=</span> <span class="s">&quot;;&quot;</span>
+                <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">select_statement</span><span class="p">)</span>
+                <span class="n">engine</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+                <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">include_pk</span><span class="p">:</span>
+                        <span class="n">start</span> <span class="o">=</span> <span class="mi">0</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">start</span> <span class="o">=</span> <span class="mi">1</span>
+                    <span class="n">newline</span> <span class="o">=</span> <span class="s">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">strvalue</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+                                        <span class="k">for</span> <span class="n">i</span>
+                                        <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">))])</span>
+                    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">newline</span> <span class="o">+</span> <span class="s">&quot;</span><span class="se">\r\n</span><span class="s">&quot;</span><span class="p">)</span>
+
+                <span class="c"># If a test fails, you can temporarily  uncomment this line</span>
+                <span class="c"># to print each line that doesn&#39;t match up together with the</span>
+                <span class="c"># line from the test file; this can be useful to find the</span>
+                <span class="c"># discrepancies</span>
+                <span class="c"># checkagainstfile(lines, &quot;PanTHERIA_manual.txt&quot;)</span>
+
+                <span class="n">lines</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+                <span class="nb">sum</span> <span class="o">=</span> <span class="n">getmd5</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="nb">sum</span><span class="p">,</span> <span class="n">checksum</span><span class="p">)</span></div></div>
+
+
+<span class="k">def</span> <span class="nf">name_matches</span><span class="p">(</span><span class="n">scripts</span><span class="p">,</span> <span class="n">arg</span><span class="p">):</span>
+    <span class="n">matches</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">script</span> <span class="ow">in</span> <span class="n">scripts</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">arg</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">script</span><span class="o">.</span><span class="n">shortname</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span> <span class="k">return</span> <span class="p">[</span><span class="n">script</span><span class="p">]</span>
+        <span class="n">max_ratio</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">difflib</span><span class="o">.</span><span class="n">SequenceMatcher</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">arg</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">factor</span><span class="p">)</span><span class="o">.</span><span class="n">ratio</span><span class="p">()</span> <span class="k">for</span> <span class="n">factor</span> <span class="ow">in</span> <span class="p">(</span><span class="n">script</span><span class="o">.</span><span class="n">shortname</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">script</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">script</span><span class="o">.</span><span class="n">filename</span><span class="o">.</span><span class="n">lower</span><span class="p">())]</span> <span class="o">+</span>
+                        <span class="p">[</span><span class="n">difflib</span><span class="o">.</span><span class="n">SequenceMatcher</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">arg</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">factor</span><span class="p">)</span><span class="o">.</span><span class="n">ratio</span><span class="p">()</span> <span class="k">for</span> <span class="n">factor</span> <span class="ow">in</span> <span class="p">[</span><span class="n">tag</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">tagset</span> <span class="ow">in</span> <span class="n">script</span><span class="o">.</span><span class="n">tags</span> <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">tagset</span><span class="p">]]</span>
+                        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">arg</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s">&#39;all&#39;</span><span class="p">:</span> <span class="n">max_ratio</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">matches</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">script</span><span class="p">,</span> <span class="n">max_ratio</span><span class="p">))</span>
+    <span class="n">matches</span> <span class="o">=</span> <span class="p">[</span><span class="n">m</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">matches</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="k">if</span> <span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.6</span><span class="p">]</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">match</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">matches</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="getmd5"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.tools.getmd5">[docs]</a><span class="k">def</span> <span class="nf">getmd5</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Get MD5 value of a set of lines.&quot;&quot;&quot;</span>
+    <span class="nb">sum</span> <span class="o">=</span> <span class="n">md5</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+        <span class="nb">sum</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">sum</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="checkagainstfile"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.tools.checkagainstfile">[docs]</a><span class="k">def</span> <span class="nf">checkagainstfile</span><span class="p">(</span><span class="n">lines</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Checks a set of lines against a file, and prints all lines that don&#39;t</span>
+<span class="sd">    match.&quot;&quot;&quot;</span>
+    <span class="n">TEST_DATA_LOCATION</span> <span class="o">=</span> <span class="s">&quot;test_data&quot;</span>
+
+    <span class="n">testfile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">TEST_DATA_LOCATION</span><span class="p">,</span> <span class="n">filename</span><span class="p">),</span> <span class="s">&#39;rb&#39;</span><span class="p">)</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">print</span> <span class="n">i</span>
+        <span class="n">line2</span> <span class="o">=</span> <span class="n">testfile</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">line</span> <span class="o">!=</span> <span class="n">line2</span><span class="p">:</span>
+            <span class="k">print</span> <span class="n">i</span>
+            <span class="k">print</span> <span class="s">&quot;LINE1: &quot;</span> <span class="o">+</span> <span class="n">line</span>
+            <span class="k">print</span> <span class="s">&quot;LINE2: &quot;</span> <span class="o">+</span> <span class="n">line2</span>
+            <span class="n">values1</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">)</span>
+            <span class="n">values2</span> <span class="o">=</span> <span class="n">line2</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">values1</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="n">values1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="n">values2</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                    <span class="k">print</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;: &quot;</span> <span class="o">+</span> <span class="n">values1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s">&quot;, &quot;</span> <span class="o">+</span> <span class="n">values2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">testfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="final_cleanup"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.tools.final_cleanup">[docs]</a><span class="k">def</span> <span class="nf">final_cleanup</span><span class="p">(</span><span class="n">engine</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Perform final cleanup operations after all scripts have run.&quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+
+<span class="n">config_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">HOME_DIR</span><span class="p">,</span> <span class="s">&#39;connections.config&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="get_saved_connection"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.tools.get_saved_connection">[docs]</a><span class="k">def</span> <span class="nf">get_saved_connection</span><span class="p">(</span><span class="n">engine_name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Given the name of an engine, returns the stored connection for that engine</span>
+<span class="sd">    from connections.config.&quot;&quot;&quot;</span>
+    <span class="n">parameters</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">config_path</span><span class="p">):</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_path</span><span class="p">,</span> <span class="s">&quot;rb&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">engine_name</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">parameters</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="k">pass</span>
+    <span class="k">return</span> <span class="n">parameters</span></div>
+
+
+<div class="viewcode-block" id="save_connection"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.tools.save_connection">[docs]</a><span class="k">def</span> <span class="nf">save_connection</span><span class="p">(</span><span class="n">engine_name</span><span class="p">,</span> <span class="n">values_dict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Saves connection information for an engine in connections.config.&quot;&quot;&quot;</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">config_path</span><span class="p">):</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_path</span><span class="p">,</span> <span class="s">&quot;rb&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">engine_name</span><span class="p">:</span>
+                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">+</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">))</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">config_path</span><span class="p">)</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_path</span><span class="p">,</span> <span class="s">&quot;wb&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_path</span><span class="p">,</span> <span class="s">&quot;wb&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s">&quot;file&quot;</span> <span class="ow">in</span> <span class="n">values_dict</span><span class="p">:</span>
+        <span class="n">values_dict</span><span class="p">[</span><span class="s">&quot;file&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">values_dict</span><span class="p">[</span><span class="s">&quot;file&quot;</span><span class="p">])</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">engine_name</span> <span class="o">+</span> <span class="s">&quot;,&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">values_dict</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="get_default_connection"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.tools.get_default_connection">[docs]</a><span class="k">def</span> <span class="nf">get_default_connection</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Gets the first (most recently used) stored connection from</span>
+<span class="sd">    connections.config.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">config_path</span><span class="p">):</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_path</span><span class="p">,</span> <span class="s">&quot;rb&quot;</span><span class="p">)</span>
+        <span class="n">default_connection</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;,&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">config</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">default_connection</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">None</span></div>
+
+
+<div class="viewcode-block" id="choose_engine"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.tools.choose_engine">[docs]</a><span class="k">def</span> <span class="nf">choose_engine</span><span class="p">(</span><span class="n">opts</span><span class="p">,</span> <span class="n">choice</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Prompts the user to select a database engine&quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">retriever.engines</span> <span class="kn">import</span> <span class="n">engine_list</span>
+
+    <span class="k">if</span> <span class="s">&quot;engine&quot;</span> <span class="ow">in</span> <span class="n">opts</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">enginename</span> <span class="o">=</span> <span class="n">opts</span><span class="p">[</span><span class="s">&quot;engine&quot;</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">opts</span><span class="p">[</span><span class="s">&quot;command&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;download&quot;</span><span class="p">:</span>
+        <span class="n">enginename</span> <span class="o">=</span> <span class="s">&quot;download&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">choice</span><span class="p">:</span> <span class="k">return</span> <span class="bp">None</span>
+        <span class="k">print</span> <span class="s">&quot;Choose a database engine:&quot;</span>
+        <span class="k">for</span> <span class="n">engine</span> <span class="ow">in</span> <span class="n">engine_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">engine</span><span class="o">.</span><span class="n">abbreviation</span><span class="p">:</span>
+                <span class="n">abbreviation</span> <span class="o">=</span> <span class="s">&quot;(&quot;</span> <span class="o">+</span> <span class="n">engine</span><span class="o">.</span><span class="n">abbreviation</span> <span class="o">+</span> <span class="s">&quot;) &quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">abbreviation</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+            <span class="k">print</span> <span class="s">&quot;    &quot;</span> <span class="o">+</span> <span class="n">abbreviation</span> <span class="o">+</span> <span class="n">engine</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">enginename</span> <span class="o">=</span> <span class="nb">raw_input</span><span class="p">(</span><span class="s">&quot;: &quot;</span><span class="p">)</span>
+    <span class="n">enginename</span> <span class="o">=</span> <span class="n">enginename</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+    <span class="n">engine</span> <span class="o">=</span> <span class="n">Engine</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">enginename</span><span class="p">:</span>
+        <span class="n">engine</span> <span class="o">=</span> <span class="n">engine_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">thisengine</span> <span class="ow">in</span> <span class="n">engine_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">enginename</span> <span class="o">==</span> <span class="n">thisengine</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                              <span class="ow">or</span> <span class="n">thisengine</span><span class="o">.</span><span class="n">abbreviation</span>
+                              <span class="ow">and</span> <span class="n">enginename</span> <span class="o">==</span> <span class="n">thisengine</span><span class="o">.</span><span class="n">abbreviation</span><span class="p">):</span>
+                <span class="n">engine</span> <span class="o">=</span> <span class="n">thisengine</span>
+
+    <span class="n">engine</span><span class="o">.</span><span class="n">opts</span> <span class="o">=</span> <span class="n">opts</span>
+    <span class="k">return</span> <span class="n">engine</span></div>
+
+<div class="viewcode-block" id="reset_retriever"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.tools.reset_retriever">[docs]</a><span class="k">def</span> <span class="nf">reset_retriever</span><span class="p">(</span><span class="n">scope</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Remove stored information on scripts, data, and connections&quot;&quot;&quot;</span>
+
+    <span class="n">warning_messages</span><span class="o">=</span> <span class="p">{</span><span class="s">&#39;all&#39;</span><span class="p">:</span> <span class="s">&quot;This will remove existing scripts, cached data, and information on database connections. Specifically it will remove the scripts and raw_data folders and the connections.config file in {}. Do you want to proceed? (y/N)</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span>
+                       <span class="s">&#39;scripts&#39;</span><span class="p">:</span> <span class="s">&quot;This will remove existing scripts. Specifically it will remove the scripts folder in {}. Do you want to proceed? (y/N)</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span>
+                       <span class="s">&#39;data&#39;</span><span class="p">:</span> <span class="s">&quot;This will remove raw data cached by the Retriever. Specifically it will remove the raw_data folder in {}. Do you want to proceed? (y/N)</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span>
+                       <span class="s">&#39;connections&#39;</span><span class="p">:</span> <span class="s">&quot;This will remove stored information on database connections. Specifically it will remove the connections.config file in {}. Do you want to proceed? (y/N)</span><span class="se">\n</span><span class="s">&quot;</span>
+    <span class="p">}</span>
+
+    <span class="n">warn_msg</span> <span class="o">=</span> <span class="n">warning_messages</span><span class="p">[</span><span class="n">scope</span><span class="p">]</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">HOME_DIR</span><span class="p">)</span>
+    <span class="n">confirm</span> <span class="o">=</span> <span class="nb">raw_input</span><span class="p">(</span><span class="n">warn_msg</span><span class="p">)</span>
+    <span class="k">while</span> <span class="ow">not</span> <span class="p">(</span><span class="n">confirm</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;y&#39;</span><span class="p">,</span> <span class="s">&#39;n&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">]):</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&quot;Please enter either y or n.&quot;</span><span class="p">)</span>
+        <span class="n">confirm</span> <span class="o">=</span> <span class="nb">raw_input</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">confirm</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s">&#39;y&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">scope</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;data&#39;</span><span class="p">,</span> <span class="s">&#39;all&#39;</span><span class="p">]:</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">HOME_DIR</span><span class="p">,</span> <span class="s">&#39;raw_data&#39;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">scope</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;scripts&#39;</span><span class="p">,</span> <span class="s">&#39;all&#39;</span><span class="p">]:</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">HOME_DIR</span><span class="p">,</span> <span class="s">&#39;scripts&#39;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">scope</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;connections&#39;</span><span class="p">,</span> <span class="s">&#39;all&#39;</span><span class="p">]:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">HOME_DIR</span><span class="p">,</span> <span class="s">&#39;connections.config&#39;</span><span class="p">))</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">pass</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Author.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
