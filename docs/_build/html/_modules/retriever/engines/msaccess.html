@@ -1,0 +1,243 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>retriever.engines.msaccess &mdash; retriever  documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="retriever  documentation" href="../../../index.html" />
+    <link rel="up" title="retriever" href="../../retriever.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for retriever.engines.msaccess</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">retriever.lib.models</span> <span class="kn">import</span> <span class="n">Engine</span><span class="p">,</span> <span class="n">no_cleanup</span>
+<span class="kn">from</span> <span class="nn">retriever</span> <span class="kn">import</span> <span class="n">DATA_DIR</span><span class="p">,</span> <span class="n">current_platform</span>
+
+<div class="viewcode-block" id="engine"><a class="viewcode-back" href="../../../retriever.engines.html#retriever.engines.msaccess.engine">[docs]</a><span class="k">class</span> <span class="nc">engine</span><span class="p">(</span><span class="n">Engine</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Engine instance for Microsoft Access.&quot;&quot;&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s">&quot;Microsoft Access&quot;</span>
+    <span class="n">instructions</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;Create a database in Microsoft Access, close Access, then </span><span class="se">\n</span><span class="s">select your database file using this dialog.&quot;&quot;&quot;</span>
+    <span class="n">abbreviation</span> <span class="o">=</span> <span class="s">&quot;msaccess&quot;</span>
+    <span class="n">datatypes</span> <span class="o">=</span> <span class="p">{</span>
+                 <span class="s">&quot;auto&quot;</span><span class="p">:</span> <span class="s">&quot;AUTOINCREMENT&quot;</span><span class="p">,</span>
+                 <span class="s">&quot;int&quot;</span><span class="p">:</span> <span class="s">&quot;INTEGER&quot;</span><span class="p">,</span>
+                 <span class="s">&quot;bigint&quot;</span><span class="p">:</span> <span class="s">&quot;INTEGER&quot;</span><span class="p">,</span>
+                 <span class="s">&quot;double&quot;</span><span class="p">:</span> <span class="s">&quot;NUMERIC&quot;</span><span class="p">,</span>
+                 <span class="s">&quot;decimal&quot;</span><span class="p">:</span> <span class="s">&quot;NUMERIC&quot;</span><span class="p">,</span>
+                 <span class="s">&quot;char&quot;</span><span class="p">:</span> <span class="s">&quot;VARCHAR&quot;</span><span class="p">,</span>
+                 <span class="s">&quot;bool&quot;</span><span class="p">:</span> <span class="s">&quot;BIT&quot;</span><span class="p">,</span>
+                 <span class="p">}</span>
+    <span class="n">required_opts</span> <span class="o">=</span> <span class="p">[(</span><span class="s">&quot;file&quot;</span><span class="p">,</span>
+                      <span class="s">&quot;Enter the filename of your Access database&quot;</span><span class="p">,</span>
+                      <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATA_DIR</span><span class="p">,</span> <span class="s">&quot;access.mdb&quot;</span><span class="p">),</span>
+                      <span class="s">&quot;Access databases (*.mdb, *.accdb)|*.mdb;*.accdb&quot;</span><span class="p">),</span>
+                     <span class="p">(</span><span class="s">&quot;table_name&quot;</span><span class="p">,</span>
+                      <span class="s">&quot;Format of table name&quot;</span><span class="p">,</span>
+                      <span class="s">&quot;[{db} {table}]&quot;</span><span class="p">),</span>
+                      <span class="p">]</span>
+
+<div class="viewcode-block" id="engine.convert_data_type"><a class="viewcode-back" href="../../../retriever.engines.html#retriever.engines.msaccess.engine.convert_data_type">[docs]</a>    <span class="k">def</span> <span class="nf">convert_data_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datatype</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;MS Access can&#39;t handle complex Decimal types&quot;&quot;&quot;</span>
+        <span class="n">converted</span> <span class="o">=</span> <span class="n">Engine</span><span class="o">.</span><span class="n">convert_data_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datatype</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s">&quot;NUMERIC&quot;</span> <span class="ow">in</span> <span class="n">converted</span><span class="p">:</span>
+            <span class="n">converted</span> <span class="o">=</span> <span class="s">&quot;NUMERIC&quot;</span>
+        <span class="k">elif</span> <span class="s">&quot;VARCHAR&quot;</span> <span class="ow">in</span> <span class="n">converted</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">length</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">converted</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;(&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;)&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">length</span> <span class="o">&gt;</span> <span class="mi">255</span><span class="p">:</span>
+                    <span class="n">converted</span> <span class="o">=</span> <span class="s">&quot;TEXT&quot;</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">pass</span>
+        <span class="k">return</span> <span class="n">converted</span></div>
+
+<div class="viewcode-block" id="engine.create_db"><a class="viewcode-back" href="../../../retriever.engines.html#retriever.engines.msaccess.engine.create_db">[docs]</a>    <span class="k">def</span> <span class="nf">create_db</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;MS Access doesn&#39;t create databases.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">None</span></div>
+
+<div class="viewcode-block" id="engine.drop_statement"><a class="viewcode-back" href="../../../retriever.engines.html#retriever.engines.msaccess.engine.drop_statement">[docs]</a>    <span class="k">def</span> <span class="nf">drop_statement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">objecttype</span><span class="p">,</span> <span class="n">objectname</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a drop table or database SQL statement.&quot;&quot;&quot;</span>
+        <span class="n">dropstatement</span> <span class="o">=</span> <span class="s">&quot;DROP </span><span class="si">%s</span><span class="s"> </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">objecttype</span><span class="p">,</span> <span class="n">objectname</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dropstatement</span></div>
+
+<div class="viewcode-block" id="engine.escape_single_quotes"><a class="viewcode-back" href="../../../retriever.engines.html#retriever.engines.msaccess.engine.escape_single_quotes">[docs]</a>    <span class="k">def</span> <span class="nf">escape_single_quotes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s">&quot;&#39;&#39;&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="engine.insert_data_from_file"><a class="viewcode-back" href="../../../retriever.engines.html#retriever.engines.msaccess.engine.insert_data_from_file">[docs]</a>    <span class="k">def</span> <span class="nf">insert_data_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Perform a bulk insert.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_cursor</span><span class="p">()</span>
+        <span class="n">ct</span> <span class="o">=</span> <span class="nb">len</span><span class="p">([</span><span class="bp">True</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">][:</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;ct-&quot;</span><span class="p">])</span> <span class="o">!=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">cleanup</span><span class="o">.</span><span class="n">function</span> <span class="o">==</span> <span class="n">no_cleanup</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">fixed_width</span> <span class="ow">and</span>
+             <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">header_rows</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">delimiter</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">,</span> <span class="s">&quot;,&quot;</span><span class="p">])</span>
+            <span class="ow">and</span> <span class="ow">not</span> <span class="n">ct</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">,</span> <span class="s">&quot;do_not_bulk_insert&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">do_not_bulk_insert</span><span class="p">)</span>
+            <span class="p">):</span>
+            <span class="k">print</span> <span class="p">(</span><span class="s">&quot;Inserting data from &quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;...&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">delimiter</span> <span class="o">==</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">:</span>
+                <span class="n">fmt</span> <span class="o">=</span> <span class="s">&quot;TabDelimited&quot;</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">delimiter</span> <span class="o">==</span> <span class="s">&quot;,&quot;</span><span class="p">:</span>
+                <span class="n">fmt</span> <span class="o">=</span> <span class="s">&quot;CSVDelimited&quot;</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">header_rows</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">hdr</span> <span class="o">=</span> <span class="s">&quot;Yes&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">hdr</span> <span class="o">=</span> <span class="s">&quot;No&quot;</span>
+
+            <span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">get_insert_columns</span><span class="p">()</span>
+
+            <span class="n">need_to_delete</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="n">add_to_record_id</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">pk</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">contains_pk</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s">&#39;.&#39;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+                    <span class="n">proper_name</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)</span>
+                    <span class="n">newfilename</span> <span class="o">=</span> <span class="s">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">proper_name</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">proper_name</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">proper_name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                                           <span class="p">)</span> <span class="o">+</span> <span class="s">&quot;_new.&quot;</span> <span class="o">+</span> <span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">newfilename</span> <span class="o">=</span> <span class="n">filename</span> <span class="o">+</span> <span class="s">&quot;_new&quot;</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">newfilename</span><span class="p">):</span>
+                    <span class="k">print</span> <span class="s">&quot;Adding index to &quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">newfilename</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;...&quot;</span>
+                    <span class="n">read</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&quot;rb&quot;</span><span class="p">)</span>
+                    <span class="n">write</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">newfilename</span><span class="p">,</span> <span class="s">&quot;wb&quot;</span><span class="p">)</span>
+                    <span class="n">to_write</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+
+                    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">read</span><span class="p">:</span>
+                        <span class="n">to_write</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">delimiter</span> <span class="o">+</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\r\n</span><span class="s">&quot;</span><span class="p">)</span>
+                        <span class="n">add_to_record_id</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">record_id</span> <span class="o">+=</span> <span class="n">add_to_record_id</span>
+
+                    <span class="n">write</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">to_write</span><span class="p">)</span>
+                    <span class="n">write</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                    <span class="n">read</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                    <span class="n">need_to_delete</span> <span class="o">=</span> <span class="bp">True</span>
+                <span class="n">columns</span> <span class="o">=</span> <span class="s">&quot;record_id, &quot;</span> <span class="o">+</span> <span class="n">columns</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">newfilename</span> <span class="o">=</span> <span class="n">filename</span>
+
+            <span class="n">newfilename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">newfilename</span><span class="p">)</span>
+            <span class="n">filename_length</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">newfilename</span><span class="p">))</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="n">filepath</span> <span class="o">=</span> <span class="n">newfilename</span><span class="p">[:</span><span class="n">filename_length</span><span class="p">]</span>
+            <span class="n">statement</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
+<span class="s">INSERT INTO &quot;&quot;&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="p">()</span> <span class="o">+</span> <span class="s">&quot; (&quot;</span> <span class="o">+</span> <span class="n">columns</span> <span class="o">+</span> <span class="s">&quot;&quot;&quot;)</span>
+<span class="s">SELECT * FROM [&quot;&quot;&quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">newfilename</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;&#39;&#39;]</span>
+<span class="s">IN &quot;&#39;&#39;&#39;</span> <span class="o">+</span> <span class="n">filepath</span> <span class="o">+</span> <span class="s">&#39;&#39;&#39;&quot; &quot;Text;FMT=&#39;&#39;&#39;</span> <span class="o">+</span> <span class="n">fmt</span> <span class="o">+</span> <span class="s">&#39;&#39;&#39;;HDR=&#39;&#39;&#39;</span> <span class="o">+</span> <span class="n">hdr</span> <span class="o">+</span> <span class="s">&#39;&#39;&#39;;&quot;&#39;&#39;&#39;</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">statement</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">print</span> <span class="s">&quot;Couldn&#39;t bulk insert. Trying manual insert.&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">record_id</span> <span class="o">-=</span> <span class="n">add_to_record_id</span>
+
+                <span class="k">return</span> <span class="n">Engine</span><span class="o">.</span><span class="n">insert_data_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">need_to_delete</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">newfilename</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Engine</span><span class="o">.</span><span class="n">insert_data_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="engine.table_exists"><a class="viewcode-back" href="../../../retriever.engines.html#retriever.engines.msaccess.engine.table_exists">[docs]</a>    <span class="k">def</span> <span class="nf">table_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">tablename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Determine if the table already exists in the database&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;existing_table_names&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">existing_table_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">tables</span><span class="p">():</span>
+                <span class="n">tableinfo</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">tableinfo</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;MSys&quot;</span><span class="p">):</span>
+                    <span class="c">#ignore system tables</span>
+                    <span class="n">database</span><span class="p">,</span> <span class="n">table</span> <span class="o">=</span> <span class="n">tableinfo</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">existing_table_names</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">database</span><span class="p">,</span> <span class="n">table</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">tablename</span><span class="p">,</span> <span class="n">dbname</span><span class="o">=</span><span class="n">dbname</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">existing_table_names</span></div>
+
+
+<div class="viewcode-block" id="engine.get_connection"><a class="viewcode-back" href="../../../retriever.engines.html#retriever.engines.msaccess.engine.get_connection">[docs]</a>    <span class="k">def</span> <span class="nf">get_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Gets the db connection.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">current_platform</span> <span class="o">!=</span> <span class="s">&quot;windows&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;MS Access can only be used in Windows.&quot;</span><span class="p">)</span>
+        <span class="kn">import</span> <span class="nn">pypyodbc</span> <span class="kn">as</span> <span class="nn">dbapi</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_input</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s">&#39;file&#39;</span><span class="p">])</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s">&#39;file&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&#39;.mdb&#39;</span><span class="p">):</span>
+            <span class="n">dbapi</span><span class="o">.</span><span class="n">win_create_mdb</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s">&#39;file&#39;</span><span class="p">])</span>
+        <span class="n">connection_string</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=&quot;</span>
+                             <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s">&quot;file&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;/&quot;</span><span class="p">,</span> <span class="s">&quot;//&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;;&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dbapi</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">connection_string</span><span class="p">,</span> <span class="n">autocommit</span> <span class="o">=</span> <span class="bp">False</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../../retriever.html">retriever</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Author.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

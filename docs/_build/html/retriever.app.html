@@ -1,0 +1,449 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>retriever.app package &mdash; retriever  documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="retriever  documentation" href="index.html" />
+    <link rel="up" title="retriever package" href="retriever.html" />
+    <link rel="next" title="retriever.engines package" href="retriever.engines.html" />
+    <link rel="prev" title="retriever package" href="retriever.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="retriever-app-package">
+<h1>retriever.app package<a class="headerlink" href="#retriever-app-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-retriever.app.app">
+<span id="retriever-app-app-module"></span><h2>retriever.app.app module<a class="headerlink" href="#module-retriever.app.app" title="Permalink to this headline">¶</a></h2>
+<p>Contains implementations of wx.App and wx.Frame for the GUI.</p>
+<dl class="class">
+<dt id="retriever.app.app.App">
+<em class="property">class </em><code class="descclassname">retriever.app.app.</code><code class="descname">App</code><span class="sig-paren">(</span><em>lists</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/app.html#App"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.app.App" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">wx._core.App</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="retriever.app.app.Frame">
+<em class="property">class </em><code class="descclassname">retriever.app.app.</code><code class="descname">Frame</code><span class="sig-paren">(</span><em>parent</em>, <em>ID</em>, <em>title</em>, <em>lists</em>, <em>engine</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/app.html#Frame"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.app.Frame" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">wx._windows.Frame</span></code></p>
+<dl class="method">
+<dt id="retriever.app.app.Frame.About">
+<code class="descname">About</code><span class="sig-paren">(</span><em>evt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/app.html#Frame.About"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.app.Frame.About" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.app.app.Frame.Connection">
+<code class="descname">Connection</code><span class="sig-paren">(</span><em>evt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/app.html#Frame.Connection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.app.Frame.Connection" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.app.app.Frame.Find">
+<code class="descname">Find</code><span class="sig-paren">(</span><em>evt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/app.html#Frame.Find"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.app.Frame.Find" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.app.app.Frame.Quit">
+<code class="descname">Quit</code><span class="sig-paren">(</span><em>evt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/app.html#Frame.Quit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.app.Frame.Quit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-retriever.app.connect_wizard">
+<span id="retriever-app-connect-wizard-module"></span><h2>retriever.app.connect_wizard module<a class="headerlink" href="#module-retriever.app.connect_wizard" title="Permalink to this headline">¶</a></h2>
+<p>Connection setup wizard.</p>
+<dl class="class">
+<dt id="retriever.app.connect_wizard.ChooseDbPage">
+<em class="property">class </em><code class="descclassname">retriever.app.connect_wizard.</code><code class="descname">ChooseDbPage</code><span class="sig-paren">(</span><em>parent</em>, <em>title</em>, <em>label</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/connect_wizard.html#ChooseDbPage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.connect_wizard.ChooseDbPage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#retriever.app.controls.TitledPage" title="retriever.app.controls.TitledPage"><code class="xref py py-class docutils literal"><span class="pre">retriever.app.controls.TitledPage</span></code></a></p>
+<dl class="method">
+<dt id="retriever.app.connect_wizard.ChooseDbPage.dirbtn_click">
+<code class="descname">dirbtn_click</code><span class="sig-paren">(</span><em>evt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/connect_wizard.html#ChooseDbPage.dirbtn_click"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.connect_wizard.ChooseDbPage.dirbtn_click" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="retriever.app.connect_wizard.ConfirmPage">
+<em class="property">class </em><code class="descclassname">retriever.app.connect_wizard.</code><code class="descname">ConfirmPage</code><span class="sig-paren">(</span><em>parent</em>, <em>title</em>, <em>label</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/connect_wizard.html#ConfirmPage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.connect_wizard.ConfirmPage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#retriever.app.controls.TitledPage" title="retriever.app.controls.TitledPage"><code class="xref py py-class docutils literal"><span class="pre">retriever.app.controls.TitledPage</span></code></a></p>
+<p>The final confirmation page.</p>
+<dl class="method">
+<dt id="retriever.app.connect_wizard.ConfirmPage.Draw">
+<code class="descname">Draw</code><span class="sig-paren">(</span><em>evt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/connect_wizard.html#ConfirmPage.Draw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.connect_wizard.ConfirmPage.Draw" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="retriever.app.connect_wizard.ConnectPage">
+<em class="property">class </em><code class="descclassname">retriever.app.connect_wizard.</code><code class="descname">ConnectPage</code><span class="sig-paren">(</span><em>parent</em>, <em>title</em>, <em>label</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/connect_wizard.html#ConnectPage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.connect_wizard.ConnectPage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#retriever.app.controls.TitledPage" title="retriever.app.controls.TitledPage"><code class="xref py py-class docutils literal"><span class="pre">retriever.app.controls.TitledPage</span></code></a></p>
+<p>The connection info page.</p>
+<dl class="method">
+<dt id="retriever.app.connect_wizard.ConnectPage.Draw">
+<code class="descname">Draw</code><span class="sig-paren">(</span><em>evt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/connect_wizard.html#ConnectPage.Draw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.connect_wizard.ConnectPage.Draw" title="Permalink to this definition">¶</a></dt>
+<dd><p>When the page is drawn, it may need to update its fields if
+the selected database has changed.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="retriever.app.connect_wizard.ConnectWizard">
+<em class="property">class </em><code class="descclassname">retriever.app.connect_wizard.</code><code class="descname">ConnectWizard</code><span class="sig-paren">(</span><em>lists</em>, <em>engine_list</em>, <em>selected=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/connect_wizard.html#ConnectWizard"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.connect_wizard.ConnectWizard" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">wx.wizard.Wizard</span></code></p>
+<dl class="method">
+<dt id="retriever.app.connect_wizard.ConnectWizard.check_for_updates">
+<code class="descname">check_for_updates</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/connect_wizard.html#ConnectWizard.check_for_updates"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.connect_wizard.ConnectWizard.check_for_updates" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-retriever.app.controls">
+<span id="retriever-app-controls-module"></span><h2>retriever.app.controls module<a class="headerlink" href="#module-retriever.app.controls" title="Permalink to this headline">¶</a></h2>
+<p>Custom implementations of wxPython controls for use in the Retriever.</p>
+<dl class="class">
+<dt id="retriever.app.controls.AboutDialog">
+<em class="property">class </em><code class="descclassname">retriever.app.controls.</code><code class="descname">AboutDialog</code><span class="sig-paren">(</span><em>parent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/controls.html#AboutDialog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.controls.AboutDialog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">wx._windows.Dialog</span></code></p>
+<dl class="attribute">
+<dt id="retriever.app.controls.AboutDialog.arch">
+<code class="descname">arch</code><em class="property"> = '64bit'</em><a class="headerlink" href="#retriever.app.controls.AboutDialog.arch" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="retriever.app.controls.AboutDialog.text">
+<code class="descname">text</code><em class="property"> = '\n&lt;body bgcolor=&quot;#ACAA60&quot;&gt;\n&lt;center&gt;&lt;table bgcolor=&quot;#455481&quot; width=&quot;100%&quot; cellspacing=&quot;0&quot; cellpadding=&quot;0&quot; border=&quot;1&quot;&gt;\n&lt;tr&gt;&lt;td align=&quot;center&quot;&gt;\n&lt;img src=\'memory:logo.png\' /&gt;\n&lt;h2&gt;\nversion v1.7.0 (master branch)&lt;br/&gt;\nrunning on Python 2.7.10 (64bit)\n&lt;/h2&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;\n&lt;p&gt;The EcoData Retriever is designed to make it easy to download ecological data and set it\nup on your own local database system.\n&lt;/p&gt;&lt;p&gt;\nTo get started, double click on a dataset to download the data files and import the data into\nyour database.\n&lt;/p&gt;&lt;p&gt;\nFor more information, visit &lt;a href=&quot;http://www.ecodataretriever.org&quot;&gt;http://www.ecodataretriever.org&lt;/a&gt;.\n&lt;/p&gt;\n&lt;/body&gt;'</em><a class="headerlink" href="#retriever.app.controls.AboutDialog.text" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="retriever.app.controls.CategoryList">
+<em class="property">class </em><code class="descclassname">retriever.app.controls.</code><code class="descname">CategoryList</code><span class="sig-paren">(</span><em>parent</em>, <em>id</em>, <em>choice_tree</em>, <em>size=(-1</em>, <em>-1)</em>, <em>style=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/controls.html#CategoryList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.controls.CategoryList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">wx._controls.TreeCtrl</span></code></p>
+<dl class="method">
+<dt id="retriever.app.controls.CategoryList.AddChild">
+<code class="descname">AddChild</code><span class="sig-paren">(</span><em>choice</em>, <em>parent=None</em>, <em>select=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/controls.html#CategoryList.AddChild"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.controls.CategoryList.AddChild" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.app.controls.CategoryList.Redraw">
+<code class="descname">Redraw</code><span class="sig-paren">(</span><em>evt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/controls.html#CategoryList.Redraw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.controls.CategoryList.Redraw" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.app.controls.CategoryList.SelectRoot">
+<code class="descname">SelectRoot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/controls.html#CategoryList.SelectRoot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.controls.CategoryList.SelectRoot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="retriever.app.controls.CheckBox">
+<em class="property">class </em><code class="descclassname">retriever.app.controls.</code><code class="descname">CheckBox</code><span class="sig-paren">(</span><em>parent</em>, <em>id</em>, <em>label</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/controls.html#CheckBox"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.controls.CheckBox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">wx._controls.CheckBox</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="retriever.app.controls.CheckListBox">
+<em class="property">class </em><code class="descclassname">retriever.app.controls.</code><code class="descname">CheckListBox</code><span class="sig-paren">(</span><em>parent</em>, <em>id</em>, <em>size=(-1</em>, <em>-1)</em>, <em>choices=[]</em>, <em>style=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/controls.html#CheckListBox"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.controls.CheckListBox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">wx._controls.CheckListBox</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="retriever.app.controls.HtmlCheckListBox">
+<em class="property">class </em><code class="descclassname">retriever.app.controls.</code><code class="descname">HtmlCheckListBox</code><span class="sig-paren">(</span><em>parent</em>, <em>id</em>, <em>size=None</em>, <em>choices=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/controls.html#HtmlCheckListBox"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.controls.HtmlCheckListBox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">wx.html.HtmlWindow</span></code></p>
+<dl class="method">
+<dt id="retriever.app.controls.HtmlCheckListBox.Append">
+<code class="descname">Append</code><span class="sig-paren">(</span><em>txt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/controls.html#HtmlCheckListBox.Append"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.controls.HtmlCheckListBox.Append" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.app.controls.HtmlCheckListBox.Clear">
+<code class="descname">Clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/controls.html#HtmlCheckListBox.Clear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.controls.HtmlCheckListBox.Clear" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.app.controls.HtmlCheckListBox.GetCheckedStrings">
+<code class="descname">GetCheckedStrings</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/controls.html#HtmlCheckListBox.GetCheckedStrings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.controls.HtmlCheckListBox.GetCheckedStrings" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.app.controls.HtmlCheckListBox.OnLinkClicked">
+<code class="descname">OnLinkClicked</code><span class="sig-paren">(</span><em>link</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/controls.html#HtmlCheckListBox.OnLinkClicked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.controls.HtmlCheckListBox.OnLinkClicked" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.app.controls.HtmlCheckListBox.SetCheckedStrings">
+<code class="descname">SetCheckedStrings</code><span class="sig-paren">(</span><em>strings</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/controls.html#HtmlCheckListBox.SetCheckedStrings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.controls.HtmlCheckListBox.SetCheckedStrings" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.app.controls.HtmlCheckListBox.SetPage">
+<code class="descname">SetPage</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/controls.html#HtmlCheckListBox.SetPage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.controls.HtmlCheckListBox.SetPage" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="retriever.app.controls.HtmlWindow">
+<em class="property">class </em><code class="descclassname">retriever.app.controls.</code><code class="descname">HtmlWindow</code><span class="sig-paren">(</span><em>parent</em>, <em>style=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/controls.html#HtmlWindow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.controls.HtmlWindow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">wx.html.HtmlWindow</span></code></p>
+<dl class="method">
+<dt id="retriever.app.controls.HtmlWindow.OnLinkClicked">
+<code class="descname">OnLinkClicked</code><span class="sig-paren">(</span><em>link</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/controls.html#HtmlWindow.OnLinkClicked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.controls.HtmlWindow.OnLinkClicked" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.app.controls.HtmlWindow.SetHtml">
+<code class="descname">SetHtml</code><span class="sig-paren">(</span><em>html</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/controls.html#HtmlWindow.SetHtml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.controls.HtmlWindow.SetHtml" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="retriever.app.controls.ListBox">
+<em class="property">class </em><code class="descclassname">retriever.app.controls.</code><code class="descname">ListBox</code><span class="sig-paren">(</span><em>parent</em>, <em>id</em>, <em>size=(-1</em>, <em>-1)</em>, <em>choices=[]</em>, <em>style=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/controls.html#ListBox"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.controls.ListBox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">wx._controls.ListBox</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="retriever.app.controls.ScriptList">
+<em class="property">class </em><code class="descclassname">retriever.app.controls.</code><code class="descname">ScriptList</code><span class="sig-paren">(</span><em>parent</em>, <em>scripts</em>, <em>style=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/controls.html#ScriptList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.controls.ScriptList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">wx._windows.HtmlListBox</span></code></p>
+<dl class="method">
+<dt id="retriever.app.controls.ScriptList.Download">
+<code class="descname">Download</code><span class="sig-paren">(</span><em>evt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/controls.html#ScriptList.Download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.controls.ScriptList.Download" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.app.controls.ScriptList.HtmlScriptSummary">
+<code class="descname">HtmlScriptSummary</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/controls.html#ScriptList.HtmlScriptSummary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.controls.ScriptList.HtmlScriptSummary" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.app.controls.ScriptList.OnGetItem">
+<code class="descname">OnGetItem</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/controls.html#ScriptList.OnGetItem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.controls.ScriptList.OnGetItem" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.app.controls.ScriptList.OnLinkClicked">
+<code class="descname">OnLinkClicked</code><span class="sig-paren">(</span><em>n</em>, <em>link</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/controls.html#ScriptList.OnLinkClicked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.controls.ScriptList.OnLinkClicked" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.app.controls.ScriptList.Redraw">
+<code class="descname">Redraw</code><span class="sig-paren">(</span><em>scripts</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/controls.html#ScriptList.Redraw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.controls.ScriptList.Redraw" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.app.controls.ScriptList.RefreshMe">
+<code class="descname">RefreshMe</code><span class="sig-paren">(</span><em>evt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/controls.html#ScriptList.RefreshMe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.controls.ScriptList.RefreshMe" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.app.controls.ScriptList.SetStatus">
+<code class="descname">SetStatus</code><span class="sig-paren">(</span><em>script</em>, <em>txt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/controls.html#ScriptList.SetStatus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.controls.ScriptList.SetStatus" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="retriever.app.controls.StaticText">
+<em class="property">class </em><code class="descclassname">retriever.app.controls.</code><code class="descname">StaticText</code><span class="sig-paren">(</span><em>parent</em>, <em>id</em>, <em>label</em>, <em>size=wx.Size(-1</em>, <em>-1)</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/controls.html#StaticText"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.controls.StaticText" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">wx._controls.StaticText</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="retriever.app.controls.TextCtrl">
+<em class="property">class </em><code class="descclassname">retriever.app.controls.</code><code class="descname">TextCtrl</code><span class="sig-paren">(</span><em>parent</em>, <em>id</em>, <em>txt=''</em>, <em>size=(-1</em>, <em>-1)</em>, <em>style=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/controls.html#TextCtrl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.controls.TextCtrl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">wx._controls.TextCtrl</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="retriever.app.controls.TitledPage">
+<em class="property">class </em><code class="descclassname">retriever.app.controls.</code><code class="descname">TitledPage</code><span class="sig-paren">(</span><em>parent</em>, <em>title</em>, <em>label</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/controls.html#TitledPage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.controls.TitledPage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">wx.wizard.WizardPageSimple</span></code></p>
+<p>A standard wizard page with a title and label.</p>
+<dl class="method">
+<dt id="retriever.app.controls.TitledPage.AddSpace">
+<code class="descname">AddSpace</code><span class="sig-paren">(</span><em>n=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/controls.html#TitledPage.AddSpace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.controls.TitledPage.AddSpace" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-retriever.app.download_manager">
+<span id="retriever-app-download-manager-module"></span><h2>retriever.app.download_manager module<a class="headerlink" href="#module-retriever.app.download_manager" title="Permalink to this headline">¶</a></h2>
+<p>This class manages dataset downloads concurrently and processes progress
+output.</p>
+<dl class="class">
+<dt id="retriever.app.download_manager.DownloadManager">
+<em class="property">class </em><code class="descclassname">retriever.app.download_manager.</code><code class="descname">DownloadManager</code><span class="sig-paren">(</span><em>parent</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/download_manager.html#DownloadManager"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.download_manager.DownloadManager" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="retriever.app.download_manager.DownloadManager.Download">
+<code class="descname">Download</code><span class="sig-paren">(</span><em>script</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/download_manager.html#DownloadManager.Download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.download_manager.DownloadManager.Download" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.app.download_manager.DownloadManager.flush">
+<code class="descname">flush</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/download_manager.html#DownloadManager.flush"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.download_manager.DownloadManager.flush" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.app.download_manager.DownloadManager.update">
+<code class="descname">update</code><span class="sig-paren">(</span><em>evt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/download_manager.html#DownloadManager.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.download_manager.DownloadManager.update" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.app.download_manager.DownloadManager.write">
+<code class="descname">write</code><span class="sig-paren">(</span><em>worker</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/download_manager.html#DownloadManager.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.download_manager.DownloadManager.write" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-retriever.app.images">
+<span id="retriever-app-images-module"></span><h2>retriever.app.images module<a class="headerlink" href="#module-retriever.app.images" title="Permalink to this headline">¶</a></h2>
+<p>Embedded icons.</p>
+</div>
+<div class="section" id="module-retriever.app.logo">
+<span id="retriever-app-logo-module"></span><h2>retriever.app.logo module<a class="headerlink" href="#module-retriever.app.logo" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-retriever.app.main">
+<span id="retriever-app-main-module"></span><h2>retriever.app.main module<a class="headerlink" href="#module-retriever.app.main" title="Permalink to this headline">¶</a></h2>
+<p>EcoData Retriever UI</p>
+<p>This module contains the UI elements of the EcoData Retriever platform.</p>
+<p>The application can be started by running the launch_app function with a list
+of Category objects.</p>
+<dl class="function">
+<dt id="retriever.app.main.launch_app">
+<code class="descclassname">retriever.app.main.</code><code class="descname">launch_app</code><span class="sig-paren">(</span><em>lists</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/main.html#launch_app"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.main.launch_app" title="Permalink to this definition">¶</a></dt>
+<dd><p>Launches the application GUI.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-retriever.app.splash">
+<span id="retriever-app-splash-module"></span><h2>retriever.app.splash module<a class="headerlink" href="#module-retriever.app.splash" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="retriever.app.splash.Splash">
+<em class="property">class </em><code class="descclassname">retriever.app.splash.</code><code class="descname">Splash</code><span class="sig-paren">(</span><em>parent=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/app/splash.html#Splash"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.app.splash.Splash" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">wx.lib.agw.advancedsplash.AdvancedSplash</span></code></p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-retriever.app">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-retriever.app" title="Permalink to this headline">¶</a></h2>
+<p>wxPython GUI for EcoData Retriever.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">retriever.app package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-retriever.app.app">retriever.app.app module</a></li>
+<li><a class="reference internal" href="#module-retriever.app.connect_wizard">retriever.app.connect_wizard module</a></li>
+<li><a class="reference internal" href="#module-retriever.app.controls">retriever.app.controls module</a></li>
+<li><a class="reference internal" href="#module-retriever.app.download_manager">retriever.app.download_manager module</a></li>
+<li><a class="reference internal" href="#module-retriever.app.images">retriever.app.images module</a></li>
+<li><a class="reference internal" href="#module-retriever.app.logo">retriever.app.logo module</a></li>
+<li><a class="reference internal" href="#module-retriever.app.main">retriever.app.main module</a></li>
+<li><a class="reference internal" href="#module-retriever.app.splash">retriever.app.splash module</a></li>
+<li><a class="reference internal" href="#module-retriever.app">Module contents</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="retriever.html">retriever package</a><ul>
+      <li>Previous: <a href="retriever.html" title="previous chapter">retriever package</a></li>
+      <li>Next: <a href="retriever.engines.html" title="next chapter">retriever.engines package</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/retriever.app.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Author.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+      |
+      <a href="_sources/retriever.app.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

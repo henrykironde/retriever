@@ -1,0 +1,276 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>retriever.lib.repository &mdash; retriever  documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="retriever  documentation" href="../../../index.html" />
+    <link rel="up" title="retriever" href="../../retriever.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for retriever.lib.repository</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;Checks the repository for updates.&quot;&quot;&quot;</span>
+
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">urllib</span>
+<span class="kn">import</span> <span class="nn">imp</span>
+<span class="kn">from</span> <span class="nn">hashlib</span> <span class="kn">import</span> <span class="n">md5</span>
+<span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">getsourcelines</span>
+<span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Thread</span>
+<span class="kn">from</span> <span class="nn">retriever</span> <span class="kn">import</span> <span class="n">REPOSITORY</span><span class="p">,</span> <span class="n">VERSION</span><span class="p">,</span> <span class="n">MASTER_BRANCH</span><span class="p">,</span> <span class="n">REPO_URL</span><span class="p">,</span> <span class="n">SCRIPT_WRITE_PATH</span><span class="p">,</span> <span class="n">HOME_DIR</span>
+<span class="kn">from</span> <span class="nn">retriever.lib.models</span> <span class="kn">import</span> <span class="n">file_exists</span>
+
+<span class="k">global</span> <span class="n">abort</span><span class="p">,</span> <span class="n">executable_name</span>
+<span class="n">abort</span> <span class="o">=</span> <span class="bp">False</span>
+<span class="n">executable_name</span> <span class="o">=</span> <span class="s">&quot;retriever&quot;</span>
+
+
+<div class="viewcode-block" id="download_from_repository"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.repository.download_from_repository">[docs]</a><span class="k">def</span> <span class="nf">download_from_repository</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">newpath</span><span class="p">,</span> <span class="n">repo</span><span class="o">=</span><span class="n">REPOSITORY</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Downloads the latest version of a file from the repository.&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">filepath</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">def</span> <span class="nf">reporthook</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">):</span>
+            <span class="k">print</span> <span class="s">&quot;</span><span class="si">%3.1f</span><span class="s">-</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">b</span><span class="p">)</span> <span class="o">/</span> <span class="n">c</span> <span class="o">*</span> <span class="mi">100</span><span class="p">),</span> <span class="n">filename</span><span class="p">),</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
+        <span class="n">urllib</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span><span class="n">repo</span> <span class="o">+</span> <span class="n">filepath</span><span class="p">,</span> <span class="n">newpath</span><span class="p">,</span> <span class="n">reporthook</span><span class="o">=</span><span class="n">reporthook</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">raise</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="more_recent"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.repository.more_recent">[docs]</a><span class="k">def</span> <span class="nf">more_recent</span><span class="p">(</span><span class="n">latest</span><span class="p">,</span> <span class="n">current</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Given two version number strings, returns True if the first is more recent.&quot;&quot;&quot;</span>
+    <span class="n">latest_parts</span> <span class="o">=</span> <span class="n">latest</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)</span>
+    <span class="n">current_parts</span> <span class="o">=</span> <span class="n">current</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">latest_parts</span><span class="p">)):</span>
+        <span class="n">l</span> <span class="o">=</span> <span class="n">latest_parts</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">current_parts</span><span class="p">)</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">l</span> <span class="o">!=</span> <span class="s">&quot;rc&quot;</span><span class="p">)</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">current_parts</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">l</span> <span class="o">&gt;</span> <span class="n">c</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">elif</span> <span class="n">c</span> <span class="o">&gt;</span> <span class="n">l</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+    <span class="k">return</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">current_parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="n">current_parts</span><span class="p">[</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;rc&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="check_for_updates"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.repository.check_for_updates">[docs]</a><span class="k">def</span> <span class="nf">check_for_updates</span><span class="p">(</span><span class="n">graphical</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Check for updates to scripts and executable.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">graphical</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">wx</span>
+        <span class="n">app</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">App</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+
+        <span class="kn">from</span> <span class="nn">retriever.app.splash</span> <span class="kn">import</span> <span class="n">Splash</span>
+        <span class="n">splash</span> <span class="o">=</span> <span class="n">Splash</span><span class="p">()</span>
+        <span class="c">#splash.Show()</span>
+        <span class="n">splash</span><span class="o">.</span><span class="n">SetText</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">Loading...&quot;</span><span class="p">)</span>
+
+        <span class="k">class</span> <span class="nc">update_progress</span><span class="p">:</span>
+            <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
+            <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">s</span> <span class="o">!=</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">SetText</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\t</span><span class="s">&#39;</span> <span class="o">+</span> <span class="n">s</span><span class="p">)</span>
+                    <span class="k">except</span><span class="p">:</span>
+                        <span class="k">pass</span>
+            <span class="k">def</span> <span class="nf">flush</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="k">pass</span>
+
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">update_progress</span><span class="p">(</span><span class="n">splash</span><span class="p">)</span>
+
+    <span class="n">init</span> <span class="o">=</span> <span class="n">InitThread</span><span class="p">()</span>
+    <span class="n">init</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">graphical</span><span class="p">:</span>
+        <span class="n">splash</span><span class="o">.</span><span class="n">Hide</span><span class="p">()</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">__stdout__</span></div>
+
+
+<div class="viewcode-block" id="InitThread"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.repository.InitThread">[docs]</a><span class="k">class</span> <span class="nc">InitThread</span><span class="p">(</span><span class="n">Thread</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This thread performs all of the necessary updates while the splash screen</span>
+<span class="sd">    is shown.</span>
+
+<span class="sd">    1. Check master/version.txt to get the latest version (Windows only).</span>
+<span class="sd">    2. Prompt for update if necessary (Windows only).</span>
+<span class="sd">    3. Download latest versions of scripts from current branch.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="InitThread.run"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.repository.InitThread.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">running_from</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+            <span class="c"># NOTE: exe auto-update functionality has been temporarily disabled</span>
+            <span class="c"># since the binaries were moved to AWS.</span>
+
+            <span class="k">if</span> <span class="bp">False</span><span class="p">:</span><span class="c">#running_from[-4:] == &quot;.exe&quot;:</span>
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s">&#39;retriever_old.exe&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">running_from</span> <span class="o">!=</span> <span class="s">&#39;retriever_old.exe&#39;</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s">&#39;retriever_old.exe&#39;</span><span class="p">)</span>
+                    <span class="k">except</span><span class="p">:</span>
+                        <span class="k">pass</span>
+
+                <span class="c"># Windows: open master branch version file to find out most recent executable version</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">version_file</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">MASTER_BRANCH</span> <span class="o">+</span> <span class="s">&quot;version.txt&quot;</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+                    <span class="k">print</span> <span class="s">&quot;Couldn&#39;t open version.txt from repository&quot;</span>
+                    <span class="k">return</span>
+
+                <span class="n">latest</span> <span class="o">=</span> <span class="n">version_file</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">more_recent</span><span class="p">(</span><span class="n">latest</span><span class="p">,</span> <span class="n">VERSION</span><span class="p">):</span>
+                    <span class="kn">import</span> <span class="nn">wx</span>
+
+                    <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;You&#39;re running version &quot;</span> <span class="o">+</span> <span class="n">VERSION</span> <span class="o">+</span> <span class="s">&quot;.&quot;</span>
+                    <span class="n">msg</span> <span class="o">+=</span> <span class="s">&#39;</span><span class="se">\n\n</span><span class="s">&#39;</span>
+                    <span class="n">msg</span> <span class="o">+=</span> <span class="s">&quot;Version &quot;</span> <span class="o">+</span> <span class="n">latest</span> <span class="o">+</span> <span class="s">&quot; is available. Do you want to upgrade?&quot;</span>
+                    <span class="n">choice</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">MessageDialog</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="s">&quot;Update&quot;</span><span class="p">,</span> <span class="n">wx</span><span class="o">.</span><span class="n">YES_NO</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">choice</span><span class="o">.</span><span class="n">ShowModal</span><span class="p">()</span> <span class="o">==</span> <span class="n">wx</span><span class="o">.</span><span class="n">ID_YES</span><span class="p">:</span>
+                        <span class="k">print</span> <span class="s">&quot;Updating to latest version. Please wait...&quot;</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="ow">not</span> <span class="s">&quot;_old&quot;</span> <span class="ow">in</span> <span class="n">running_from</span><span class="p">:</span>
+                                <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">running_from</span><span class="p">,</span>
+                                          <span class="s">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">running_from</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                                          <span class="o">+</span> <span class="s">&quot;_old.&quot;</span> <span class="o">+</span> <span class="n">running_from</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                        <span class="k">except</span><span class="p">:</span>
+                            <span class="k">pass</span>
+
+                        <span class="n">download_from_repository</span><span class="p">(</span><span class="s">&quot;windows/&quot;</span> <span class="o">+</span> <span class="n">executable_name</span> <span class="o">+</span> <span class="s">&quot;.exe&quot;</span><span class="p">,</span>
+                                                 <span class="n">executable_name</span> <span class="o">+</span> <span class="s">&quot;.exe&quot;</span><span class="p">,</span>
+                                                 <span class="n">repo</span><span class="o">=</span><span class="n">REPO_URL</span> <span class="o">+</span> <span class="n">latest</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span><span class="p">)</span>
+
+                        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">__stdout__</span>
+
+                        <span class="n">wx</span><span class="o">.</span><span class="n">MessageBox</span><span class="p">(</span><span class="s">&quot;Update complete. The program will now restart.&quot;</span><span class="p">)</span>
+
+                        <span class="n">os</span><span class="o">.</span><span class="n">execv</span><span class="p">(</span><span class="n">executable_name</span> <span class="o">+</span> <span class="s">&quot;.exe&quot;</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span>
+
+                        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+
+                <span class="n">version_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+            <span class="c"># open version.txt for current release branch and get script versions</span>
+            <span class="n">version_file</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">REPOSITORY</span> <span class="o">+</span> <span class="s">&quot;version.txt&quot;</span><span class="p">)</span>
+            <span class="n">version_file</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+            <span class="n">scripts</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">version_file</span><span class="p">:</span>
+                <span class="n">scripts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">))</span>
+
+            <span class="c"># get script files</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">SCRIPT_WRITE_PATH</span><span class="p">):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">SCRIPT_WRITE_PATH</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">script</span> <span class="ow">in</span> <span class="n">scripts</span><span class="p">:</span>
+                <span class="n">script_name</span> <span class="o">=</span> <span class="n">script</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">script</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">script_version</span> <span class="o">=</span> <span class="n">script</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">script_version</span> <span class="o">=</span> <span class="bp">None</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">file_exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">HOME_DIR</span><span class="p">,</span> <span class="s">&quot;scripts&quot;</span><span class="p">,</span> <span class="n">script_name</span><span class="p">)):</span>
+                    <span class="c"># File doesn&#39;t exist: download it</span>
+                    <span class="k">print</span> <span class="s">&quot;Downloading script: &quot;</span> <span class="o">+</span> <span class="n">script_name</span>
+                    <span class="n">download_from_repository</span><span class="p">(</span><span class="s">&quot;scripts/&quot;</span> <span class="o">+</span> <span class="n">script_name</span><span class="p">,</span>
+                                             <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">SCRIPT_WRITE_PATH</span><span class="p">,</span> <span class="n">script_name</span><span class="p">))</span>
+                <span class="k">elif</span> <span class="n">script_version</span><span class="p">:</span>
+                    <span class="c"># File exists: import and check MD5 sum</span>
+                    <span class="n">need_to_download</span> <span class="o">=</span> <span class="bp">False</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="nb">file</span><span class="p">,</span> <span class="n">pathname</span><span class="p">,</span> <span class="n">desc</span> <span class="o">=</span> <span class="n">imp</span><span class="o">.</span><span class="n">find_module</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">script_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
+                                                               <span class="p">[</span><span class="s">&quot;scripts&quot;</span><span class="p">])</span>
+                        <span class="n">new_module</span> <span class="o">=</span> <span class="n">imp</span><span class="o">.</span><span class="n">load_module</span><span class="p">(</span><span class="n">script_name</span><span class="p">,</span> <span class="nb">file</span><span class="p">,</span> <span class="n">pathname</span><span class="p">,</span> <span class="n">desc</span><span class="p">)</span>
+                        <span class="n">m</span> <span class="o">=</span> <span class="n">md5</span><span class="p">()</span>
+                        <span class="n">m</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">getsourcelines</span><span class="p">(</span><span class="n">new_module</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\r\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">))</span>
+                        <span class="n">m</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+                        <span class="n">need_to_download</span> <span class="o">=</span> <span class="n">script_version</span> <span class="o">!=</span> <span class="n">m</span>
+                    <span class="k">except</span><span class="p">:</span>
+                        <span class="k">pass</span>
+
+                    <span class="k">if</span> <span class="n">need_to_download</span><span class="p">:</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&quot;scripts&quot;</span><span class="p">,</span> <span class="n">script_name</span><span class="p">))</span>
+                            <span class="n">download_from_repository</span><span class="p">(</span><span class="s">&quot;scripts/&quot;</span> <span class="o">+</span> <span class="n">script_name</span><span class="p">,</span>
+                                                     <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">SCRIPT_WRITE_PATH</span><span class="p">,</span> <span class="n">script_name</span><span class="p">))</span>
+                        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                            <span class="k">print</span> <span class="n">e</span>
+                            <span class="k">pass</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span>
+            <span class="k">return</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../../retriever.html">retriever</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Author.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

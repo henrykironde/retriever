@@ -1,0 +1,731 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>retriever.lib.engine &mdash; retriever  documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="retriever  documentation" href="../../../index.html" />
+    <link rel="up" title="retriever" href="../../retriever.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for retriever.lib.engine</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">getpass</span>
+<span class="kn">import</span> <span class="nn">zipfile</span>
+<span class="kn">import</span> <span class="nn">gzip</span>
+<span class="kn">import</span> <span class="nn">tarfile</span>
+<span class="kn">import</span> <span class="nn">urllib</span>
+<span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">from</span> <span class="nn">decimal</span> <span class="kn">import</span> <span class="n">Decimal</span>
+<span class="kn">from</span> <span class="nn">retriever</span> <span class="kn">import</span> <span class="n">DATA_SEARCH_PATHS</span><span class="p">,</span> <span class="n">DATA_WRITE_PATH</span>
+<span class="kn">from</span> <span class="nn">retriever.lib.cleanup</span> <span class="kn">import</span> <span class="n">no_cleanup</span>
+<span class="kn">from</span> <span class="nn">retriever.lib.warning</span> <span class="kn">import</span> <span class="ne">Warning</span>
+
+
+<div class="viewcode-block" id="Engine"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.engine.Engine">[docs]</a><span class="k">class</span> <span class="nc">Engine</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;A generic database system. Specific database platforms will inherit</span>
+<span class="sd">    from this class.&quot;&quot;&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+    <span class="n">instructions</span> <span class="o">=</span> <span class="s">&quot;Enter your database connection information:&quot;</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_connection</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">_cursor</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">datatypes</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">required_opts</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">pkformat</span> <span class="o">=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s"> PRIMARY KEY&quot;</span>
+    <span class="n">script</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">debug</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">warnings</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="Engine.connect"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.engine.Engine.connect">[docs]</a>    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">force_reconnect</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">force_reconnect</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_connection</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span></div>
+
+    <span class="n">connection</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">connect</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Engine.disconnect"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.engine.Engine.disconnect">[docs]</a>    <span class="k">def</span> <span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cursor</span> <span class="o">=</span> <span class="bp">None</span></div>
+
+<div class="viewcode-block" id="Engine.get_connection"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.engine.Engine.get_connection">[docs]</a>    <span class="k">def</span> <span class="nf">get_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;This method should be overloaded by specific implementations</span>
+<span class="sd">        of Engine.&#39;&#39;&#39;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Engine.add_to_table"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.engine.Engine.add_to_table">[docs]</a>    <span class="k">def</span> <span class="nf">add_to_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_source</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This function adds data to a table from one or more lines specified</span>
+<span class="sd">        in engine.table.source.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">][:</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;ct-&quot;</span><span class="p">:</span>
+            <span class="c"># cross-tab data</span>
+
+            <span class="n">lines</span> <span class="o">=</span> <span class="n">gen_from_source</span><span class="p">(</span><span class="n">data_source</span><span class="p">)</span>
+            <span class="n">real_lines</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+                <span class="n">split_line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">split_on_delimiter</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                <span class="n">initial_cols</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="mi">3</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">,</span> <span class="s">&quot;ct_names&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="n">begin</span> <span class="o">=</span> <span class="n">split_line</span><span class="p">[:</span><span class="n">initial_cols</span><span class="p">]</span>
+                <span class="n">rest</span> <span class="o">=</span> <span class="n">split_line</span><span class="p">[</span><span class="n">initial_cols</span><span class="p">:]</span>
+                <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">rest</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">,</span> <span class="s">&quot;ct_names&quot;</span><span class="p">):</span>
+                        <span class="n">name</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">ct_names</span><span class="p">[</span><span class="n">n</span><span class="p">]]</span>
+                        <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">name</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="n">real_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">combine_on_delimiter</span><span class="p">(</span><span class="n">begin</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="p">[</span><span class="n">item</span><span class="p">]))</span>
+            <span class="n">real_line_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">real_lines</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># this function returns a generator that iterates over the lines in</span>
+            <span class="c"># the source data</span>
+            <span class="k">def</span> <span class="nf">source_gen</span><span class="p">():</span>
+                <span class="k">return</span> <span class="p">(</span><span class="n">line</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">gen_from_source</span><span class="p">(</span><span class="n">data_source</span><span class="p">)</span>
+                         <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n\r\t</span><span class="s"> &#39;</span><span class="p">))</span>
+            <span class="c"># use one generator to compute the length of the input</span>
+            <span class="n">real_lines</span><span class="p">,</span> <span class="n">len_source</span> <span class="o">=</span> <span class="n">source_gen</span><span class="p">(),</span> <span class="n">source_gen</span><span class="p">()</span>
+            <span class="n">real_line_length</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">len_source</span><span class="p">)</span>
+
+        <span class="n">total</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">record_id</span> <span class="o">+</span> <span class="n">real_line_length</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">real_lines</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">fixed_width</span><span class="p">:</span> <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">line</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">record_id</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">linevalues</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">values_from_line</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+                <span class="n">types</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">get_column_datatypes</span><span class="p">()</span>
+                <span class="c"># Build insert statement with the correct # of values</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">cleanvalues</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">format_insert_value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">cleanup</span><span class="o">.</span><span class="n">function</span>
+                                                            <span class="p">(</span><span class="n">linevalues</span><span class="p">[</span><span class="n">n</span><span class="p">],</span>
+                                                            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">cleanup</span><span class="o">.</span><span class="n">args</span><span class="p">),</span>
+                                                            <span class="n">types</span><span class="p">[</span><span class="n">n</span><span class="p">])</span>
+                                   <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">linevalues</span><span class="p">))]</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s">&#39;Exception in line </span><span class="si">%s</span><span class="s">: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">record_id</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+                    <span class="k">continue</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">insert_stmt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">insert_statement</span><span class="p">(</span><span class="n">cleanvalues</span><span class="p">)</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span> <span class="k">print</span> <span class="n">types</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span> <span class="k">print</span> <span class="n">linevalues</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span> <span class="k">print</span> <span class="n">cleanvalues</span>
+                    <span class="k">raise</span>
+
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">update_frequency</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">update_frequency</span><span class="p">)</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="n">update_frequency</span> <span class="o">=</span> <span class="mi">100</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">record_id</span> <span class="o">%</span> <span class="n">update_frequency</span> <span class="o">==</span> <span class="mi">0</span>
+                    <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">record_id</span> <span class="o">==</span> <span class="mi">1</span>
+                    <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">record_id</span> <span class="o">==</span> <span class="n">total</span><span class="p">):</span>
+                    <span class="n">prompt</span> <span class="o">=</span> <span class="s">&quot;Inserting rows to &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="p">()</span> <span class="o">+</span> <span class="s">&quot;: &quot;</span>
+                    <span class="n">prompt</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">record_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot; / &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">total</span><span class="p">)</span>
+                    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">prompt</span> <span class="o">+</span> <span class="s">&quot;</span><span class="se">\b</span><span class="s">&quot;</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">prompt</span><span class="p">))</span>
+
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">insert_stmt</span><span class="p">,</span> <span class="n">commit</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="k">print</span> <span class="n">insert_stmt</span>
+                    <span class="k">raise</span>
+
+        <span class="k">print</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Engine.auto_create_table"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.engine.Engine.auto_create_table">[docs]</a>    <span class="k">def</span> <span class="nf">auto_create_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates a table automatically by analyzing a data source and</span>
+<span class="sd">        predicting column names, data types, delimiter, etc.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">url</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">filename</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">filename_from_url</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="n">table</span>
+
+        <span class="k">if</span> <span class="n">url</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_file</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+            <span class="c"># If the file doesn&#39;t exist, download it</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">download_file</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+        <span class="n">file_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_file</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+        <span class="n">source</span> <span class="o">=</span> <span class="p">(</span><span class="n">skip_rows</span><span class="p">,</span>
+                  <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">column_names_row</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+                   <span class="p">(</span><span class="nb">open</span><span class="p">,</span> <span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s">&quot;rb&quot;</span><span class="p">))))</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="n">gen_from_source</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+
+        <span class="n">header</span> <span class="o">=</span> <span class="n">lines</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="n">source</span> <span class="o">=</span> <span class="p">(</span><span class="n">skip_rows</span><span class="p">,</span>
+                  <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">header_rows</span><span class="p">,</span>
+                   <span class="p">(</span><span class="nb">open</span><span class="p">,</span> <span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s">&quot;rb&quot;</span><span class="p">))))</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">delimiter</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">auto_get_delimiter</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="n">lines</span> <span class="o">=</span> <span class="n">gen_from_source</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">pk</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[(</span><span class="s">&quot;record_id&quot;</span><span class="p">,</span> <span class="p">(</span><span class="s">&quot;pk-auto&quot;</span><span class="p">,))]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">contains_pk</span> <span class="o">=</span> <span class="bp">True</span>
+
+            <span class="n">columns</span><span class="p">,</span> <span class="n">column_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">auto_get_columns</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">auto_get_datatypes</span><span class="p">(</span><span class="n">pk</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="n">columns</span><span class="p">,</span> <span class="n">column_values</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">][:</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;ct-&quot;</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">,</span> <span class="s">&quot;ct_names&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">ct_column</span> <span class="ow">in</span> <span class="p">[</span><span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">ct_column</span><span class="p">,</span> <span class="p">(</span><span class="s">&quot;char&quot;</span><span class="p">,</span> <span class="mi">20</span><span class="p">))]</span> <span class="o">+</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">create_table</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Engine.auto_get_datatypes"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.engine.Engine.auto_get_datatypes">[docs]</a>    <span class="k">def</span> <span class="nf">auto_get_datatypes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pk</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">columns</span><span class="p">,</span> <span class="n">column_values</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Determines data types for each column.&quot;&quot;&quot;</span>
+        <span class="c"># Get all values for each column</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;scan_lines&#39;</span><span class="p">):</span>
+            <span class="n">lines</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scan_lines</span><span class="p">)</span>
+            <span class="n">lines_to_scan</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">while</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="n">lines</span><span class="p">:</span>
+                <span class="n">lines_to_scan</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">next</span><span class="p">())</span>
+                <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lines_to_scan</span> <span class="o">=</span> <span class="n">source</span>
+
+        <span class="n">column_types</span> <span class="o">=</span> <span class="p">[(</span><span class="s">&#39;int&#39;</span><span class="p">,)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">))]</span>
+        <span class="n">max_lengths</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">))]</span>
+
+        <span class="c"># Check the values for each column to determine data type</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines_to_scan</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+                <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">extract_values</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">))</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">)):</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">cleanup</span><span class="o">.</span><span class="n">function</span> <span class="o">!=</span> <span class="n">no_cleanup</span><span class="p">:</span>
+                            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">cleanup</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">cleanup</span><span class="o">.</span><span class="n">args</span><span class="p">)</span>
+
+                        <span class="k">if</span> <span class="n">value</span> <span class="o">!=</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">value</span> <span class="o">!=</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span> <span class="o">&gt;</span> <span class="n">max_lengths</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                                <span class="n">max_lengths</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+                            <span class="k">if</span> <span class="n">column_types</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&#39;int&#39;</span><span class="p">,</span> <span class="s">&#39;bigint&#39;</span><span class="p">):</span>
+                                <span class="k">try</span><span class="p">:</span>
+                                    <span class="n">value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                                    <span class="k">if</span> <span class="n">column_types</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;int&#39;</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;max_int&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_int</span><span class="p">:</span>
+                                        <span class="n">column_types</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;bigint&#39;</span><span class="p">,]</span>
+                                <span class="k">except</span><span class="p">:</span>
+                                    <span class="n">column_types</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;double&#39;</span><span class="p">,]</span>
+                            <span class="k">if</span> <span class="n">column_types</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;double&#39;</span><span class="p">:</span>
+                                <span class="k">try</span><span class="p">:</span>
+                                    <span class="n">value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                                    <span class="k">if</span> <span class="s">&quot;e&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="s">&quot;.&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="ow">and</span>
+                                                             <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;.&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">):</span>
+                                        <span class="n">column_types</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;decimal&quot;</span><span class="p">,</span><span class="s">&quot;30,20&quot;</span><span class="p">]</span>
+                                <span class="k">except</span><span class="p">:</span>
+                                    <span class="n">column_types</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;char&#39;</span><span class="p">,</span><span class="n">max_lengths</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+                            <span class="k">if</span> <span class="n">column_types</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;char&#39;</span><span class="p">:</span>
+                                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">))</span> <span class="o">&gt;</span> <span class="n">column_types</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]:</span>
+                                    <span class="n">column_types</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_lengths</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+                    <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                        <span class="k">pass</span>
+
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">columns</span><span class="p">)):</span>
+            <span class="n">column</span> <span class="o">=</span> <span class="n">columns</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">column</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">column_types</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">pk</span> <span class="o">==</span> <span class="n">column</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="n">column</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;pk-&quot;</span> <span class="o">+</span> <span class="n">column</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">column</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">column</span><span class="p">[</span><span class="mi">1</span><span class="p">])))</span></div>
+
+<div class="viewcode-block" id="Engine.auto_get_delimiter"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.engine.Engine.auto_get_delimiter">[docs]</a>    <span class="k">def</span> <span class="nf">auto_get_delimiter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">):</span></div>
+        <span class="c"># Determine the delimiter by finding out which of a set of common</span>
+        <span class="c"># delimiters occurs most in the header line</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">delimiter</span> <span class="o">=</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span>
+        <span class="k">for</span> <span class="n">other_delimiter</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&quot;,&quot;</span><span class="p">,</span> <span class="s">&quot;;&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">header</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">other_delimiter</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">header</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">delimiter</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">delimiter</span> <span class="o">=</span> <span class="n">other_delimiter</span>
+
+<div class="viewcode-block" id="Engine.convert_data_type"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.engine.Engine.convert_data_type">[docs]</a>    <span class="k">def</span> <span class="nf">convert_data_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datatype</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Converts Retriever generic data types to database platform specific</span>
+<span class="sd">        data types&quot;&quot;&quot;</span>
+        <span class="n">thistype</span> <span class="o">=</span> <span class="n">datatype</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">thispk</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">if</span> <span class="n">thistype</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;pk-&quot;</span><span class="p">:</span>
+            <span class="n">thistype</span> <span class="o">=</span> <span class="n">thistype</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s">&quot;pk-&quot;</span><span class="p">)</span>
+            <span class="n">thispk</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">elif</span> <span class="n">thistype</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;ct-&quot;</span><span class="p">:</span>
+            <span class="n">thistype</span> <span class="o">=</span> <span class="n">thistype</span><span class="p">[</span><span class="mi">3</span><span class="p">:]</span>
+
+        <span class="k">if</span> <span class="n">thistype</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">datatypes</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">thistype</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">datatypes</span><span class="p">[</span><span class="n">thistype</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thistype</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">datatype</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">datatype</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">thistype</span> <span class="o">=</span> <span class="n">thistype</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s">&quot;(&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">datatype</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="s">&quot;)&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">thistype</span> <span class="o">=</span> <span class="n">thistype</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">datatype</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">datatype</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">thistype</span> <span class="o">+=</span> <span class="s">&quot;(&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">datatype</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="s">&quot;)&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">thistype</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">thispk</span><span class="p">:</span>
+            <span class="n">thistype</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pkformat</span> <span class="o">%</span> <span class="n">thistype</span>
+
+        <span class="k">return</span> <span class="n">thistype</span></div>
+
+<div class="viewcode-block" id="Engine.create_db"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.engine.Engine.create_db">[docs]</a>    <span class="k">def</span> <span class="nf">create_db</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates a new database based on settings supplied in Database object</span>
+<span class="sd">        engine.db&quot;&quot;&quot;</span>
+        <span class="n">db_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">database_name</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">db_name</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;Creating database &quot;</span> <span class="o">+</span> <span class="n">db_name</span> <span class="o">+</span> <span class="s">&quot;...&quot;</span>
+            <span class="c"># Create the database</span>
+            <span class="n">create_stmt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_db_statement</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span> <span class="k">print</span> <span class="n">create_stmt</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">create_stmt</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+                <span class="k">except</span><span class="p">:</span> <span class="k">pass</span>
+                <span class="k">print</span> <span class="s">&quot;Couldn&#39;t create database (</span><span class="si">%s</span><span class="s">). Trying to continue anyway.&quot;</span> <span class="o">%</span> <span class="n">e</span></div>
+
+<div class="viewcode-block" id="Engine.create_db_statement"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.engine.Engine.create_db_statement">[docs]</a>    <span class="k">def</span> <span class="nf">create_db_statement</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a SQL statement to create a database.&quot;&quot;&quot;</span>
+        <span class="n">create_stmt</span> <span class="o">=</span> <span class="s">&quot;CREATE DATABASE &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">database_name</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">create_stmt</span></div>
+
+<div class="viewcode-block" id="Engine.create_raw_data_dir"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.engine.Engine.create_raw_data_dir">[docs]</a>    <span class="k">def</span> <span class="nf">create_raw_data_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Checks to see if the archive directory exists and creates it if</span>
+<span class="sd">        necessary.&quot;&quot;&quot;</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_data_dir</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Engine.create_table"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.engine.Engine.create_table">[docs]</a>    <span class="k">def</span> <span class="nf">create_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates a new database table based on settings supplied in Table</span>
+<span class="sd">        object engine.table.&quot;&quot;&quot;</span>
+        <span class="k">print</span> <span class="s">&quot;Creating table &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="p">()</span> <span class="o">+</span> <span class="s">&quot;...&quot;</span>
+
+        <span class="c"># Try to drop the table if it exists; this may cause an exception if it</span>
+        <span class="c"># doesn&#39;t exist, so ignore exceptions</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">drop_statement</span><span class="p">(</span><span class="s">&quot;TABLE&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="p">()))</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="n">create_stmt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_table_statement</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span> <span class="k">print</span> <span class="n">create_stmt</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">create_stmt</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+            <span class="k">except</span><span class="p">:</span> <span class="k">pass</span>
+            <span class="k">print</span> <span class="s">&quot;Couldn&#39;t create table (</span><span class="si">%s</span><span class="s">). Trying to continue anyway.&quot;</span> <span class="o">%</span> <span class="n">e</span></div>
+
+<div class="viewcode-block" id="Engine.create_table_statement"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.engine.Engine.create_table_statement">[docs]</a>    <span class="k">def</span> <span class="nf">create_table_statement</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a SQL statement to create a table.&quot;&quot;&quot;</span>
+        <span class="n">create_stmt</span> <span class="o">=</span> <span class="s">&quot;CREATE TABLE &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="p">()</span> <span class="o">+</span> <span class="s">&quot; (&quot;</span>
+
+        <span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">get_insert_columns</span><span class="p">(</span><span class="n">join</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+        <span class="n">types</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">column_name</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">column</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">column_name</span><span class="p">:</span>
+                    <span class="n">types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">convert_data_type</span><span class="p">(</span><span class="n">column</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span> <span class="k">print</span> <span class="n">columns</span>
+
+        <span class="n">column_strings</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">columns</span><span class="p">,</span> <span class="n">types</span><span class="p">):</span>
+            <span class="n">column_strings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span> <span class="o">+</span> <span class="s">&#39; &#39;</span> <span class="o">+</span> <span class="n">t</span><span class="p">)</span>
+
+        <span class="n">create_stmt</span> <span class="o">+=</span> <span class="s">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">column_strings</span><span class="p">)</span>
+        <span class="n">create_stmt</span> <span class="o">+=</span> <span class="s">&quot; );&quot;</span>
+
+        <span class="k">return</span> <span class="n">create_stmt</span></div>
+
+<div class="viewcode-block" id="Engine.database_name"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.engine.Engine.database_name">[docs]</a>    <span class="k">def</span> <span class="nf">database_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">script</span><span class="o">.</span><span class="n">shortname</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="s">&quot;{db}&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">db_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s">&quot;database_name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">db</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">db_name</span> <span class="o">=</span> <span class="n">name</span>
+
+        <span class="k">return</span> <span class="n">db_name</span></div>
+
+<div class="viewcode-block" id="Engine.download_file"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.engine.Engine.download_file">[docs]</a>    <span class="k">def</span> <span class="nf">download_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">clean_line_endings</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Downloads a file to the raw data directory.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_file</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">create_raw_data_dir</span><span class="p">()</span>
+            <span class="k">print</span> <span class="s">&quot;Downloading &quot;</span> <span class="o">+</span> <span class="n">filename</span> <span class="o">+</span> <span class="s">&quot;...&quot;</span>
+            <span class="nb">file</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+            <span class="n">local_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s">&#39;wb&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">clean_line_endings</span> <span class="ow">and</span> <span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&quot;exe&quot;</span><span class="p">,</span> <span class="s">&quot;zip&quot;</span><span class="p">,</span> <span class="s">&quot;xls&quot;</span><span class="p">]):</span>
+                <span class="n">local_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\r\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\r</span><span class="s">&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">local_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">file</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+            <span class="n">local_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="nb">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Engine.download_files_from_archive"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.engine.Engine.download_files_from_archive">[docs]</a>    <span class="k">def</span> <span class="nf">download_files_from_archive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">filenames</span><span class="p">,</span> <span class="n">filetype</span><span class="o">=</span><span class="s">&quot;zip&quot;</span><span class="p">,</span>
+                                    <span class="n">keep_in_dir</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">archivename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Downloads files from an archive into the raw data directory.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">downloaded</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">if</span> <span class="n">archivename</span><span class="p">:</span>
+            <span class="n">archivename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_filename</span><span class="p">(</span><span class="n">archivename</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">archivename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_filename</span><span class="p">(</span><span class="n">filename_from_url</span><span class="p">(</span><span class="n">url</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">keep_in_dir</span><span class="p">:</span>
+            <span class="n">archivebase</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">archivename</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">archivedir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATA_WRITE_PATH</span><span class="p">,</span> <span class="n">archivebase</span><span class="p">)</span>
+            <span class="n">archivedir</span> <span class="o">=</span> <span class="n">archivedir</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">script</span><span class="o">.</span><span class="n">shortname</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">archivedir</span><span class="p">):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">archivedir</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">archivebase</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+
+        <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_file</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">archivebase</span><span class="p">,</span> <span class="n">filename</span><span class="p">)):</span>
+                <span class="c"># Use local copy</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">create_raw_data_dir</span><span class="p">()</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">downloaded</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">download_file</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">archivename</span><span class="p">,</span> <span class="n">clean_line_endings</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+                    <span class="n">downloaded</span> <span class="o">=</span> <span class="bp">True</span>
+
+                <span class="k">if</span> <span class="n">filetype</span> <span class="o">==</span> <span class="s">&#39;zip&#39;</span><span class="p">:</span>
+                    <span class="n">archive</span> <span class="o">=</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">archivename</span><span class="p">)</span>
+                    <span class="n">open_archive_file</span> <span class="o">=</span> <span class="n">archive</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">filetype</span> <span class="o">==</span> <span class="s">&#39;gz&#39;</span><span class="p">:</span>
+                    <span class="c">#gzip archives can only contain a single file</span>
+                    <span class="n">open_archive_file</span> <span class="o">=</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">archivename</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">filetype</span> <span class="o">==</span> <span class="s">&#39;tar&#39;</span><span class="p">:</span>
+                    <span class="n">archive</span> <span class="o">=</span> <span class="n">tarfile</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+                    <span class="n">open_archive_file</span> <span class="o">=</span> <span class="n">archive</span><span class="o">.</span><span class="n">extractfile</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+                <span class="n">fileloc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_filename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">archivebase</span><span class="p">,</span>
+                                                            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">filename</span><span class="p">)))</span>
+                <span class="n">unzipped_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileloc</span><span class="p">,</span> <span class="s">&#39;wb&#39;</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">open_archive_file</span><span class="p">:</span>
+                    <span class="n">unzipped_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                <span class="n">open_archive_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="n">unzipped_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="k">if</span> <span class="s">&#39;archive&#39;</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">():</span> <span class="n">archive</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Engine.drop_statement"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.engine.Engine.drop_statement">[docs]</a>    <span class="k">def</span> <span class="nf">drop_statement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">objecttype</span><span class="p">,</span> <span class="n">objectname</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a drop table or database SQL statement.&quot;&quot;&quot;</span>
+        <span class="n">dropstatement</span> <span class="o">=</span> <span class="s">&quot;DROP </span><span class="si">%s</span><span class="s"> IF EXISTS </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">objecttype</span><span class="p">,</span> <span class="n">objectname</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dropstatement</span></div>
+
+<div class="viewcode-block" id="Engine.escape_single_quotes"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.engine.Engine.escape_single_quotes">[docs]</a>    <span class="k">def</span> <span class="nf">escape_single_quotes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\\</span><span class="s">&#39;&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Engine.escape_double_quotes"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.engine.Engine.escape_double_quotes">[docs]</a>    <span class="k">def</span> <span class="nf">escape_double_quotes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;&quot;&#39;</span><span class="p">,</span> <span class="s">&#39;</span><span class="se">\\</span><span class="s">&quot;&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Engine.execute"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.engine.Engine.execute">[docs]</a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">statement</span><span class="p">,</span> <span class="n">commit</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">statement</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">commit</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Engine.exists"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.engine.Engine.exists">[docs]</a>    <span class="k">def</span> <span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">script</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">all</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">table_exists</span><span class="p">(</span>
+                    <span class="n">script</span><span class="o">.</span><span class="n">shortname</span><span class="p">,</span>
+                    <span class="n">key</span>
+                    <span class="p">)</span>
+                    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">script</span><span class="o">.</span><span class="n">urls</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">if</span> <span class="n">key</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="Engine.final_cleanup"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.engine.Engine.final_cleanup">[docs]</a>    <span class="k">def</span> <span class="nf">final_cleanup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Close the database connection.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">warnings</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">w</span><span class="p">)</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">warnings</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Engine.find_file"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.engine.Engine.find_file">[docs]</a>    <span class="k">def</span> <span class="nf">find_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">search_path</span> <span class="ow">in</span> <span class="n">DATA_SEARCH_PATHS</span><span class="p">:</span>
+            <span class="n">search_path</span> <span class="o">=</span> <span class="n">search_path</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">script</span><span class="o">.</span><span class="n">shortname</span><span class="p">)</span>
+            <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">search_path</span><span class="p">,</span> <span class="n">filename</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">file_exists</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">file_path</span>
+        <span class="k">return</span> <span class="bp">False</span></div>
+
+<div class="viewcode-block" id="Engine.format_data_dir"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.engine.Engine.format_data_dir">[docs]</a>    <span class="k">def</span> <span class="nf">format_data_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the correctly formatted raw data directory location.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">DATA_WRITE_PATH</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">script</span><span class="o">.</span><span class="n">shortname</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Engine.format_filename"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.engine.Engine.format_filename">[docs]</a>    <span class="k">def</span> <span class="nf">format_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the full path of a file in the archive directory.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">format_data_dir</span><span class="p">(),</span> <span class="n">filename</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Engine.format_insert_value"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.engine.Engine.format_insert_value">[docs]</a>    <span class="k">def</span> <span class="nf">format_insert_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">datatype</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Formats a value for an insert statement, for example by surrounding</span>
+<span class="sd">        it in single quotes.&quot;&quot;&quot;</span>
+        <span class="n">datatype</span> <span class="o">=</span> <span class="n">datatype</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;-&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">strvalue</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+        <span class="c"># Remove any quotes already surrounding the string</span>
+        <span class="n">quotes</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s">&#39;&quot;&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">strvalue</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">strvalue</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">strvalue</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">and</span> <span class="n">strvalue</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">quotes</span><span class="p">:</span>
+            <span class="n">strvalue</span> <span class="o">=</span> <span class="n">strvalue</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">nulls</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;null&quot;</span><span class="p">,</span> <span class="s">&quot;none&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">strvalue</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">nulls</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s">&quot;null&quot;</span>
+        <span class="k">elif</span> <span class="n">datatype</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&quot;int&quot;</span><span class="p">,</span> <span class="s">&quot;bigint&quot;</span><span class="p">,</span> <span class="s">&quot;bool&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">strvalue</span><span class="p">:</span>
+                <span class="n">intvalue</span> <span class="o">=</span> <span class="n">strvalue</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">intvalue</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">intvalue</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="s">&quot;null&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s">&quot;null&quot;</span>
+        <span class="k">elif</span> <span class="n">datatype</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&quot;double&quot;</span><span class="p">,</span> <span class="s">&quot;decimal&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">strvalue</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">strvalue</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s">&quot;null&quot;</span>
+        <span class="k">elif</span> <span class="n">datatype</span><span class="o">==</span><span class="s">&quot;char&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">strvalue</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">nulls</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s">&quot;null&quot;</span>
+
+            <span class="c"># automatically escape quotes in string fields</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">,</span> <span class="s">&quot;escape_double_quotes&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">escape_double_quotes</span><span class="p">:</span>
+                <span class="n">strvalue</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">escape_double_quotes</span><span class="p">(</span><span class="n">strvalue</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">,</span> <span class="s">&quot;escape_single_quotes&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">escape_single_quotes</span><span class="p">:</span>
+                <span class="n">strvalue</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">escape_single_quotes</span><span class="p">(</span><span class="n">strvalue</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="s">&quot;&#39;&quot;</span> <span class="o">+</span> <span class="n">strvalue</span> <span class="o">+</span> <span class="s">&quot;&#39;&quot;</span>
+        <span class="c">#elif datatype==&quot;bool&quot;:</span>
+            <span class="c">#return &quot;&#39;true&#39;&quot; if value else &quot;&#39;false&#39;&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s">&quot;null&quot;</span></div>
+
+<div class="viewcode-block" id="Engine.get_cursor"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.engine.Engine.get_cursor">[docs]</a>    <span class="k">def</span> <span class="nf">get_cursor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Gets the db cursor.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cursor</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cursor</span></div>
+
+    <span class="n">cursor</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">get_cursor</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Engine.get_input"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.engine.Engine.get_input">[docs]</a>    <span class="k">def</span> <span class="nf">get_input</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Manually get user input for connection information when script is</span>
+<span class="sd">        run from terminal.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">opt</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">required_opts</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">opt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="k">if</span> <span class="n">opt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;password&quot;</span><span class="p">:</span>
+                    <span class="k">print</span> <span class="n">opt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="n">opt</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">getpass</span><span class="o">.</span><span class="n">getpass</span><span class="p">(</span><span class="s">&quot; &quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">prompt</span> <span class="o">=</span> <span class="n">opt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">opt</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span>
+                        <span class="n">prompt</span> <span class="o">+=</span> <span class="s">&quot; or press Enter for the default, </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">opt</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+                    <span class="n">prompt</span> <span class="o">+=</span> <span class="s">&#39;: &#39;</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="n">opt</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">raw_input</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="n">opt</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="s">&quot;default&quot;</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="n">opt</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">opt</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Engine.insert_data_from_archive"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.engine.Engine.insert_data_from_archive">[docs]</a>    <span class="k">def</span> <span class="nf">insert_data_from_archive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">filenames</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Insert data from files located in an online archive. This function</span>
+<span class="sd">        extracts the file, inserts the data, and deletes the file if raw data</span>
+<span class="sd">        archiving is not set.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">download_files_from_archive</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">filenames</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">:</span>
+            <span class="n">file_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_file</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">file_path</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">insert_data_from_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;File not found: </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="n">filename</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Engine.insert_data_from_file"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.engine.Engine.insert_data_from_file">[docs]</a>    <span class="k">def</span> <span class="nf">insert_data_from_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;The default function to insert data from a file. This function</span>
+<span class="sd">        simply inserts the data row by row. Database platforms with support</span>
+<span class="sd">        for inserting bulk data from files can override this function.&quot;&quot;&quot;</span>
+        <span class="n">data_source</span> <span class="o">=</span> <span class="p">(</span><span class="n">skip_rows</span><span class="p">,</span>
+                       <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">header_rows</span><span class="p">,</span>
+                       <span class="p">(</span><span class="nb">open</span><span class="p">,</span> <span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">))))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_to_table</span><span class="p">(</span><span class="n">data_source</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Engine.insert_data_from_url"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.engine.Engine.insert_data_from_url">[docs]</a>    <span class="k">def</span> <span class="nf">insert_data_from_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Insert data from a web resource, such as a text file.&quot;&quot;&quot;</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">filename_from_url</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="n">find</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_file</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">find</span><span class="p">:</span>
+            <span class="c"># Use local copy</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">insert_data_from_file</span><span class="p">(</span><span class="n">find</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># Save a copy of the file locally, then load from that file</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">create_raw_data_dir</span><span class="p">()</span>
+            <span class="k">print</span> <span class="s">&quot;Saving a copy of &quot;</span> <span class="o">+</span> <span class="n">filename</span> <span class="o">+</span> <span class="s">&quot;...&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">download_file</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">insert_data_from_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">find_file</span><span class="p">(</span><span class="n">filename</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Engine.insert_statement"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.engine.Engine.insert_statement">[docs]</a>    <span class="k">def</span> <span class="nf">insert_statement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a SQL statement to insert a set of values.&quot;&quot;&quot;</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">get_insert_columns</span><span class="p">()</span>
+        <span class="n">types</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">get_column_datatypes</span><span class="p">()</span>
+        <span class="n">columncount</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">get_insert_columns</span><span class="p">(</span><span class="bp">False</span><span class="p">))</span>
+        <span class="n">insert_stmt</span> <span class="o">=</span> <span class="s">&quot;INSERT INTO &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="p">()</span>
+        <span class="n">insert_stmt</span> <span class="o">+=</span> <span class="s">&quot; (&quot;</span> <span class="o">+</span> <span class="n">columns</span> <span class="o">+</span> <span class="s">&quot;)&quot;</span>
+        <span class="n">insert_stmt</span> <span class="o">+=</span> <span class="s">&quot; VALUES (&quot;</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">columncount</span><span class="p">):</span>
+            <span class="n">insert_stmt</span> <span class="o">+=</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">, &quot;</span>
+        <span class="n">insert_stmt</span> <span class="o">=</span> <span class="n">insert_stmt</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s">&quot;, &quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;);&quot;</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">insert_stmt</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%s</span><span class="s">&quot;</span><span class="p">):</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">format_insert_value</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span>
+                                                   <span class="n">types</span><span class="p">[</span><span class="n">n</span><span class="p">]))</span>
+            <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">insert_stmt</span> <span class="o">%=</span> <span class="nb">tuple</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="p">])</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span> <span class="k">print</span> <span class="n">insert_stmt</span>
+        <span class="k">return</span> <span class="n">insert_stmt</span></div>
+
+<div class="viewcode-block" id="Engine.table_exists"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.engine.Engine.table_exists">[docs]</a>    <span class="k">def</span> <span class="nf">table_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">tablename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This can be overridden to return True if a table exists. It</span>
+<span class="sd">        returns False by default.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">False</span></div>
+
+<div class="viewcode-block" id="Engine.table_name"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.engine.Engine.table_name">[docs]</a>    <span class="k">def</span> <span class="nf">table_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">dbname</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the full tablename.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">dbname</span><span class="p">:</span>
+            <span class="n">dbname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">database_name</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">dbname</span><span class="p">:</span> <span class="n">dbname</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">opts</span><span class="p">[</span><span class="s">&quot;table_name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">db</span><span class="o">=</span><span class="n">dbname</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="n">name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Engine.warning"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.engine.Engine.warning">[docs]</a>    <span class="k">def</span> <span class="nf">warning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">warning</span><span class="p">):</span>
+        <span class="n">new_warning</span> <span class="o">=</span> <span class="ne">Warning</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%s</span><span class="s">:</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">script</span><span class="o">.</span><span class="n">shortname</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">name</span><span class="p">),</span> <span class="n">warning</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_warning</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="skip_rows"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.engine.skip_rows">[docs]</a><span class="k">def</span> <span class="nf">skip_rows</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Skip over the header lines by reading them before processing.&quot;&quot;&quot;</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="n">gen_from_source</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">rows</span><span class="p">):</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">lines</span></div>
+
+
+<div class="viewcode-block" id="file_exists"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.engine.file_exists">[docs]</a><span class="k">def</span> <span class="nf">file_exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns true if a file exists and its size is greater than 0.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="filename_from_url"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.engine.filename_from_url">[docs]</a><span class="k">def</span> <span class="nf">filename_from_url</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">url</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;?&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="gen_from_source"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.engine.gen_from_source">[docs]</a><span class="k">def</span> <span class="nf">gen_from_source</span><span class="p">(</span><span class="n">source</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns a generator from a source tuple.</span>
+<span class="sd">    Source tuples are of the form (callable, args) where callable(*args)</span>
+<span class="sd">    returns either a generator or another source tuple.</span>
+<span class="sd">    This allows indefinite regeneration of data sources.&quot;&quot;&quot;</span>
+    <span class="k">while</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="n">gen</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="n">source</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">gen</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">source</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../../retriever.html">retriever</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Author.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

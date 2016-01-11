@@ -1,0 +1,855 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>retriever.engines package &mdash; retriever  documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="retriever  documentation" href="index.html" />
+    <link rel="up" title="retriever package" href="retriever.html" />
+    <link rel="next" title="retriever.lib package" href="retriever.lib.html" />
+    <link rel="prev" title="retriever.app package" href="retriever.app.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="retriever-engines-package">
+<h1>retriever.engines package<a class="headerlink" href="#retriever-engines-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-retriever.engines.csv">
+<span id="retriever-engines-csv-module"></span><h2>retriever.engines.csv module<a class="headerlink" href="#module-retriever.engines.csv" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="retriever.engines.csv.DummyConnection">
+<em class="property">class </em><code class="descclassname">retriever.engines.csv.</code><code class="descname">DummyConnection</code><a class="reference internal" href="_modules/retriever/engines/csv.html#DummyConnection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.csv.DummyConnection" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="retriever.engines.csv.DummyConnection.close">
+<code class="descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/csv.html#DummyConnection.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.csv.DummyConnection.close" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.csv.DummyConnection.commit">
+<code class="descname">commit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/csv.html#DummyConnection.commit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.csv.DummyConnection.commit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.csv.DummyConnection.cursor">
+<code class="descname">cursor</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/csv.html#DummyConnection.cursor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.csv.DummyConnection.cursor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.csv.DummyConnection.rollback">
+<code class="descname">rollback</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/csv.html#DummyConnection.rollback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.csv.DummyConnection.rollback" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="retriever.engines.csv.DummyCursor">
+<em class="property">class </em><code class="descclassname">retriever.engines.csv.</code><code class="descname">DummyCursor</code><a class="reference internal" href="_modules/retriever/engines/csv.html#DummyCursor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.csv.DummyCursor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#retriever.engines.csv.DummyConnection" title="retriever.engines.csv.DummyConnection"><code class="xref py py-class docutils literal"><span class="pre">retriever.engines.csv.DummyConnection</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="retriever.engines.csv.engine">
+<em class="property">class </em><code class="descclassname">retriever.engines.csv.</code><code class="descname">engine</code><a class="reference internal" href="_modules/retriever/engines/csv.html#engine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.csv.engine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="retriever.lib.html#retriever.lib.engine.Engine" title="retriever.lib.engine.Engine"><code class="xref py py-class docutils literal"><span class="pre">retriever.lib.engine.Engine</span></code></a></p>
+<p>Engine instance for writing data to a CSV file.</p>
+<dl class="attribute">
+<dt id="retriever.engines.csv.engine.abbreviation">
+<code class="descname">abbreviation</code><em class="property"> = 'csv'</em><a class="headerlink" href="#retriever.engines.csv.engine.abbreviation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.csv.engine.create_db">
+<code class="descname">create_db</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/csv.html#engine.create_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.csv.engine.create_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Override create_db since there is no database just a CSV file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.csv.engine.create_table">
+<code class="descname">create_table</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/csv.html#engine.create_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.csv.engine.create_table" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the table by creating an empty csv file</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="retriever.engines.csv.engine.datatypes">
+<code class="descname">datatypes</code><em class="property"> = {'int': 'INTEGER', 'auto': 'INTEGER', 'decimal': 'REAL', 'char': 'TEXT', 'bigint': 'INTEGER', 'bool': 'INTEGER', 'double': 'REAL'}</em><a class="headerlink" href="#retriever.engines.csv.engine.datatypes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.csv.engine.disconnect">
+<code class="descname">disconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/csv.html#engine.disconnect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.csv.engine.disconnect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close the last file in the dataset</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.csv.engine.execute">
+<code class="descname">execute</code><span class="sig-paren">(</span><em>statement</em>, <em>commit=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/csv.html#engine.execute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.csv.engine.execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write a line to the output file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.csv.engine.format_insert_value">
+<code class="descname">format_insert_value</code><span class="sig-paren">(</span><em>value</em>, <em>datatype</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/csv.html#engine.format_insert_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.csv.engine.format_insert_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Formats a value for an insert statement</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.csv.engine.get_connection">
+<code class="descname">get_connection</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/csv.html#engine.get_connection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.csv.engine.get_connection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the db connection.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.csv.engine.insert_statement">
+<code class="descname">insert_statement</code><span class="sig-paren">(</span><em>values</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/csv.html#engine.insert_statement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.csv.engine.insert_statement" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="retriever.engines.csv.engine.name">
+<code class="descname">name</code><em class="property"> = 'CSV'</em><a class="headerlink" href="#retriever.engines.csv.engine.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="retriever.engines.csv.engine.required_opts">
+<code class="descname">required_opts</code><em class="property"> = [('table_name', 'Format of table name', '.\\{db}_{table}.csv')]</em><a class="headerlink" href="#retriever.engines.csv.engine.required_opts" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.csv.engine.table_exists">
+<code class="descname">table_exists</code><span class="sig-paren">(</span><em>dbname</em>, <em>tablename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/csv.html#engine.table_exists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.csv.engine.table_exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check to see if the data file currently exists</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-retriever.engines.download_only">
+<span id="retriever-engines-download-only-module"></span><h2>retriever.engines.download_only module<a class="headerlink" href="#module-retriever.engines.download_only" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="retriever.engines.download_only.DummyConnection">
+<em class="property">class </em><code class="descclassname">retriever.engines.download_only.</code><code class="descname">DummyConnection</code><a class="reference internal" href="_modules/retriever/engines/download_only.html#DummyConnection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.download_only.DummyConnection" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="retriever.engines.download_only.DummyConnection.close">
+<code class="descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/download_only.html#DummyConnection.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.download_only.DummyConnection.close" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.download_only.DummyConnection.commit">
+<code class="descname">commit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/download_only.html#DummyConnection.commit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.download_only.DummyConnection.commit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.download_only.DummyConnection.cursor">
+<code class="descname">cursor</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/download_only.html#DummyConnection.cursor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.download_only.DummyConnection.cursor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.download_only.DummyConnection.rollback">
+<code class="descname">rollback</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/download_only.html#DummyConnection.rollback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.download_only.DummyConnection.rollback" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="retriever.engines.download_only.DummyCursor">
+<em class="property">class </em><code class="descclassname">retriever.engines.download_only.</code><code class="descname">DummyCursor</code><a class="reference internal" href="_modules/retriever/engines/download_only.html#DummyCursor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.download_only.DummyCursor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#retriever.engines.download_only.DummyConnection" title="retriever.engines.download_only.DummyConnection"><code class="xref py py-class docutils literal"><span class="pre">retriever.engines.download_only.DummyConnection</span></code></a></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="retriever.engines.download_only.dummy_method">
+<code class="descclassname">retriever.engines.download_only.</code><code class="descname">dummy_method</code><span class="sig-paren">(</span><em>self</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/download_only.html#dummy_method"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.download_only.dummy_method" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="retriever.engines.download_only.engine">
+<em class="property">class </em><code class="descclassname">retriever.engines.download_only.</code><code class="descname">engine</code><a class="reference internal" href="_modules/retriever/engines/download_only.html#engine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.download_only.engine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="retriever.lib.html#retriever.lib.engine.Engine" title="retriever.lib.engine.Engine"><code class="xref py py-class docutils literal"><span class="pre">retriever.lib.engine.Engine</span></code></a></p>
+<p>Engine instance for writing data to a CSV file.</p>
+<dl class="attribute">
+<dt id="retriever.engines.download_only.engine.abbreviation">
+<code class="descname">abbreviation</code><em class="property"> = 'download'</em><a class="headerlink" href="#retriever.engines.download_only.engine.abbreviation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.download_only.engine.add_to_table">
+<code class="descname">add_to_table</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#retriever.engines.download_only.engine.add_to_table" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.download_only.engine.auto_create_table">
+<code class="descname">auto_create_table</code><span class="sig-paren">(</span><em>table</em>, <em>url=None</em>, <em>filename=None</em>, <em>pk=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/download_only.html#engine.auto_create_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.download_only.engine.auto_create_table" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.download_only.engine.auto_get_datatypes">
+<code class="descname">auto_get_datatypes</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#retriever.engines.download_only.engine.auto_get_datatypes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.download_only.engine.auto_get_delimiter">
+<code class="descname">auto_get_delimiter</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#retriever.engines.download_only.engine.auto_get_delimiter" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.download_only.engine.connect">
+<code class="descname">connect</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#retriever.engines.download_only.engine.connect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.download_only.engine.convert_data_type">
+<code class="descname">convert_data_type</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#retriever.engines.download_only.engine.convert_data_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.download_only.engine.create_db">
+<code class="descname">create_db</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#retriever.engines.download_only.engine.create_db" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.download_only.engine.create_db_statement">
+<code class="descname">create_db_statement</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#retriever.engines.download_only.engine.create_db_statement" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.download_only.engine.create_table">
+<code class="descname">create_table</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#retriever.engines.download_only.engine.create_table" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.download_only.engine.create_table_statement">
+<code class="descname">create_table_statement</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#retriever.engines.download_only.engine.create_table_statement" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.download_only.engine.database_name">
+<code class="descname">database_name</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#retriever.engines.download_only.engine.database_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.download_only.engine.disconnect">
+<code class="descname">disconnect</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#retriever.engines.download_only.engine.disconnect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.download_only.engine.drop_statement">
+<code class="descname">drop_statement</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#retriever.engines.download_only.engine.drop_statement" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.download_only.engine.escape_double_quotes">
+<code class="descname">escape_double_quotes</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#retriever.engines.download_only.engine.escape_double_quotes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.download_only.engine.escape_single_quotes">
+<code class="descname">escape_single_quotes</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#retriever.engines.download_only.engine.escape_single_quotes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.download_only.engine.execute">
+<code class="descname">execute</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#retriever.engines.download_only.engine.execute" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.download_only.engine.exists">
+<code class="descname">exists</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#retriever.engines.download_only.engine.exists" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.download_only.engine.final_cleanup">
+<code class="descname">final_cleanup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/download_only.html#engine.final_cleanup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.download_only.engine.final_cleanup" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.download_only.engine.find_file">
+<code class="descname">find_file</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/download_only.html#engine.find_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.download_only.engine.find_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.download_only.engine.format_insert_value">
+<code class="descname">format_insert_value</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#retriever.engines.download_only.engine.format_insert_value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.download_only.engine.get_connection">
+<code class="descname">get_connection</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/download_only.html#engine.get_connection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.download_only.engine.get_connection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the db connection.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.download_only.engine.get_cursor">
+<code class="descname">get_cursor</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#retriever.engines.download_only.engine.get_cursor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.download_only.engine.get_input">
+<code class="descname">get_input</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#retriever.engines.download_only.engine.get_input" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.download_only.engine.insert_data_from_archive">
+<code class="descname">insert_data_from_archive</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#retriever.engines.download_only.engine.insert_data_from_archive" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.download_only.engine.insert_data_from_file">
+<code class="descname">insert_data_from_file</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#retriever.engines.download_only.engine.insert_data_from_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.download_only.engine.insert_data_from_url">
+<code class="descname">insert_data_from_url</code><span class="sig-paren">(</span><em>url</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/download_only.html#engine.insert_data_from_url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.download_only.engine.insert_data_from_url" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.download_only.engine.insert_statement">
+<code class="descname">insert_statement</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#retriever.engines.download_only.engine.insert_statement" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="retriever.engines.download_only.engine.name">
+<code class="descname">name</code><em class="property"> = 'Download Only'</em><a class="headerlink" href="#retriever.engines.download_only.engine.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.download_only.engine.register_files">
+<code class="descname">register_files</code><span class="sig-paren">(</span><em>filenames</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/download_only.html#engine.register_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.download_only.engine.register_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Identify a list of files to be moved by the download</p>
+<p>When downloading archives with multiple files the engine needs to be
+informed of all of the file names so that it can move them.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="retriever.engines.download_only.engine.required_opts">
+<code class="descname">required_opts</code><em class="property"> = [('path', 'File path to copy data files', './'), ('subdir', 'Keep the subdirectories for archived files', False)]</em><a class="headerlink" href="#retriever.engines.download_only.engine.required_opts" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.download_only.engine.table_exists">
+<code class="descname">table_exists</code><span class="sig-paren">(</span><em>dbname</em>, <em>tablename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/download_only.html#engine.table_exists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.download_only.engine.table_exists" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.download_only.engine.table_name">
+<code class="descname">table_name</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#retriever.engines.download_only.engine.table_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.download_only.engine.warning">
+<code class="descname">warning</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#retriever.engines.download_only.engine.warning" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-retriever.engines.jsonengine">
+<span id="retriever-engines-jsonengine-module"></span><h2>retriever.engines.jsonengine module<a class="headerlink" href="#module-retriever.engines.jsonengine" title="Permalink to this headline">¶</a></h2>
+<p>Engine for writing data to a JSON file</p>
+<dl class="class">
+<dt id="retriever.engines.jsonengine.DummyConnection">
+<em class="property">class </em><code class="descclassname">retriever.engines.jsonengine.</code><code class="descname">DummyConnection</code><a class="reference internal" href="_modules/retriever/engines/jsonengine.html#DummyConnection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.jsonengine.DummyConnection" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="retriever.engines.jsonengine.DummyConnection.close">
+<code class="descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/jsonengine.html#DummyConnection.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.jsonengine.DummyConnection.close" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.jsonengine.DummyConnection.commit">
+<code class="descname">commit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/jsonengine.html#DummyConnection.commit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.jsonengine.DummyConnection.commit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.jsonengine.DummyConnection.cursor">
+<code class="descname">cursor</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/jsonengine.html#DummyConnection.cursor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.jsonengine.DummyConnection.cursor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.jsonengine.DummyConnection.rollback">
+<code class="descname">rollback</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/jsonengine.html#DummyConnection.rollback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.jsonengine.DummyConnection.rollback" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="retriever.engines.jsonengine.DummyCursor">
+<em class="property">class </em><code class="descclassname">retriever.engines.jsonengine.</code><code class="descname">DummyCursor</code><a class="reference internal" href="_modules/retriever/engines/jsonengine.html#DummyCursor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.jsonengine.DummyCursor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#retriever.engines.jsonengine.DummyConnection" title="retriever.engines.jsonengine.DummyConnection"><code class="xref py py-class docutils literal"><span class="pre">retriever.engines.jsonengine.DummyConnection</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="retriever.engines.jsonengine.engine">
+<em class="property">class </em><code class="descclassname">retriever.engines.jsonengine.</code><code class="descname">engine</code><a class="reference internal" href="_modules/retriever/engines/jsonengine.html#engine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.jsonengine.engine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="retriever.lib.html#retriever.lib.engine.Engine" title="retriever.lib.engine.Engine"><code class="xref py py-class docutils literal"><span class="pre">retriever.lib.engine.Engine</span></code></a></p>
+<p>Engine instance for writing data to a CSV file.</p>
+<dl class="attribute">
+<dt id="retriever.engines.jsonengine.engine.abbreviation">
+<code class="descname">abbreviation</code><em class="property"> = 'json'</em><a class="headerlink" href="#retriever.engines.jsonengine.engine.abbreviation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.jsonengine.engine.create_db">
+<code class="descname">create_db</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/jsonengine.html#engine.create_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.jsonengine.engine.create_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Override create_db since there is no database just a JSON file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.jsonengine.engine.create_table">
+<code class="descname">create_table</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/jsonengine.html#engine.create_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.jsonengine.engine.create_table" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the table by creating an empty json file</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="retriever.engines.jsonengine.engine.datatypes">
+<code class="descname">datatypes</code><em class="property"> = {'int': 'INTEGER', 'auto': 'INTEGER', 'decimal': 'REAL', 'char': 'TEXT', 'bigint': 'INTEGER', 'bool': 'INTEGER', 'double': 'REAL'}</em><a class="headerlink" href="#retriever.engines.jsonengine.engine.datatypes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.jsonengine.engine.disconnect">
+<code class="descname">disconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/jsonengine.html#engine.disconnect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.jsonengine.engine.disconnect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close out the JSON with a ] and close the file</p>
+<p>Do to an extra comma after the last entry it is necessary to close the
+current file, read it back in, and remove the extra comma, before adding
+the closing bracket, and re-writing the file to disk. This will be
+inefficient for large files and we may want to replace it with something
+better.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.jsonengine.engine.execute">
+<code class="descname">execute</code><span class="sig-paren">(</span><em>statement</em>, <em>commit=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/jsonengine.html#engine.execute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.jsonengine.engine.execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write a line to the output file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.jsonengine.engine.format_insert_value">
+<code class="descname">format_insert_value</code><span class="sig-paren">(</span><em>value</em>, <em>datatype</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/jsonengine.html#engine.format_insert_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.jsonengine.engine.format_insert_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Formats a value for an insert statement</p>
+<p>Overrides default behavior by:
+1. Storing decimal numbers as floats rather than strings
+2. Not escaping quotes (handled by the json module)
+3. Replacing &#8220;null&#8221; with None which will convert to the &#8216;null&#8217; keyword</p>
+<blockquote>
+<div>in json</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.jsonengine.engine.get_connection">
+<code class="descname">get_connection</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/jsonengine.html#engine.get_connection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.jsonengine.engine.get_connection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the db connection.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.jsonengine.engine.insert_statement">
+<code class="descname">insert_statement</code><span class="sig-paren">(</span><em>values</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/jsonengine.html#engine.insert_statement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.jsonengine.engine.insert_statement" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="retriever.engines.jsonengine.engine.name">
+<code class="descname">name</code><em class="property"> = 'JSON'</em><a class="headerlink" href="#retriever.engines.jsonengine.engine.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="retriever.engines.jsonengine.engine.required_opts">
+<code class="descname">required_opts</code><em class="property"> = [('table_name', 'Format of table name', '.\\{db}_{table}.json')]</em><a class="headerlink" href="#retriever.engines.jsonengine.engine.required_opts" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.jsonengine.engine.table_exists">
+<code class="descname">table_exists</code><span class="sig-paren">(</span><em>dbname</em>, <em>tablename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/jsonengine.html#engine.table_exists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.jsonengine.engine.table_exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check to see if the data file currently exists</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-retriever.engines.msaccess">
+<span id="retriever-engines-msaccess-module"></span><h2>retriever.engines.msaccess module<a class="headerlink" href="#module-retriever.engines.msaccess" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="retriever.engines.msaccess.engine">
+<em class="property">class </em><code class="descclassname">retriever.engines.msaccess.</code><code class="descname">engine</code><a class="reference internal" href="_modules/retriever/engines/msaccess.html#engine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.msaccess.engine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="retriever.lib.html#retriever.lib.engine.Engine" title="retriever.lib.engine.Engine"><code class="xref py py-class docutils literal"><span class="pre">retriever.lib.engine.Engine</span></code></a></p>
+<p>Engine instance for Microsoft Access.</p>
+<dl class="attribute">
+<dt id="retriever.engines.msaccess.engine.abbreviation">
+<code class="descname">abbreviation</code><em class="property"> = 'msaccess'</em><a class="headerlink" href="#retriever.engines.msaccess.engine.abbreviation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.msaccess.engine.convert_data_type">
+<code class="descname">convert_data_type</code><span class="sig-paren">(</span><em>datatype</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/msaccess.html#engine.convert_data_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.msaccess.engine.convert_data_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>MS Access can&#8217;t handle complex Decimal types</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.msaccess.engine.create_db">
+<code class="descname">create_db</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/msaccess.html#engine.create_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.msaccess.engine.create_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>MS Access doesn&#8217;t create databases.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="retriever.engines.msaccess.engine.datatypes">
+<code class="descname">datatypes</code><em class="property"> = {'int': 'INTEGER', 'auto': 'AUTOINCREMENT', 'decimal': 'NUMERIC', 'char': 'VARCHAR', 'bigint': 'INTEGER', 'bool': 'BIT', 'double': 'NUMERIC'}</em><a class="headerlink" href="#retriever.engines.msaccess.engine.datatypes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.msaccess.engine.drop_statement">
+<code class="descname">drop_statement</code><span class="sig-paren">(</span><em>objecttype</em>, <em>objectname</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/msaccess.html#engine.drop_statement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.msaccess.engine.drop_statement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a drop table or database SQL statement.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.msaccess.engine.escape_single_quotes">
+<code class="descname">escape_single_quotes</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/msaccess.html#engine.escape_single_quotes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.msaccess.engine.escape_single_quotes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.msaccess.engine.get_connection">
+<code class="descname">get_connection</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/msaccess.html#engine.get_connection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.msaccess.engine.get_connection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the db connection.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.msaccess.engine.insert_data_from_file">
+<code class="descname">insert_data_from_file</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/msaccess.html#engine.insert_data_from_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.msaccess.engine.insert_data_from_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform a bulk insert.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="retriever.engines.msaccess.engine.instructions">
+<code class="descname">instructions</code><em class="property"> = 'Create a database in Microsoft Access, close Access, then \nselect your database file using this dialog.'</em><a class="headerlink" href="#retriever.engines.msaccess.engine.instructions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="retriever.engines.msaccess.engine.name">
+<code class="descname">name</code><em class="property"> = 'Microsoft Access'</em><a class="headerlink" href="#retriever.engines.msaccess.engine.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="retriever.engines.msaccess.engine.required_opts">
+<code class="descname">required_opts</code><em class="property"> = [('file', 'Enter the filename of your Access database', '.\\access.mdb', 'Access databases (*.mdb, *.accdb)|*.mdb;*.accdb'), ('table_name', 'Format of table name', '[{db} {table}]')]</em><a class="headerlink" href="#retriever.engines.msaccess.engine.required_opts" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.msaccess.engine.table_exists">
+<code class="descname">table_exists</code><span class="sig-paren">(</span><em>dbname</em>, <em>tablename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/msaccess.html#engine.table_exists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.msaccess.engine.table_exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine if the table already exists in the database</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-retriever.engines.mysql">
+<span id="retriever-engines-mysql-module"></span><h2>retriever.engines.mysql module<a class="headerlink" href="#module-retriever.engines.mysql" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="retriever.engines.mysql.engine">
+<em class="property">class </em><code class="descclassname">retriever.engines.mysql.</code><code class="descname">engine</code><a class="reference internal" href="_modules/retriever/engines/mysql.html#engine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.mysql.engine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="retriever.lib.html#retriever.lib.engine.Engine" title="retriever.lib.engine.Engine"><code class="xref py py-class docutils literal"><span class="pre">retriever.lib.engine.Engine</span></code></a></p>
+<p>Engine instance for MySQL.</p>
+<dl class="attribute">
+<dt id="retriever.engines.mysql.engine.abbreviation">
+<code class="descname">abbreviation</code><em class="property"> = 'mysql'</em><a class="headerlink" href="#retriever.engines.mysql.engine.abbreviation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.mysql.engine.create_db_statement">
+<code class="descname">create_db_statement</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/mysql.html#engine.create_db_statement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.mysql.engine.create_db_statement" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="retriever.engines.mysql.engine.datatypes">
+<code class="descname">datatypes</code><em class="property"> = {'int': 'INT', 'auto': 'INT(5) NOT NULL AUTO_INCREMENT', 'decimal': 'DECIMAL', 'char': ('TEXT', 'VARCHAR'), 'bigint': 'BIGINT', 'bool': 'BOOL', 'double': 'DOUBLE'}</em><a class="headerlink" href="#retriever.engines.mysql.engine.datatypes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.mysql.engine.get_connection">
+<code class="descname">get_connection</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/mysql.html#engine.get_connection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.mysql.engine.get_connection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the db connection.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.mysql.engine.insert_data_from_file">
+<code class="descname">insert_data_from_file</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/mysql.html#engine.insert_data_from_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.mysql.engine.insert_data_from_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls MySQL &#8220;LOAD DATA LOCAL INFILE&#8221; statement to perform a bulk
+insert.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="retriever.engines.mysql.engine.max_int">
+<code class="descname">max_int</code><em class="property"> = 4294967295L</em><a class="headerlink" href="#retriever.engines.mysql.engine.max_int" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="retriever.engines.mysql.engine.name">
+<code class="descname">name</code><em class="property"> = 'MySQL'</em><a class="headerlink" href="#retriever.engines.mysql.engine.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="retriever.engines.mysql.engine.required_opts">
+<code class="descname">required_opts</code><em class="property"> = [('user', 'Enter your MySQL username', 'root'), ('password', 'Enter your password', ''), ('host', 'Enter your MySQL host', 'localhost'), ('port', 'Enter your MySQL port', 3306), ('database_name', 'Format of database name', '{db}'), ('table_name', 'Format of table name', '{db}.{table}')]</em><a class="headerlink" href="#retriever.engines.mysql.engine.required_opts" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.mysql.engine.table_exists">
+<code class="descname">table_exists</code><span class="sig-paren">(</span><em>dbname</em>, <em>tablename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/mysql.html#engine.table_exists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.mysql.engine.table_exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks to see if the given table exists</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-retriever.engines.postgres">
+<span id="retriever-engines-postgres-module"></span><h2>retriever.engines.postgres module<a class="headerlink" href="#module-retriever.engines.postgres" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="retriever.engines.postgres.engine">
+<em class="property">class </em><code class="descclassname">retriever.engines.postgres.</code><code class="descname">engine</code><a class="reference internal" href="_modules/retriever/engines/postgres.html#engine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.postgres.engine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="retriever.lib.html#retriever.lib.engine.Engine" title="retriever.lib.engine.Engine"><code class="xref py py-class docutils literal"><span class="pre">retriever.lib.engine.Engine</span></code></a></p>
+<p>Engine instance for PostgreSQL.</p>
+<dl class="attribute">
+<dt id="retriever.engines.postgres.engine.abbreviation">
+<code class="descname">abbreviation</code><em class="property"> = 'postgres'</em><a class="headerlink" href="#retriever.engines.postgres.engine.abbreviation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.postgres.engine.create_db">
+<code class="descname">create_db</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/postgres.html#engine.create_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.postgres.engine.create_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the database</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.postgres.engine.create_db_statement">
+<code class="descname">create_db_statement</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/postgres.html#engine.create_db_statement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.postgres.engine.create_db_statement" title="Permalink to this definition">¶</a></dt>
+<dd><p>In PostgreSQL, the equivalent of a SQL database is a schema.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.postgres.engine.create_table">
+<code class="descname">create_table</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/postgres.html#engine.create_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.postgres.engine.create_table" title="Permalink to this definition">¶</a></dt>
+<dd><p>PostgreSQL needs to commit operations individually.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="retriever.engines.postgres.engine.datatypes">
+<code class="descname">datatypes</code><em class="property"> = {'int': 'integer', 'auto': 'serial', 'decimal': 'decimal', 'char': 'varchar', 'bigint': 'bigint', 'bool': 'boolean', 'double': 'double precision'}</em><a class="headerlink" href="#retriever.engines.postgres.engine.datatypes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.postgres.engine.drop_statement">
+<code class="descname">drop_statement</code><span class="sig-paren">(</span><em>objecttype</em>, <em>objectname</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/postgres.html#engine.drop_statement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.postgres.engine.drop_statement" title="Permalink to this definition">¶</a></dt>
+<dd><p>In PostgreSQL, the equivalent of a SQL database is a schema.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.postgres.engine.escape_single_quotes">
+<code class="descname">escape_single_quotes</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/postgres.html#engine.escape_single_quotes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.postgres.engine.escape_single_quotes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.postgres.engine.format_insert_value">
+<code class="descname">format_insert_value</code><span class="sig-paren">(</span><em>value</em>, <em>datatype</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/postgres.html#engine.format_insert_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.postgres.engine.format_insert_value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.postgres.engine.get_connection">
+<code class="descname">get_connection</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/postgres.html#engine.get_connection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.postgres.engine.get_connection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the db connection.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.postgres.engine.insert_data_from_file">
+<code class="descname">insert_data_from_file</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/postgres.html#engine.insert_data_from_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.postgres.engine.insert_data_from_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use PostgreSQL&#8217;s &#8220;COPY FROM&#8221; statement to perform a bulk insert.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.postgres.engine.insert_statement">
+<code class="descname">insert_statement</code><span class="sig-paren">(</span><em>values</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/postgres.html#engine.insert_statement"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.postgres.engine.insert_statement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a SQL statement to insert a set of values</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="retriever.engines.postgres.engine.max_int">
+<code class="descname">max_int</code><em class="property"> = 2147483647</em><a class="headerlink" href="#retriever.engines.postgres.engine.max_int" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="retriever.engines.postgres.engine.name">
+<code class="descname">name</code><em class="property"> = 'PostgreSQL'</em><a class="headerlink" href="#retriever.engines.postgres.engine.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="retriever.engines.postgres.engine.required_opts">
+<code class="descname">required_opts</code><em class="property"> = [('user', 'Enter your PostgreSQL username', 'postgres'), ('password', 'Enter your password', ''), ('host', 'Enter your PostgreSQL host', 'localhost'), ('port', 'Enter your PostgreSQL port', 5432), ('database', 'Enter your PostgreSQL database name', 'postgres'), ('database_name', 'Format of schema name', '{db}'), ('table_name', 'Format of table name', '{db}.{table}')]</em><a class="headerlink" href="#retriever.engines.postgres.engine.required_opts" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.postgres.engine.table_exists">
+<code class="descname">table_exists</code><span class="sig-paren">(</span><em>dbname</em>, <em>tablename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/postgres.html#engine.table_exists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.postgres.engine.table_exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks to see if the given table exists</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-retriever.engines.sqlite">
+<span id="retriever-engines-sqlite-module"></span><h2>retriever.engines.sqlite module<a class="headerlink" href="#module-retriever.engines.sqlite" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="retriever.engines.sqlite.engine">
+<em class="property">class </em><code class="descclassname">retriever.engines.sqlite.</code><code class="descname">engine</code><a class="reference internal" href="_modules/retriever/engines/sqlite.html#engine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.sqlite.engine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="retriever.lib.html#retriever.lib.engine.Engine" title="retriever.lib.engine.Engine"><code class="xref py py-class docutils literal"><span class="pre">retriever.lib.engine.Engine</span></code></a></p>
+<p>Engine instance for SQLite.</p>
+<dl class="attribute">
+<dt id="retriever.engines.sqlite.engine.abbreviation">
+<code class="descname">abbreviation</code><em class="property"> = 'sqlite'</em><a class="headerlink" href="#retriever.engines.sqlite.engine.abbreviation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.sqlite.engine.create_db">
+<code class="descname">create_db</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/sqlite.html#engine.create_db"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.sqlite.engine.create_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>SQLite doesn&#8217;t create databases; each database is a file and needs
+a separate connection.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="retriever.engines.sqlite.engine.datatypes">
+<code class="descname">datatypes</code><em class="property"> = {'int': 'INTEGER', 'auto': 'INTEGER', 'decimal': 'REAL', 'char': 'TEXT', 'bigint': 'INTEGER', 'bool': 'INTEGER', 'double': 'REAL'}</em><a class="headerlink" href="#retriever.engines.sqlite.engine.datatypes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.sqlite.engine.escape_single_quotes">
+<code class="descname">escape_single_quotes</code><span class="sig-paren">(</span><em>line</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/sqlite.html#engine.escape_single_quotes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.sqlite.engine.escape_single_quotes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.sqlite.engine.get_connection">
+<code class="descname">get_connection</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/sqlite.html#engine.get_connection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.sqlite.engine.get_connection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the db connection.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="retriever.engines.sqlite.engine.name">
+<code class="descname">name</code><em class="property"> = 'SQLite'</em><a class="headerlink" href="#retriever.engines.sqlite.engine.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="retriever.engines.sqlite.engine.required_opts">
+<code class="descname">required_opts</code><em class="property"> = [('file', 'Enter the filename of your SQLite database', '.\\sqlite.db', ''), ('table_name', 'Format of table name', '{db}_{table}')]</em><a class="headerlink" href="#retriever.engines.sqlite.engine.required_opts" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="retriever.engines.sqlite.engine.table_exists">
+<code class="descname">table_exists</code><span class="sig-paren">(</span><em>dbname</em>, <em>tablename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/retriever/engines/sqlite.html#engine.table_exists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#retriever.engines.sqlite.engine.table_exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine if the table already exists in the database</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-retriever.engines">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-retriever.engines" title="Permalink to this headline">¶</a></h2>
+<p>Contains DBMS-specific Engine implementations.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">retriever.engines package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-retriever.engines.csv">retriever.engines.csv module</a></li>
+<li><a class="reference internal" href="#module-retriever.engines.download_only">retriever.engines.download_only module</a></li>
+<li><a class="reference internal" href="#module-retriever.engines.jsonengine">retriever.engines.jsonengine module</a></li>
+<li><a class="reference internal" href="#module-retriever.engines.msaccess">retriever.engines.msaccess module</a></li>
+<li><a class="reference internal" href="#module-retriever.engines.mysql">retriever.engines.mysql module</a></li>
+<li><a class="reference internal" href="#module-retriever.engines.postgres">retriever.engines.postgres module</a></li>
+<li><a class="reference internal" href="#module-retriever.engines.sqlite">retriever.engines.sqlite module</a></li>
+<li><a class="reference internal" href="#module-retriever.engines">Module contents</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="retriever.html">retriever package</a><ul>
+      <li>Previous: <a href="retriever.app.html" title="previous chapter">retriever.app package</a></li>
+      <li>Next: <a href="retriever.lib.html" title="next chapter">retriever.lib package</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/retriever.engines.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Author.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+      |
+      <a href="_sources/retriever.engines.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

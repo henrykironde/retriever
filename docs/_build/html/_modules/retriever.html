@@ -1,0 +1,216 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>retriever &mdash; retriever  documentation</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="retriever  documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for retriever</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;EcoData Retriever</span>
+
+<span class="sd">This package contains a framework for creating and running scripts designed to</span>
+<span class="sd">download published ecological data, and store the data in a database.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">join</span><span class="p">,</span> <span class="n">isfile</span><span class="p">,</span> <span class="n">getmtime</span><span class="p">,</span> <span class="n">exists</span>
+<span class="kn">import</span> <span class="nn">imp</span>
+<span class="kn">from</span> <span class="nn">lib.compile</span> <span class="kn">import</span> <span class="n">compile_script</span>
+<span class="kn">import</span> <span class="nn">platform</span>
+
+<span class="n">current_platform</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">system</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+<span class="k">if</span> <span class="n">current_platform</span> <span class="o">!=</span> <span class="s">&#39;windows&#39;</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">pwd</span>
+
+<span class="n">VERSION</span> <span class="o">=</span> <span class="s">&#39;v1.7.0&#39;</span>
+<span class="n">MASTER</span> <span class="o">=</span> <span class="bp">True</span>
+
+<span class="n">REPO_URL</span> <span class="o">=</span> <span class="s">&quot;https://raw.github.com/weecology/retriever/&quot;</span>
+<span class="n">MASTER_BRANCH</span> <span class="o">=</span> <span class="n">REPO_URL</span> <span class="o">+</span> <span class="s">&quot;master/&quot;</span>
+<span class="n">REPOSITORY</span> <span class="o">=</span> <span class="n">MASTER_BRANCH</span> <span class="k">if</span> <span class="n">MASTER</span> <span class="k">else</span> <span class="n">REPO_URL</span> <span class="o">+</span> <span class="n">VERSION</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span>
+
+<span class="c"># create the necessary directory structure for storing scripts/raw_data</span>
+<span class="c"># in the ~/.retriever directory</span>
+<span class="n">HOME_DIR</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s">&#39;~/.retriever/&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="nb">dir</span> <span class="ow">in</span> <span class="p">(</span><span class="n">HOME_DIR</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">HOME_DIR</span><span class="p">,</span> <span class="s">&#39;raw_data&#39;</span><span class="p">),</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">HOME_DIR</span><span class="p">,</span> <span class="s">&#39;scripts&#39;</span><span class="p">)):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="nb">dir</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="nb">dir</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">current_platform</span> <span class="o">!=</span> <span class="s">&#39;windows&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s">&quot;SUDO_USER&quot;</span><span class="p">):</span>
+                <span class="c"># owner of .retriever should be user even when installing w/sudo</span>
+                <span class="n">pw</span> <span class="o">=</span> <span class="n">pwd</span><span class="o">.</span><span class="n">getpwnam</span><span class="p">(</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s">&quot;SUDO_USER&quot;</span><span class="p">)</span> <span class="p">)</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">chown</span><span class="p">(</span><span class="nb">dir</span><span class="p">,</span> <span class="n">pw</span><span class="o">.</span><span class="n">pw_uid</span><span class="p">,</span> <span class="n">pw</span><span class="o">.</span><span class="n">pw_gid</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;The Retriever lacks permission to access the ~/.retriever/ directory.&quot;</span>
+            <span class="k">raise</span>
+<span class="n">SCRIPT_SEARCH_PATHS</span> <span class="o">=</span>   <span class="p">[</span>
+                         <span class="s">&quot;./&quot;</span><span class="p">,</span>
+                         <span class="s">&quot;scripts&quot;</span><span class="p">,</span>
+                         <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">HOME_DIR</span><span class="p">,</span> <span class="s">&#39;scripts/&#39;</span><span class="p">),</span>
+                         <span class="p">]</span>
+<span class="n">SCRIPT_WRITE_PATH</span> <span class="o">=</span>     <span class="n">SCRIPT_SEARCH_PATHS</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">DATA_SEARCH_PATHS</span> <span class="o">=</span>     <span class="p">[</span>
+                         <span class="s">&quot;./&quot;</span><span class="p">,</span>
+                         <span class="s">&quot;{dataset}&quot;</span><span class="p">,</span>
+                         <span class="s">&quot;raw_data/{dataset}&quot;</span><span class="p">,</span>
+                         <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">HOME_DIR</span><span class="p">,</span> <span class="s">&#39;raw_data/{dataset}&#39;</span><span class="p">),</span>
+                         <span class="p">]</span>
+<span class="n">DATA_WRITE_PATH</span> <span class="o">=</span>       <span class="n">DATA_SEARCH_PATHS</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+<span class="c"># Create default data directory</span>
+<span class="n">isgui</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;gui&#39;</span><span class="p">))</span>
+<span class="k">if</span> <span class="n">current_platform</span> <span class="o">==</span> <span class="s">&#39;windows&#39;</span> <span class="ow">and</span> <span class="n">isgui</span><span class="p">:</span>
+    <span class="c"># The run path for installer based GUI on Windows is a system path.</span>
+    <span class="c"># Users won&#39;t expect the data to be stored there, so store it on the Desktop</span>
+    <span class="n">DATA_DIR</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s">&#39;~&#39;</span><span class="p">),</span> <span class="s">&#39;Desktop&#39;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">DATA_DIR</span> <span class="o">=</span> <span class="s">&#39;.&#39;</span>
+
+<div class="viewcode-block" id="MODULE_LIST"><a class="viewcode-back" href="../retriever.html#retriever.MODULE_LIST">[docs]</a><span class="k">def</span> <span class="nf">MODULE_LIST</span><span class="p">(</span><span class="n">force_compile</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Load scripts from scripts directory and return list of modules.&quot;&quot;&quot;</span>
+    <span class="n">modules</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">search_path</span> <span class="ow">in</span> <span class="p">[</span><span class="n">search_path</span> <span class="k">for</span> <span class="n">search_path</span> <span class="ow">in</span> <span class="n">SCRIPT_SEARCH_PATHS</span> <span class="k">if</span> <span class="n">exists</span><span class="p">(</span><span class="n">search_path</span><span class="p">)]:</span>
+        <span class="n">to_compile</span> <span class="o">=</span> <span class="p">[</span><span class="nb">file</span> <span class="k">for</span> <span class="nb">file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">search_path</span><span class="p">)</span>
+                      <span class="k">if</span> <span class="nb">file</span><span class="p">[</span><span class="o">-</span><span class="mi">7</span><span class="p">:]</span> <span class="o">==</span> <span class="s">&quot;.script&quot;</span> <span class="ow">and</span> <span class="nb">file</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s">&quot;_&quot;</span>
+                      <span class="ow">and</span> <span class="p">((</span><span class="ow">not</span> <span class="n">isfile</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">search_path</span><span class="p">,</span> <span class="nb">file</span><span class="p">[:</span><span class="o">-</span><span class="mi">7</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;.py&#39;</span><span class="p">)))</span> <span class="ow">or</span>
+                           <span class="p">(</span><span class="n">isfile</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">search_path</span><span class="p">,</span> <span class="nb">file</span><span class="p">[:</span><span class="o">-</span><span class="mi">7</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;.py&#39;</span><span class="p">))</span> <span class="ow">and</span>
+                            <span class="p">(</span><span class="n">getmtime</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">search_path</span><span class="p">,</span> <span class="nb">file</span><span class="p">[:</span><span class="o">-</span><span class="mi">7</span><span class="p">]</span> <span class="o">+</span> <span class="s">&#39;.py&#39;</span><span class="p">))</span> <span class="o">&lt;</span>
+                             <span class="n">getmtime</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">search_path</span><span class="p">,</span> <span class="nb">file</span><span class="p">))))</span>
+                            <span class="ow">or</span> <span class="n">force_compile</span><span class="p">)</span>
+                          <span class="p">]</span>
+        <span class="k">for</span> <span class="n">script</span> <span class="ow">in</span> <span class="n">to_compile</span><span class="p">:</span>
+            <span class="n">script_name</span> <span class="o">=</span> <span class="s">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">script</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">compile_script</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">search_path</span><span class="p">,</span> <span class="n">script_name</span><span class="p">))</span>
+
+        <span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="nb">file</span> <span class="k">for</span> <span class="nb">file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">search_path</span><span class="p">)</span>
+                 <span class="k">if</span> <span class="nb">file</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span> <span class="o">==</span> <span class="s">&quot;.py&quot;</span> <span class="ow">and</span> <span class="nb">file</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s">&quot;_&quot;</span>
+                 <span class="ow">and</span> <span class="s">&#39;#retriever&#39;</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">search_path</span><span class="p">,</span> <span class="nb">file</span><span class="p">),</span> <span class="s">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span>
+
+        <span class="k">for</span> <span class="n">script</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="n">script_name</span> <span class="o">=</span> <span class="s">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">script</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="nb">file</span><span class="p">,</span> <span class="n">pathname</span><span class="p">,</span> <span class="n">desc</span> <span class="o">=</span> <span class="n">imp</span><span class="o">.</span><span class="n">find_module</span><span class="p">(</span><span class="n">script_name</span><span class="p">,</span> <span class="p">[</span><span class="n">search_path</span><span class="p">])</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">new_module</span> <span class="o">=</span> <span class="n">imp</span><span class="o">.</span><span class="n">load_module</span><span class="p">(</span><span class="n">script_name</span><span class="p">,</span> <span class="nb">file</span><span class="p">,</span> <span class="n">pathname</span><span class="p">,</span> <span class="n">desc</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">new_module</span> <span class="ow">in</span> <span class="n">modules</span><span class="p">:</span>
+                    <span class="c"># if the script wasn&#39;t found in an early search path</span>
+                    <span class="c"># make sure it works and then add it</span>
+                    <span class="n">new_module</span><span class="o">.</span><span class="n">SCRIPT</span><span class="o">.</span><span class="n">download</span>
+                    <span class="n">modules</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_module</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;Failed to load script: </span><span class="si">%s</span><span class="s"> (</span><span class="si">%s</span><span class="s">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">script_name</span><span class="p">,</span> <span class="n">search_path</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">modules</span></div>
+
+
+<div class="viewcode-block" id="SCRIPT_LIST"><a class="viewcode-back" href="../retriever.html#retriever.SCRIPT_LIST">[docs]</a><span class="k">def</span> <span class="nf">SCRIPT_LIST</span><span class="p">(</span><span class="n">force_compile</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">module</span><span class="o">.</span><span class="n">SCRIPT</span> <span class="k">for</span> <span class="n">module</span> <span class="ow">in</span> <span class="n">MODULE_LIST</span><span class="p">(</span><span class="n">force_compile</span><span class="p">)]</span></div>
+
+
+<div class="viewcode-block" id="ENGINE_LIST"><a class="viewcode-back" href="../retriever.html#retriever.ENGINE_LIST">[docs]</a><span class="k">def</span> <span class="nf">ENGINE_LIST</span><span class="p">():</span>
+    <span class="kn">from</span> <span class="nn">retriever.engines</span> <span class="kn">import</span> <span class="n">engine_list</span>
+    <span class="k">return</span> <span class="n">engine_list</span></div>
+
+
+<div class="viewcode-block" id="set_proxy"><a class="viewcode-back" href="../retriever.html#retriever.set_proxy">[docs]</a><span class="k">def</span> <span class="nf">set_proxy</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Check for proxies and makes them available to urllib&quot;&quot;&quot;</span>
+    <span class="n">proxies</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;https_proxy&quot;</span><span class="p">,</span> <span class="s">&quot;http_proxy&quot;</span><span class="p">,</span> <span class="s">&quot;ftp_proxy&quot;</span><span class="p">,</span> <span class="s">&quot;HTTP_PROXY&quot;</span><span class="p">,</span> <span class="s">&quot;HTTPS_PROXY&quot;</span><span class="p">,</span> <span class="s">&quot;FTP_PROXY&quot;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">proxy</span> <span class="ow">in</span> <span class="n">proxies</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="n">proxy</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="n">proxy</span><span class="p">])</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">proxies</span><span class="p">:</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="n">proxy</span><span class="p">]</span>
+                <span class="k">break</span></div>
+
+<span class="n">set_proxy</span><span class="p">()</span>
+
+
+<span class="n">sample_script</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;# basic information about the script</span>
+<span class="s">name: Mammal Life History Database - Ernest, et al., 2003</span>
+<span class="s">shortname: MammalLH</span>
+<span class="s">description: S. K. Morgan Ernest. 2003. Life history characteristics of placental non-volant mammals. Ecology 84:3402.</span>
+<span class="s">tags: Taxon &gt; Mammals, Data Type &gt; Compilation</span>
+<span class="s">url: http://esapubs.org/archive/ecol/E084/093/default.htm</span>
+
+<span class="s"># tables</span>
+<span class="s">table: species, http://esapubs.org/archive/ecol/E084/093/Mammal_lifehistories_v2.txt&quot;&quot;&quot;</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Author.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

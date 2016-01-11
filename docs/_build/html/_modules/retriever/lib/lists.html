@@ -1,0 +1,184 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>retriever.lib.lists &mdash; retriever  documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="retriever  documentation" href="../../../index.html" />
+    <link rel="up" title="retriever" href="../../retriever.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for retriever.lib.lists</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;Contains code for getting dataset lists from available datasets/categories.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">attrgetter</span>
+<span class="kn">from</span> <span class="nn">retriever.lib.models</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">retriever.lib.templates</span> <span class="kn">import</span> <span class="o">*</span>
+
+
+<div class="viewcode-block" id="Category"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.lists.Category">[docs]</a><span class="k">class</span> <span class="nc">Category</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;A categorical list of scripts.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">scripts</span><span class="p">,</span> <span class="n">children</span><span class="o">=</span><span class="p">[]):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scripts</span> <span class="o">=</span> <span class="n">scripts</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">children</span> <span class="o">=</span> <span class="n">children</span>
+<div class="viewcode-block" id="Category.add_child"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.lists.Category.add_child">[docs]</a>    <span class="k">def</span> <span class="nf">add_child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">child</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="tag_tree"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.lists.tag_tree">[docs]</a><span class="k">def</span> <span class="nf">tag_tree</span><span class="p">(</span><span class="n">all_tags</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">tag</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">all_tags</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;&gt;&#39;</span><span class="p">)]</span></div>
+
+
+<div class="viewcode-block" id="tag_tree_desc"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.lists.tag_tree_desc">[docs]</a><span class="k">def</span> <span class="nf">tag_tree_desc</span><span class="p">(</span><span class="n">l</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s">&#39; &gt; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">l</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="children"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.lists.children">[docs]</a><span class="k">def</span> <span class="nf">children</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">scripts</span><span class="p">,</span> <span class="n">tags</span><span class="p">,</span> <span class="n">level</span><span class="p">):</span>
+    <span class="n">lists</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">tags</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">valid_scripts</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">script</span> <span class="ow">in</span> <span class="n">scripts</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">this_tag</span> <span class="ow">in</span> <span class="n">script</span><span class="o">.</span><span class="n">tags</span><span class="p">:</span>
+                    <span class="n">this_tag_tree</span> <span class="o">=</span> <span class="n">tag_tree</span><span class="p">(</span><span class="n">this_tag</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">this_tag_tree</span><span class="p">[</span><span class="n">level</span><span class="p">:])</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">tag</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">this_tag_tree</span><span class="p">[</span><span class="n">level</span><span class="p">:][</span><span class="mi">0</span><span class="p">]:</span>
+                        <span class="n">valid_scripts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">script</span><span class="p">)</span>
+
+            <span class="n">lists</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Category</span><span class="p">(</span><span class="n">tag</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">valid_scripts</span><span class="p">,</span>
+                                  <span class="n">children</span><span class="o">=</span><span class="n">children</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">valid_scripts</span><span class="p">,</span>
+                                                    <span class="p">[</span><span class="n">tag</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">tags</span><span class="p">],</span>
+                                                     <span class="n">level</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">lists</span></div>
+
+
+<div class="viewcode-block" id="get_lists"><a class="viewcode-back" href="../../../retriever.lib.html#retriever.lib.lists.get_lists">[docs]</a><span class="k">def</span> <span class="nf">get_lists</span><span class="p">():</span></div>
+    <span class="c"># get a list of category tags from all scripts</span>
+    <span class="kn">from</span> <span class="nn">retriever</span> <span class="kn">import</span> <span class="n">SCRIPT_LIST</span>
+    <span class="n">SCRIPT_LIST</span> <span class="o">=</span> <span class="n">SCRIPT_LIST</span><span class="p">()</span>
+    <span class="n">SCRIPT_LIST</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">attrgetter</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">))</span>
+
+    <span class="n">full_tags</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">tag_heads</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">script</span> <span class="ow">in</span> <span class="n">SCRIPT_LIST</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">script</span><span class="o">.</span><span class="n">tags</span><span class="p">:</span>
+            <span class="n">full_tags</span><span class="o">.</span><span class="n">update</span><span class="p">([</span><span class="n">tag</span><span class="p">])</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tag_tree</span><span class="p">(</span><span class="n">tag</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">tag_heads</span><span class="o">.</span><span class="n">update</span><span class="p">([</span><span class="n">tag_tree</span><span class="p">(</span><span class="n">tag</span><span class="p">)[</span><span class="mi">0</span><span class="p">]])</span>
+    <span class="n">full_tags</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">full_tags</span><span class="p">))</span>
+    <span class="n">tag_heads</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">tag_heads</span><span class="p">))</span>
+
+    <span class="n">lists</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">head</span> <span class="ow">in</span> <span class="n">tag_heads</span><span class="p">:</span>
+        <span class="n">valid_scripts</span> <span class="o">=</span> <span class="p">[</span><span class="n">script</span> <span class="k">for</span> <span class="n">script</span> <span class="ow">in</span> <span class="n">SCRIPT_LIST</span>
+                                <span class="k">if</span> <span class="nb">len</span><span class="p">([</span><span class="n">tag</span> <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">script</span><span class="o">.</span><span class="n">tags</span>
+                                            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tag_tree</span><span class="p">(</span><span class="n">tag</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span>
+                                            <span class="n">tag_tree</span><span class="p">(</span><span class="n">tag</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">head</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">lists</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Category</span><span class="p">(</span><span class="n">head</span><span class="p">,</span> <span class="n">valid_scripts</span><span class="p">,</span>
+                              <span class="n">children</span><span class="o">=</span><span class="n">children</span><span class="p">(</span><span class="n">head</span><span class="p">,</span> <span class="n">valid_scripts</span><span class="p">,</span>
+                                                <span class="p">[</span><span class="n">tag_tree</span><span class="p">(</span><span class="n">tag</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>
+                                                 <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">full_tags</span>
+                                                 <span class="k">if</span> <span class="n">tag_tree</span><span class="p">(</span><span class="n">tag</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">head</span><span class="p">],</span>
+                                                <span class="mi">1</span><span class="p">))</span>
+                     <span class="p">)</span>
+
+    <span class="c"># Get list of additional datasets from scripts.config file</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="s">&quot;scripts.config&quot;</span><span class="p">):</span>
+        <span class="n">other_scripts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s">&quot;scripts.config&quot;</span><span class="p">,</span> <span class="s">&#39;rb&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">line</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">new_dataset</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+                    <span class="n">other_scripts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_dataset</span><span class="p">)</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="k">pass</span>
+
+        <span class="n">other_scripts</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">attrgetter</span><span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">other_scripts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">lists</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Category</span><span class="p">(</span><span class="s">&quot;Custom&quot;</span><span class="p">,</span> <span class="n">other_scripts</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">script</span> <span class="ow">in</span> <span class="n">other_scripts</span><span class="p">:</span>
+                <span class="n">lists</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scripts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">script</span><span class="p">)</span>
+
+    <span class="n">choice_tree</span> <span class="o">=</span> <span class="n">Category</span><span class="p">(</span><span class="s">&quot;All Datasets&quot;</span><span class="p">,</span> <span class="n">SCRIPT_LIST</span><span class="p">,</span>
+                           <span class="n">children</span><span class="o">=</span><span class="n">lists</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">choice_tree</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../../retriever.html">retriever</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Author.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

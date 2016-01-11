@@ -1,0 +1,181 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>retriever.engines.csv &mdash; retriever  documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="retriever  documentation" href="../../../index.html" />
+    <link rel="up" title="retriever" href="../../retriever.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for retriever.engines.csv</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">platform</span>
+<span class="kn">from</span> <span class="nn">retriever.lib.models</span> <span class="kn">import</span> <span class="n">Engine</span><span class="p">,</span> <span class="n">no_cleanup</span>
+<span class="kn">from</span> <span class="nn">retriever</span> <span class="kn">import</span> <span class="n">DATA_DIR</span>
+
+<div class="viewcode-block" id="DummyConnection"><a class="viewcode-back" href="../../../retriever.engines.html#retriever.engines.csv.DummyConnection">[docs]</a><span class="k">class</span> <span class="nc">DummyConnection</span><span class="p">:</span>
+<div class="viewcode-block" id="DummyConnection.cursor"><a class="viewcode-back" href="../../../retriever.engines.html#retriever.engines.csv.DummyConnection.cursor">[docs]</a>    <span class="k">def</span> <span class="nf">cursor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+<div class="viewcode-block" id="DummyConnection.commit"><a class="viewcode-back" href="../../../retriever.engines.html#retriever.engines.csv.DummyConnection.commit">[docs]</a>    <span class="k">def</span> <span class="nf">commit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+<div class="viewcode-block" id="DummyConnection.rollback"><a class="viewcode-back" href="../../../retriever.engines.html#retriever.engines.csv.DummyConnection.rollback">[docs]</a>    <span class="k">def</span> <span class="nf">rollback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+<div class="viewcode-block" id="DummyConnection.close"><a class="viewcode-back" href="../../../retriever.engines.html#retriever.engines.csv.DummyConnection.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div></div>
+
+<div class="viewcode-block" id="DummyCursor"><a class="viewcode-back" href="../../../retriever.engines.html#retriever.engines.csv.DummyCursor">[docs]</a><span class="k">class</span> <span class="nc">DummyCursor</span><span class="p">(</span><span class="n">DummyConnection</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="engine"><a class="viewcode-back" href="../../../retriever.engines.html#retriever.engines.csv.engine">[docs]</a><span class="k">class</span> <span class="nc">engine</span><span class="p">(</span><span class="n">Engine</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Engine instance for writing data to a CSV file.&quot;&quot;&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s">&quot;CSV&quot;</span>
+    <span class="n">abbreviation</span> <span class="o">=</span> <span class="s">&quot;csv&quot;</span>
+    <span class="n">datatypes</span> <span class="o">=</span> <span class="p">{</span>
+                 <span class="s">&quot;auto&quot;</span><span class="p">:</span> <span class="s">&quot;INTEGER&quot;</span><span class="p">,</span>
+                 <span class="s">&quot;int&quot;</span><span class="p">:</span> <span class="s">&quot;INTEGER&quot;</span><span class="p">,</span>
+                 <span class="s">&quot;bigint&quot;</span><span class="p">:</span> <span class="s">&quot;INTEGER&quot;</span><span class="p">,</span>
+                 <span class="s">&quot;double&quot;</span><span class="p">:</span> <span class="s">&quot;REAL&quot;</span><span class="p">,</span>
+                 <span class="s">&quot;decimal&quot;</span><span class="p">:</span> <span class="s">&quot;REAL&quot;</span><span class="p">,</span>
+                 <span class="s">&quot;char&quot;</span><span class="p">:</span> <span class="s">&quot;TEXT&quot;</span><span class="p">,</span>
+                 <span class="s">&quot;bool&quot;</span><span class="p">:</span> <span class="s">&quot;INTEGER&quot;</span><span class="p">,</span>
+                 <span class="p">}</span>
+    <span class="n">required_opts</span> <span class="o">=</span> <span class="p">[</span>
+                     <span class="p">(</span><span class="s">&quot;table_name&quot;</span><span class="p">,</span>
+                      <span class="s">&quot;Format of table name&quot;</span><span class="p">,</span>
+                      <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DATA_DIR</span><span class="p">,</span> <span class="s">&quot;{db}_{table}.csv&quot;</span><span class="p">)),</span>
+                     <span class="p">]</span>
+
+<div class="viewcode-block" id="engine.create_db"><a class="viewcode-back" href="../../../retriever.engines.html#retriever.engines.csv.engine.create_db">[docs]</a>    <span class="k">def</span> <span class="nf">create_db</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Override create_db since there is no database just a CSV file&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">None</span></div>
+
+<div class="viewcode-block" id="engine.create_table"><a class="viewcode-back" href="../../../retriever.engines.html#retriever.engines.csv.engine.create_table">[docs]</a>    <span class="k">def</span> <span class="nf">create_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create the table by creating an empty csv file&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="p">(),</span> <span class="s">&quot;w&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&#39;&quot;</span><span class="si">%s</span><span class="s">&quot;&#39;</span> <span class="o">%</span> <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">]))</span></div>
+
+<div class="viewcode-block" id="engine.disconnect"><a class="viewcode-back" href="../../../retriever.engines.html#retriever.engines.csv.engine.disconnect">[docs]</a>    <span class="k">def</span> <span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Close the last file in the dataset&quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="c">#when disconnect is called by app.connect_wizard.ConfirmPage to</span>
+            <span class="c">#confirm the connection, output_file doesn&#39;t exist yet, this is</span>
+            <span class="c">#fine so just pass</span>
+            <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="engine.execute"><a class="viewcode-back" href="../../../retriever.engines.html#retriever.engines.csv.engine.execute">[docs]</a>    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">statement</span><span class="p">,</span> <span class="n">commit</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Write a line to the output file&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">+</span> <span class="n">statement</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="engine.format_insert_value"><a class="viewcode-back" href="../../../retriever.engines.html#retriever.engines.csv.engine.format_insert_value">[docs]</a>    <span class="k">def</span> <span class="nf">format_insert_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">datatype</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Formats a value for an insert statement&quot;&quot;&quot;</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">Engine</span><span class="o">.</span><span class="n">format_insert_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">datatype</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="s">&#39;null&#39;</span><span class="p">:</span> <span class="k">return</span> <span class="s">&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">v</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;&#39;&quot;</span><span class="p">:</span>
+                <span class="n">v</span> <span class="o">=</span> <span class="s">&#39;&quot;</span><span class="si">%s</span><span class="s">&quot;&#39;</span> <span class="o">%</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">return</span> <span class="n">v</span></div>
+
+<div class="viewcode-block" id="engine.insert_statement"><a class="viewcode-back" href="../../../retriever.engines.html#retriever.engines.csv.engine.insert_statement">[docs]</a>    <span class="k">def</span> <span class="nf">insert_statement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;auto_column_number&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">auto_column_number</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">)):</span>
+            <span class="n">column</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">if</span> <span class="s">&#39;auto&#39;</span> <span class="ow">in</span> <span class="n">column</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="n">values</span> <span class="o">=</span> <span class="n">values</span><span class="p">[:</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">auto_column_number</span><span class="p">]</span> <span class="o">+</span> <span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">:]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">auto_column_number</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">offset</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="s">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="engine.table_exists"><a class="viewcode-back" href="../../../retriever.engines.html#retriever.engines.csv.engine.table_exists">[docs]</a>    <span class="k">def</span> <span class="nf">table_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dbname</span><span class="p">,</span> <span class="n">tablename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check to see if the data file currently exists&quot;&quot;&quot;</span>
+        <span class="n">tablename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">tablename</span><span class="p">,</span> <span class="n">dbname</span><span class="o">=</span><span class="n">dbname</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">tablename</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="engine.get_connection"><a class="viewcode-back" href="../../../retriever.engines.html#retriever.engines.csv.engine.get_connection">[docs]</a>    <span class="k">def</span> <span class="nf">get_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Gets the db connection.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_input</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">DummyConnection</span><span class="p">()</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  <li><a href="../../retriever.html">retriever</a><ul>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Author.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.7</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
