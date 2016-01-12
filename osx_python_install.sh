@@ -16,4 +16,7 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
     
     # Also start Postgres
     pg_ctl -D /usr/local/var/postgres start
+    
+    # and MySQL
+    mysql.server start
 fi
