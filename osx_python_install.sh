@@ -13,4 +13,7 @@ if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
     pyenv virtualenv $PYTHON_VERSION virtualenv
     pyenv rehash
     pyenv activate virtualenv
+    
+    # Also start Postgres
+    pg_ctl -D /usr/local/var/postgres start
 fi
