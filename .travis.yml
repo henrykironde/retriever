@@ -13,7 +13,7 @@ services:
   - postgresql
   
 before_install:
-install:
+  - chmod +x osx_python_install.sh
   - ./osx_python_install.sh
 install:
   - pip install -r requirements.txt --use-mirrors
