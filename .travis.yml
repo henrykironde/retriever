@@ -16,10 +16,10 @@ before_install:
   - chmod +x osx_python_install.sh
   - ./osx_python_install.sh
 install:
-  - pip install -r requirements.txt --use-mirrors
-  - python setup.py -q install
-  - pip install codecov
-  - pip install nose-cov
+  - pip install -r requirements.txt --use-mirrors --user
+  - python setup.py -q install --user
+  - pip install codecov --user
+  - pip install nose-cov --user
 
 # command to run tests
 script: nosetests --with-cov
