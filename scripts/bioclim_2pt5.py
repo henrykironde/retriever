@@ -20,7 +20,7 @@ class main(Script):
         if engine.name != "Download Only":
             raise Exception("The Bioclim dataset contains only non-tabular data files, and can only be used with the 'download only' engine.")
         Script.download(self, engine, debug)
-        file_names = ["bio%s.bil" % file_num for file_num in range(1, 20)]
+        file_names = ["bio%s.bil" % file_num for file_num in range(1, 20)]+["bio%s.hdr" % file_num for file_num in range(1, 20)]
         self.engine.download_files_from_archive(self.urls["climate"], file_names)
         self.engine.register_files(file_names)
 
