@@ -33,11 +33,13 @@ class Script:
             desc += "\n" + self.reference_url()
         return desc
 
-    def download(self, engine=None, debug=False):
+    def download(self, engine=None, debug=False, populate=False):
+        """when initializing the selected engine create_db=false will not overwrite the existing db"""
         self.engine = self.checkengine(engine)
         self.engine.debug = debug
         self.engine.db_name = self.shortname
-        self.engine.create_db()
+        if not populate:
+            self.engine.create_db()
 
     def reference_url(self):
         if self.ref:
@@ -83,8 +85,8 @@ class BasicTextTemplate(Script):
     def __init__(self, **kwargs):
         Script.__init__(self, **kwargs)
 
-    def download(self, engine=None, debug=False):
-        Script.download(self, engine, debug)
+    def download(self, engine=None, debug=False, populate=False):
+        Script.download(self, engine, debug, populate)
 
         for key in self.urls.keys():
             if key not in self.tables.keys():
@@ -92,9 +94,15 @@ class BasicTextTemplate(Script):
                                                               nulls=[-999]))
 
         for key, value in self.urls.items():
-            self.engine.auto_create_table(self.tables[key], url=value)
-            self.engine.insert_data_from_url(value)
-            self.tables[key].record_id = 0
+            if not populate:
+                self.engine.auto_create_table(self.tables[key], url=value)
+                self.engine.insert_data_from_url(value)
+                self.tables[key].record_id = 0
+            else:
+                self.engine.auto_create_table(self.tables[key], url=value, populate=True)
+                self.engine.to_csv()
+                self.engine.final_cleanup()
+
         return self.engine
 
     def reference_url(self):

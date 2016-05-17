@@ -1,7 +1,8 @@
 import os
-import platform
-from retriever.lib.models import Engine, no_cleanup
+import csv
 
+from retriever.lib.models import Engine, no_cleanup
+from retriever.lib.tools import sortcsv
 
 class engine(Engine):
     """Engine instance for MySQL."""
@@ -90,6 +91,22 @@ IGNORE """ + str(self.table.header_rows) + """ LINES
             for schema, table in self.cursor:
                 self.existing_table_names.add((schema.lower(), table.lower()))
         return (dbname.lower(), tablename.lower()) in self.existing_table_names
+
+    def to_csv(self):
+        csvfile_output = os.path.normpath(self.table_name()+ '.csv')
+        self.get_cursor()
+        sql_query = ("SELECT * FROM " + self.table_name()+ ";")
+        self.cursor.execute(sql_query)
+        data = self.cursor.fetchall()
+        colnames = [tuple_i[0] for tuple_i in self.cursor.description]
+        csv_out = open(csvfile_output, "wb")
+        csv_writer = csv.writer(csv_out, dialect='excel')
+        csv_writer.writerow(colnames)
+        for lines in data:
+            csv_writer.writerow([values for values in lines])
+        csv_out.close()
+        sortcsv(csvfile_output)
+        return csvfile_output
 
     def get_connection(self):
         """Gets the db connection."""

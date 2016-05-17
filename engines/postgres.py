@@ -1,6 +1,8 @@
 import os
+import csv
 
 from retriever.lib.models import Engine, no_cleanup
+from retriever.lib.tools import sortcsv
 
 
 class engine(Engine):
@@ -121,6 +123,28 @@ CSV HEADER"""
             except:
                 pass
         return Engine.format_insert_value(self, value, datatype)
+
+    def to_csv(self):
+        dbname = str(Engine.database_name(self))
+        tablename = str(Engine.table_name(self))
+        tablefile = str(self.table.name)
+        csvfile_output = os.path.normpath(str(tablefile+ '.csv'))
+        self.get_cursor()
+        sql_query = ("SELECT * FROM " + tablename + ";")
+        self.cursor.execute(sql_query)
+        data = self.cursor.fetchall()
+
+        colnames = [tuple_i[0] for tuple_i in self.cursor.description]
+        # use cursor.description instead of self.table.columns to fetch columns
+        csv_out = open(csvfile_output, "wb")
+        csv_writer = csv.writer(csv_out, dialect='excel')
+        csv_writer.writerow(colnames)
+        for lines in data:
+            csv_writer.writerow(lines)
+        csv_out.close()
+        sortcsv(csvfile_output)
+        Engine.disconnect(self)
+
 
     def get_connection(self):
         """Gets the db connection."""

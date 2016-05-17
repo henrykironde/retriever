@@ -128,7 +128,6 @@ def main():
                     print ("%d. %s"%(count, script))
                     count += 1
             return
-
         engine = choose_engine(args.__dict__)
 
         if hasattr(args, 'debug') and args.debug:

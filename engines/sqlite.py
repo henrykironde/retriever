@@ -2,7 +2,8 @@ import os
 import platform
 from retriever.lib.models import Engine, no_cleanup
 from retriever import DATA_DIR
-
+import csv
+from retriever.lib.tools import sortcsv
 
 class engine(Engine):
     """Engine instance for SQLite."""
@@ -51,6 +52,7 @@ class engine(Engine):
         for i in range(0, columncount):
             insert_stmt += "?, "
         insert_stmt = insert_stmt.rstrip(", ") + ");"
+        print self.table_name(),"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX self.table_name()"
         return insert_stmt
 
     def insert_data_from_file(self, filename):
@@ -61,8 +63,13 @@ class engine(Engine):
         executemany.
 
         """
+
+
         CHUNK_SIZE = 1000000
         self.get_cursor()
+        print self.table.columns, ">>>>>>>>>>insert in to table"
+        print filename, " >>>>>>>>>>>>>>>insert in to table"
+        print self.table.columns
         ct = len([True for c in self.table.columns if c[1][0][:3] == "ct-"]) != 0
         if (([self.table.cleanup.function, self.table.header_rows] == [no_cleanup, 1])
             and not self.table.fixed_width
@@ -87,6 +94,26 @@ class engine(Engine):
                 return Engine.insert_data_from_file(self, filename)
         else:
             return Engine.insert_data_from_file(self, filename)
+
+    def to_csv(self):
+        """Export SQLite table to CSV"""
+        dbname = str(Engine.database_name(self))
+        tablename = str(Engine.table_name(self))
+        tablefile = str(self.table.name)
+        csvfile_output = tablename + '.csv'
+        csv_out = open(csvfile_output, 'wb')
+        csv_writer = csv.writer(csv_out, dialect='excel')
+        # fixing SQLite encoding issue
+        self.connection.text_factory = str
+        self.get_cursor()
+        self.cursor.execute('SELECT * FROM ' + tablename + ';')
+        data = self.cursor.fetchall()
+        colnames = [tuple_i[0] for tuple_i in self.cursor.description]
+        csv_writer.writerow(colnames)
+        for lines in data:
+            csv_writer.writerow(lines)
+        csv_out.close()
+        sortcsv(csvfile_output)
 
     def table_exists(self, dbname, tablename):
         """Determine if the table already exists in the database"""
