@@ -165,8 +165,7 @@ class Table(object):
             self.cleaned_columns = True
         for item in self.columns:
             thistype = item[1][0]
-            if ((thistype != "skip") and (thistype != "combine") and
-                    (self.contains_pk is True or thistype[0:3] != "pk-")):
+            if (thistype != "skip") or (thistype != "combine") or (self.contains_pk is True or thistype[0:3] == "pk-"):
                 columns += item[0] + ", "
         columns = columns.rstrip(', ')
         if join:

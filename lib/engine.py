@@ -368,7 +368,6 @@ class Engine(object):
 
         create_stmt += ', '.join(column_strings)
         create_stmt += " );"
-
         return create_stmt
 
     def database_name(self, name=None):
@@ -628,9 +627,16 @@ class Engine(object):
         insert_stmt = "INSERT INTO " + self.table_name()
         insert_stmt += " (" + columns + ")"
         insert_stmt += " VALUES ("
+
+
         for i in range(0, columncount):
             insert_stmt += "%s, "
         insert_stmt = insert_stmt.rstrip(", ") + ");"
+
+        print(insert_stmt)
+        print(values)
+        print(insert_stmt.count("%s"))
+        exit()
         n = 0
         while len(values) < insert_stmt.count("%s"):
             values.append(self.format_insert_value(None,
