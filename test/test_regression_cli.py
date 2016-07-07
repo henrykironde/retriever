@@ -28,8 +28,8 @@ db_md5 = [
 
 filedb_md5 = [
     # ('DelMoral2010', '0'),
-    ('EA_avianbodysize2007', 'ca8f7e670ff98b520371d3fabf9a8632'),
-    ('EA_mom2003', '92bf63eb5b36b777c600d0a95229222c')
+    ('EA_avianbodysize2007', '8a07fa5101dc78422b8d10fd0e4ccda7'),
+    ('EA_mom2003', '906c59e7724c6596461628118976d43d')
 ]
 
 

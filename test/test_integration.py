@@ -13,6 +13,11 @@ from retriever.lib.tools import file_2string
 simple_csv = {'name': 'simple_csv',
               'raw_data': "a,b,c\n1,2,3\n4,5,6\n",
               'script': "shortname: simple_csv\ntable: simple_csv, http://example.com/simple_csv.txt",
+              'expect_out': '"a","b","c"\n1,2,3\n4,5,6'}
+
+autopk_csv = {'name': 'simple_csv',
+              'raw_data': "a,b,c\n1,2,3\n4,5,6\n",
+              'script': "shortname: simple_csv\ntable: simple_csv, http://example.com/simple_csv.txt\n*column: record_id, pk-auto\n*column: a, int\n*column: b, int\n*column: c, int",
               'expect_out': '"record_id","a","b","c"\n1,1,2,3\n2,4,5,6'}
 
 crosstab = {'name': 'crosstab',
@@ -20,7 +25,7 @@ crosstab = {'name': 'crosstab',
             'script': "shortname: crosstab\ntable: crosstab, http://example.com/crosstab.txt\n*column: record_id, pk-auto\n*column: a, int\n*column: b, int\n*ct_column: c\n*column: val, ct-double\n*ct_names: c1,c2",
             'expect_out': '"record_id","a","b","c","val"\n1,1,1,"c1",1.1\n2,1,1,"c2",1.2\n3,1,2,"c1",2.1\n4,1,2,"c2",2.2'}
 
-tests = [simple_csv, crosstab]
+tests = [simple_csv, crosstab, autopk_csv]
 
 
 def setup_module():
