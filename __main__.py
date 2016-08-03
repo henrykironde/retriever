@@ -18,7 +18,7 @@ reload(sys)
 if hasattr(sys, 'setdefaultencoding'):
     # set default encoding to latin-1 to decode source text
     sys.setdefaultencoding('latin-1')
-from retriever import VERSION, MASTER, SCRIPT_LIST, sample_script, current_platform
+from retriever import VERSION, MASTER, SCRIPT_LIST, HOME_DIR, sample_script, current_platform
 from retriever.engines import engine_list
 from retriever.lib.repository import check_for_updates
 from retriever.lib.lists import Category, get_lists
@@ -79,34 +79,18 @@ def main():
             return
 
         elif args.command == 'new_json':
+            # create new JSON script
             create_json()
             return
 
         elif args.command == 'edit_json':
-            if args.dataset is None:
-                raise Exception("\nError: Filename not given.")
-            else:
-                if not script_list:
-                    print("No scripts are currently available. Updating scripts now...")
-                    check_for_updates()
-                    print("\n\nScripts downloaded.\n")
-                    script_list = SCRIPT_LIST()
-                scripts = name_matches(script_list, args.dataset)
-
-                s_no = 1
-
-                if len(scripts) > 1:
-                    print("Did you mean: ")
-                    for i in range(len(scripts)):
-                        print("{:d}. {}".format(i+1, scripts[i]))
-                    s_no = input("\n\nEnter the correct dataset number: ")
-
-                elif len(scripts) == 0:
-                    raise Exception("\nError: Unable to find script.")
-
-                script_name = scripts[s_no-1].shortname
-                edit_json(script_name)
-                return
+            # edit existing JSON script
+            for json_file in [filename for filename in os.listdir(os.path.join(HOME_DIR, 'scripts'))
+                        if filename[-5:] == '.json']:
+                if json_file.lower().find(args.dataset.lower()) != -1:
+                    edit_json(json_file)
+                    return
+            raise FileNotFoundError
 
         if args.command == 'ls' or args.dataset is None:
 

@@ -4,20 +4,24 @@ import os
 import json
 import yaml
 from time import sleep
-from retriever import SCRIPT_LIST
+from retriever import SCRIPT_LIST, HOME_DIR
 
-JSON_SCRIPTS_DIR = "scripts/"
 short_names = [script.shortname.lower() for script in SCRIPT_LIST()]
 
 def create_json():
+    '''
+    Creates datapackage.JSON script.
+    http://specs.frictionlessdata.io/data-packages/#descriptor-datapackagejson
 
+    Takes input from user via command line.
+
+    Usage: retriever create_json
+    '''
     contents = {}
 
     script_exists = True
     while script_exists:
-        contents['name'] = input("Shortname (unique identifier for script: ")
-        print(short_names)
-        print(contents['name'])
+        contents['name'] = input("Shortname (unique identifier for script): ")
         script_exists = contents['name'].lower() in short_names
         if script_exists:
             print("Dataset already available. Check the list or try a different shortname")
@@ -56,60 +60,62 @@ def create_json():
                 val = input(d_opts[i]+": ")
                 key = [k.strip() for k in d_opts[i].split(" ")][0]
 
-                if val != "":
-
-                    if i<3:
-                        while True:
-                            if val == "":       #User wants to skip
-                                break
-
-                            values = [v.strip() for v in val.split(";")]
-                            values = [v for v in values if v!=""]
-
-                            if len(values) == 0:
-                                print("Empty list. Try again\n")
-                                val = input(d_opts[i]+": ")
-                                continue
-
-                            for i in range(0,len(values)):
-                                try:
-                                    values[i] = eval(values[i])
-                                except:
-                                    values[i] = str(values[i])
-
-                            if len(values) == 1:
-                                table['dialect'][key] = values[0]           # not a list type for a single value (bool,int, etc)
-                            else:
-                                table['dialect'][key] = values
+                if i < 3:
+                    while True:
+                    # loop to check for invalid input
+                        if val == "":       #User wants to skip
                             break
 
-                    elif i<6:
-                        while True:
-                            try:
-                                if val == "":       #User wants to skip
-                                    break
-                                elif type(eval(val)) == bool:
-                                    table['dialect'][key] = val
-                                    break
-                                else:
-                                    print("\nWrong type. Either leave blank or try again.\n")
-                            except:
-                                print("Exception occured. Try Again.\n")
-                                val = input(d_opts[i]+": ")
+                        values = [v.strip() for v in val.split(";")]
+                        values = [v for v in values if v!=""]
 
-                    else:
-                        while True:
+                        if len(values) == 0:
+                            print("Empty list. Try again\n")
+                            val = input(d_opts[i]+": ")
+                            continue
+
+                        for i in range(0,len(values)):
                             try:
-                                if val == "":       #User wants to skip
-                                    break
-                                elif type(eval(val)) == int:
-                                    table['dialect'][key] = val
-                                    break
-                                else:
-                                    print("\nWrong type. Either leave blank or try again.\n")
+                                values[i] = eval(values[i])
                             except:
-                                print("Exception occured. Try Again.\n")
-                                val = input(d_opts[i]+": ")
+                                values[i] = str(values[i])
+
+                        if len(values) == 1:
+                            # not a list type for a single value (bool,int, etc)
+                            table['dialect'][key] = values[0]
+                        else:
+                            table['dialect'][key] = values
+                        break
+
+                elif i < 6:
+                    while True:
+                    # loop to check for invalid input
+                        try:
+                            if val == "":       #User wants to skip
+                                break
+                            elif type(eval(val)) == bool:
+                                table['dialect'][key] = val
+                                break
+                            else:
+                                print("\nWrong type. Either leave blank or try again.\n")
+                        except:
+                            print("Exception occured. Try Again.\n")
+                            val = input(d_opts[i]+": ")
+
+                else:
+                    while True:
+                    # loop to check for invalid input
+                        try:
+                            if val == "":       #User wants to skip
+                                break
+                            elif type(eval(val)) == int:
+                                table['dialect'][key] = val
+                                break
+                            else:
+                                print("\nWrong type. Either leave blank or try again.\n")
+                        except:
+                            print("Exception occured. Try Again.\n")
+                            val = input(d_opts[i]+": ")
 
 
             table['schema'] = {}
@@ -157,7 +163,7 @@ def create_json():
             contents['resources'].append(table)
 
     file_name = contents['name'] + ".json"
-    with open(JSON_SCRIPTS_DIR + file_name, 'w') as output_file:
+    with open(os.path.join(HOME_DIR, 'scripts', file_name), 'w') as output_file:
         json.dump(contents, output_file, sort_keys=True, indent=4,
             separators=(',', ': '))
         output_file.write('\n')
@@ -166,7 +172,9 @@ def create_json():
 
 
 def edit_dict(obj, tabwidth=0):
-
+    '''
+    Recursive helper function for edit_json() to edit a datapackage.JSON script file.
+    '''
     for (key, val) in obj.items():
         print('\n'+"  "*tabwidth+"->"+key+" : \n")
         if type(val) == list:
@@ -204,7 +212,8 @@ def edit_dict(obj, tabwidth=0):
                     elif selection == '2':
                         mod_key = input('Enter the key: ')
                         if mod_key not in val:
-                            raise Exception("Invalid input! Key not found.")
+                            print("Invalid input! Key not found.")
+                            continue
                         mod_val = input('Enter new value: ')
                         obj[key][mod_key] = mod_val
 
@@ -253,6 +262,9 @@ def edit_dict(obj, tabwidth=0):
 
                     elif selection == '2':
                         del_val = input('Enter value to be deleted: ')
+                        if del_val not in obj[key]:
+                            print("Invalid value: Not found.")
+                            continue
                         print("Removed "+str(obj[key].pop(del_key)))
 
                     elif selection == '3':
@@ -300,12 +312,22 @@ def edit_dict(obj, tabwidth=0):
 
 
 def edit_json(json_file):
+    '''
+    Edits existing datapackage.JSON script.
 
-    contents = yaml.load(open(JSON_SCRIPTS_DIR+json_file+'.json','r'))
+    Usage: retriever edit_json <script_name>
+    Note: Name of script is the dataset shortname.
+    '''
+    try:
+        contents = yaml.load(open(os.path.join(HOME_DIR, 'scripts', json_file),'r'))
+    except FileNotFoundError:
+        print("Script not found.")
+        return
+
     edit_dict(contents, 1)
 
     file_name = contents['name'] + ".json"
-    with open(JSON_SCRIPTS_DIR + file_name, 'w') as output_file:
+    with open(os.path.join(HOME_DIR, 'scripts', file_name), 'w') as output_file:
         json.dump(contents, output_file, sort_keys=True, indent=4,
             separators=(',', ': '))
         output_file.write('\n')

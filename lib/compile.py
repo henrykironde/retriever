@@ -143,10 +143,68 @@ def compile_script(script_file):
     definition.close()
 
 
+def add_dialect(table_dict, table):
+    '''
+    Reads dialect key of JSON script and extracts key-value pairs to store them
+    in python script
+
+    Contains properties such 'nulls', delimiter', etc
+    '''
+    for (key, val) in table['dialect'].items():
+        # dialect related key-value pairs
+        # copied as is
+        if key == "nulls":
+            table_dict['cleanup'] = "Cleanup(correct_invalid_value, nulls=" + str(val) + ")"
+
+        elif key == "delimiter":
+            table_dict[key] = "'" + str(val) + "'"
+        else:
+            table_dict[key] = val
+
+def add_schema(table_dict, table):
+    '''
+    Reads schema key of JSON script and extracts values to store them in
+    python script
+
+    Contains properties related to table schema, such as 'fields' and cross-tab
+    column name ('ct_column').
+    '''
+    for (key, val) in table['schema'].items():
+        #schema related key-value pairs
+
+        if key == "fields":
+            #fields = columns of the table
+
+            #list of column tuples
+            column_list = []
+            for obj in val:
+                #fields is a collection of JSON objects
+                #(similar to a list of dicts in python)
+
+                if "size" in obj:
+                    column_list.append((obj["name"],
+                        (obj["type"], obj["size"])))
+                else:
+                    column_list.append((obj["name"],
+                        (obj["type"], )))
+
+            table_dict["columns"] = column_list
+
+        elif key == "ct_column":
+            table_dict[key] = "'"+val+"'"
+
+        else:
+            table_dict[key] = val
+
+
 def compile_json(json_file):
+    '''
+    Function to compile JSON script files to python scripts
+    The scripts are created with `retriever create_json <script_name` using
+    command line
+    '''
     json_object = yaml.safe_load(open(json_file + ".json","r"))
 
-    tables = {}
     values = {}
     keys_to_ignore = ["template"]
 
@@ -178,7 +236,8 @@ def compile_json(json_file):
             tables = {}
 
             for table in value:
-                table_dict = {}     # Maintain a dict for table keys and values
+                 # Maintain a dict for table keys and values
+                table_dict = {}
 
                 if table["schema"] == {} and table["dialect"] == {}:
                     continue
@@ -186,49 +245,17 @@ def compile_json(json_file):
                 for (t_key, t_val) in table.items():
 
                     if t_key == "dialect":
-                        for (d_key, d_val) in t_val.items():
-                            #dialect related key-value pairs
-                            #copied as is
-                            if d_key == "nulls":
-                                table_dict['cleanup'] = "Cleanup(correct_invalid_value, nulls=" + str(d_val) + ")"
-
-                            elif d_key == "delimiter":
-                                table_dict[d_key] = "'"+str(d_val)+"'"
-                            else:
-                                table_dict[d_key] = d_val
+                        add_dialect(table_dict, table)
 
                     elif t_key == "schema":
-                        for (s_key, s_val) in t_val.items():
-                            #schema related key-value pairs
-
-                            if s_key == "fields":
-                                #fields = columns of the table
-
-                                column_list = []        #list of column tuples
-                                for obj in s_val:
-                                    #fields is a collection of JSON objects
-                                    #(similar to a list of dicts in python)
-
-                                    if "size" in obj:
-                                        column_list.append((obj["name"],
-                                            (obj["type"], obj["size"])))
-                                    else:
-                                        column_list.append((obj["name"],
-                                            (obj["type"], )))
-
-                                table_dict["columns"] = column_list
-
-                            elif s_key == "ct_column":
-                                table_dict[s_key] = "'"+u""+s_val+"'"
-
-                            else:
-                                table_dict[s_key] = s_val
+                        add_schema(table_dict, table)
 
                 tables[table["name"]] = table_dict
 
         else:
             values[key] = value
 
+    # Create a Table object string using the tables dict
     table_desc = "{"
     for (key, value) in tables.items():
         table_desc += "'" + key + "': Table('" + key + "', "
