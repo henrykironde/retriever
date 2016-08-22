@@ -11,7 +11,7 @@
 
 Large quantities of ecological and environmental data are increasingly available thanks to initiatives sponsoring the collection of large-scale data and efforts to increase the publication of already collected datasets. As a result, progress in ecology is increasingly limited by the speed at which we can organize and analyze data. To help improve ecologists' ability to quickly access and analyze data we have been developing software that designs database structures for ecological datasets and then downloads the data, pre-processes it, and installs it into major database management systems (at the moment we support MySQL, PostgreSQL, SQLite, and Microsoft Access).
 
-Once the EcoData Retriever has loaded the data into the database it is easy to connect to the database using standard tools (e.g., MS Access, Filemaker, etc.).The EcoData Retriever can download and install small datasets in seconds and large datasets in minutes. The program also cleans up known issues with the datasets and automatically restructures them into a format appropriate for standard database management systems. The automation of this process reduces the time for a user to get most large datasets up and running by hours, and in some cases days.
+Once the Data Retriever has loaded the data into the database it is easy to connect to the database using standard tools (e.g., MS Access, Filemaker, etc.).The Data Retriever can download and install small datasets in seconds and large datasets in minutes. The program also cleans up known issues with the datasets and automatically restructures them into a format appropriate for standard database management systems. The automation of this process reduces the time for a user to get most large datasets up and running by hours, and in some cases days.
 
 Installing (binaries)
 ---------------------
@@ -23,7 +23,7 @@ and Ubuntu/Debian at the [project website](http://ecodataretriever.org).
 Installing From Source
 ----------------------
 
-To install the EcoData Retriever from source, you'll need Python 2.7+ or 3.3+ with the following packages installed:
+To install the Data Retriever from source, you'll need Python 2.7+ or 3.3+ with the following packages installed:
 
 * xlrd
 
@@ -41,7 +41,7 @@ To install the EcoData Retriever from source, you'll need Python 2.7+ or 3.3+ wi
    setup.py install``. You may need to include `sudo` at the beginning of the
    command depending on your system (i.e., `sudo python setup.py install`).
 3. After installing, type ``retriever`` from a command prompt to launch the
-   EcoData Retriever
+   Data Retriever
 
 Using the Command Line
 ----------------------
