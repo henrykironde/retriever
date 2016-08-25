@@ -141,12 +141,12 @@ def compile_script(script_file):
 
 
 def add_dialect(table_dict, table):
-    '''
+    """
     Reads dialect key of JSON script and extracts key-value pairs to store them
     in python script
 
     Contains properties such 'nulls', delimiter', etc
-    '''
+    """
     for (key, val) in table['dialect'].items():
         # dialect related key-value pairs
         # copied as is
@@ -161,13 +161,13 @@ def add_dialect(table_dict, table):
 
 
 def add_schema(table_dict, table):
-    '''
+    """
     Reads schema key of JSON script and extracts values to store them in
     python script
 
     Contains properties related to table schema, such as 'fields' and cross-tab
     column name ('ct_column').
-    '''
+    """
     for (key, val) in table['schema'].items():
         # schema related key-value pairs
 
@@ -178,14 +178,14 @@ def add_schema(table_dict, table):
             column_list = []
             for obj in val:
                 # fields is a collection of JSON objects
-                #(similar to a list of dicts in python)
+                # (similar to a list of dicts in python)
 
                 if "size" in obj:
                     column_list.append((obj["name"],
                                         (obj["type"], obj["size"])))
                 else:
                     column_list.append((obj["name"],
-                                        (obj["type"], )))
+                                        (obj["type"],)))
 
             table_dict["columns"] = column_list
 
@@ -197,92 +197,95 @@ def add_schema(table_dict, table):
 
 
 def compile_json(json_file):
-    '''
+    """
     Function to compile JSON script files to python scripts
     The scripts are created with `retriever create_json <script_name` using
     command line
-    '''
+    """
     json_object = json.load(open(json_file + ".json", "r"))
 
-    values = {}
-    values['urls'] = {}
+    if "retriever" in json_object.keys():
+        # Compile only files that have retriever key
 
-    keys_to_ignore = ["template"]
+        values = {}
+        values['urls'] = {}
 
-    for (key, value) in json_object.items():
+        keys_to_ignore = ["template"]
 
-        if key == "title":
-            values["name"] = "\"" + value + "\""
+        for (key, value) in json_object.items():
 
-        elif key == "name":
-            values["shortname"] = "\"" + value + "\""
+            if key == "title":
+                values["name"] = "\"" + value + "\""
 
-        elif key == "description":
-            values["description"] = "\"" + value + "\""
+            elif key == "name":
+                values["shortname"] = "\"" + value + "\""
 
-        elif key == "homepage":
-            values["ref"] = "\"" + value + "\""
+            elif key == "description":
+                values["description"] = "\"" + value + "\""
 
-        elif key == "citation":
-            values["citation"] = "\"" + value + "\""
+            elif key == "homepage":
+                values["ref"] = "\"" + value + "\""
 
-        elif key == "keywords":
-            values["tags"] = value
+            elif key == "citation":
+                values["citation"] = "\"" + value + "\""
 
-        elif key == "resources":
-            # Array of table objects
-            tables = {}
-            for table in value:
-                 # Maintain a dict for table keys and values
-                table_dict = {}
+            elif key == "keywords":
+                values["tags"] = value
 
-                try:
-                    values['urls'][table['name']] = table['url']
-                except Exception as e:
-                    print(e, "\nError in reading table: " + table)
-                    continue
+            elif key == "resources":
+                # Array of table objects
+                tables = {}
+                for table in value:
+                    # Maintain a dict for table keys and values
+                    table_dict = {}
 
-                if table["schema"] == {} and table["dialect"] == {}:
-                    continue
+                    try:
+                        values['urls'][table['name']] = table['url']
+                    except Exception as e:
+                        print(e, "\nError in reading table: " + table)
+                        continue
 
-                for (t_key, t_val) in table.items():
+                    if table["schema"] == {} and table["dialect"] == {}:
+                        continue
 
-                    if t_key == "dialect":
-                        add_dialect(table_dict, table)
+                    for (t_key, t_val) in table.items():
 
-                    elif t_key == "schema":
-                        add_schema(table_dict, table)
+                        if t_key == "dialect":
+                            add_dialect(table_dict, table)
 
-                tables[table["name"]] = table_dict
+                        elif t_key == "schema":
+                            add_schema(table_dict, table)
 
+                    tables[table["name"]] = table_dict
+
+            else:
+                values[key] = value
+
+        # Create a Table object string using the tables dict
+        table_desc = "{"
+        for (key, value) in tables.items():
+            table_desc += "'" + key + "': Table('" + key + "', "
+            table_desc += ','.join([key + "=" + str(value)
+                                    for key, value, in value.items()])
+            table_desc += "),"
+        if table_desc != '{':
+            table_desc = table_desc[:-1]
+        table_desc += "}"
+
+        values["tables"] = table_desc
+
+        script_desc = []
+        for key, value in values.items():
+            if key not in keys_to_ignore:
+                script_desc.append(key + "=" + str(value))
+        script_desc = (',\n' + ' ' * 27).join(script_desc)
+
+        if 'template' in values.keys():
+            template = values["template"]
         else:
-            values[key] = value
+            template = "default"
+        script_contents = (script_templates[template] % script_desc)
 
-    # Create a Table object string using the tables dict
-    table_desc = "{"
-    for (key, value) in tables.items():
-        table_desc += "'" + key + "': Table('" + key + "', "
-        table_desc += ','.join([key + "=" + str(value)
-                                for key, value, in value.items()])
-        table_desc += "),"
-    if table_desc != '{':
-        table_desc = table_desc[:-1]
-    table_desc += "}"
-
-    values["tables"] = table_desc
-
-    script_desc = []
-    for key, value in values.items():
-        if key not in keys_to_ignore:
-            script_desc.append(key + "=" + str(value))
-    script_desc = (',\n' + ' ' * 27).join(script_desc)
-
-    if 'template' in values.keys():
-        template = values["template"]
-    else:
-        template = "default"
-    script_contents = (script_templates[template] % script_desc)
-
-    new_script = open(json_file + '.py', 'w')
-    new_script.write(script_contents)
-    new_script.close()
+        new_script = open(json_file + '.py', 'w')
+        new_script.write(script_contents)
+        new_script.close()

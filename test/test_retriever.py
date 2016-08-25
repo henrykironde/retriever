@@ -1,16 +1,14 @@
 """Tests for the Data Retriever"""
 from future import standard_library
-standard_library.install_aliases()
-from imp import reload
-from future.builtins import input
 
+standard_library.install_aliases()
 import os
-import pytest
 import sys
+from imp import reload
+
 reload(sys)
 if hasattr(sys, 'setdefaultencoding'):
     sys.setdefaultencoding('utf-8')
-from io import StringIO
 from retriever.lib.engine import Engine
 from retriever.lib.table import Table
 from retriever.lib.templates import BasicTextTemplate
@@ -195,7 +193,7 @@ def test_getmd5_lines():
 def test_getmd5_path():
     """Test md5 sum calculation given a path to data source"""
     data_file = create_file('a,b,c\n1,2,3\n4,5,6\n')
-    assert getmd5(data=data_file, data_type='file',mode='rU') == '0bec5bf6f93c547bc9c6774acaf85e1a'
+    assert getmd5(data=data_file, data_type='file', mode='rU') == '0bec5bf6f93c547bc9c6774acaf85e1a'
 
 
 def test_json2csv():
@@ -246,107 +244,122 @@ def test_sort_csv():
 
 def test_is_empty_null_string():
     """Test for null string"""
-    assert(is_empty("") == True)
+    assert (is_empty("") == True)
 
 
 def test_is_empty_empty_list():
     """Test for empty list"""
-    assert(is_empty([]) == True)
+    assert (is_empty([]) == True)
 
 
 def test_is_empty_not_null_string():
     """Test for non-null string"""
-    assert(is_empty("not empty") == False)
+    assert (is_empty("not empty") == False)
 
 
 def test_is_empty_not_empty_list():
     """Test for not empty list"""
-    assert(is_empty(["not empty"]) == False)
+    assert (is_empty(["not empty"]) == False)
 
 
 def test_clean_input_empty_input_ignore_empty(monkeypatch):
     """Test with empty input ignored"""
+
     def mock_input(prompt):
         return ""
+
     monkeypatch.setattr('retriever.lib.datapackage.input', mock_input)
-    assert(clean_input("", ignore_empty=True) == "")
+    assert (clean_input("", ignore_empty=True) == "")
 
 
 def test_clean_input_empty_input_not_ignore_empty(monkeypatch):
     """Test with empty input not ignored"""
+
     def mock_input(prompt):
         mock_input.counter += 1
         if mock_input.counter <= 1:
             return ""
         else:
             return "not empty"
+
     mock_input.counter = 0
     monkeypatch.setattr('retriever.lib.datapackage.input', mock_input)
-    assert(clean_input("", ignore_empty=False) == "not empty")
+    assert (clean_input("", ignore_empty=False) == "not empty")
 
 
 def test_clean_input_string_input(monkeypatch):
     """Test with non-empty input"""
+
     def mock_input(prompt):
         return "not empty"
+
     monkeypatch.setattr('retriever.lib.datapackage.input', mock_input)
-    assert(clean_input("") == "not empty")
+    assert (clean_input("") == "not empty")
 
 
 def test_clean_input_empty_list_ignore_empty(monkeypatch):
     """Test with empty list ignored"""
+
     def mock_input(prompt):
         return ",  ,   ,"
+
     monkeypatch.setattr('retriever.lib.datapackage.input', mock_input)
-    assert(clean_input("", ignore_empty=True, split_char=",") == [])
+    assert (clean_input("", ignore_empty=True, split_char=",") == [])
 
 
 def test_clean_input_empty_list_not_ignore_empty(monkeypatch):
     """Test with empty list not ignored"""
+
     def mock_input(prompt):
         mock_input.counter += 1
         if mock_input.counter <= 1:
             return ",  ,   ,"
         else:
             return "1  ,    2,  3,"
+
     mock_input.counter = 0
     monkeypatch.setattr('retriever.lib.datapackage.input', mock_input)
-    assert(clean_input("", split_char=",") == ["1", "2", "3"])
+    assert clean_input("", split_char=",") == ["1", "2", "3"]
 
 
 def test_clean_input_not_empty_list(monkeypatch):
     """Test with list input"""
+
     def mock_input(prompt):
         return "1,    2,     3"
+
     monkeypatch.setattr('retriever.lib.datapackage.input', mock_input)
-    assert(clean_input("", ignore_empty=True, split_char=',', dtype=None) == ["1", "2", "3"])
+    assert clean_input("", ignore_empty=True, split_char=',', dtype=None) == ["1", "2", "3"]
 
 
 def test_clean_input_bool(monkeypatch):
     """Test with correct datatype input"""
+
     def mock_input(prompt):
         return "True "
+
     monkeypatch.setattr('retriever.lib.datapackage.input', mock_input)
-    assert(clean_input("", dtype=bool) == "True")
+    assert clean_input("", dtype=bool) == "True"
 
 
 def test_clean_input_not_bool(monkeypatch):
     """Test with incorrect datatype input"""
+
     def mock_input(prompt):
         mock_input.counter += 1
         if mock_input.counter <= 1:
             return "non bool input"
         else:
             return "True "
+
     mock_input.counter = 0
     monkeypatch.setattr('retriever.lib.datapackage.input', mock_input)
-    assert(clean_input("", dtype=bool) == "True")
+    assert clean_input("", dtype=bool) == "True"
 
 
 def test_add_dialect():
     """Test adding values from dialect key to python script"""
-    table = {}
-    table['dialect'] = {}
+    table = {'dialect': {}}
     table_dict = {}
     table['dialect']['nulls'] = '\0'
     table['dialect']['delimiter'] = '\t'
@@ -358,28 +371,26 @@ def test_add_dialect():
     result['dummy_key'] = 'dummy_value'
 
     add_dialect(table_dict, table)
-    assert(table_dict == result)
+    assert table_dict == result
 
 
 def test_add_schema():
     """Test adding values from schema key to python script"""
-    table = {}
-    table['schema'] = {}
     table_dict = {}
+    table = {'schema': {}}  # dictionary literal for dictionary creation
     table['schema']['fields'] = []
-    table['schema']['fields'].append({'name':'col1', 'type':'int'})
-    table['schema']['fields'].append({'name':'col2', 'type':'char', 'size':20})
+    table['schema']['fields'].append({'name': 'col1', 'type': 'int'})
+    table['schema']['fields'].append({'name': 'col2', 'type': 'char', 'size': 20})
     table['schema']['ct_column'] = 'ct_column'
     table['schema']['ct_names'] = ['ct1', 'ct2', 'ct3', 'ct4']
     table['schema']['dummy_key'] = 'dummy_value'
 
-    result = {}
-    result['columns'] = []
-    result['columns'].append(('col1', ('int',) ))
+    result = {'columns': []}  # dictionary literal for dictionary creation
+    result['columns'].append(('col1', ('int',)))
     result['columns'].append(('col2', ('char', 20)))
     result['ct_column'] = "'ct_column'"
     result['ct_names'] = ['ct1', 'ct2', 'ct3', 'ct4']
     result['dummy_key'] = 'dummy_value'
 
     add_schema(table_dict, table)
-    assert(table_dict == result)
+    assert (table_dict == result)
