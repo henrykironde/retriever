@@ -101,35 +101,17 @@ class Engine(object):
             real_line_length = sum(1 for _ in len_source)
 
         total = self.table.record_id + real_line_length
-        pos = 0
         count_iter = 1
-        insert_limit = 200
+        insert_limit = 1
         current = 0
         types = self.table.get_column_datatypes()
         multiple_values = []
         for line in real_lines:
             if not self.table.fixed_width:
-                # This replaces end of line characters that exist in a single line
-                # eg. "one \nline has multiple end of lines\n"
-                line.replace('\n', '').strip()
+                line = line.strip()
             if line:
                 self.table.record_id += 1
-
-                # Check for single row distributed over multiple lines
-                val_list = self.table.extract_values(line)
-                while len(val_list) < len(self.table.get_column_datatypes()):
-                    line = line.rstrip('\n')
-                    if type(real_lines) != list:
-                        line += next(real_lines)
-                    else:
-                        line += real_lines[pos+1]
-                        real_lines.pop(pos+1)
-                    real_line_length -= 1
-                    val_list = (self.table.extract_values(line))
-                pos += 1
-
                 linevalues = self.table.values_from_line(line)
-
                 # Build insert statement with the correct # of values
                 try:
                     cleanvalues = [self.format_insert_value(self.table.cleanup.function
@@ -342,7 +324,7 @@ class Engine(object):
                     self.connection.rollback()
                 except:
                     pass
-                print("Couldn't create database (%s). Trying to continue anyway." % e)
+                print("New database not created, {}Trying to continue installation.....".format(e))
 
     def create_db_statement(self):
         """Returns a SQL statement to create a database."""
@@ -452,12 +434,12 @@ class Engine(object):
 
                 if filetype == 'zip':
                     archive = zipfile.ZipFile(archivename)
-                    open_archive_file = archive.open(filename, 'r')
+                    open_archive_file = archive.open(filename, 'rU')
                 elif filetype == 'gz':
                     # gzip archives can only contain a single file
-                    open_archive_file = gzip.open(archivename, 'r')
+                    open_archive_file = gzip.open(archivename, 'rU')
                 elif filetype == 'tar':
-                    archive = tarfile.open(filename, 'r')
+                    archive = tarfile.open(filename, 'rU')
                     open_archive_file = archive.extractfile(filename)
 
                 fileloc = self.format_filename(os.path.join(archivebase,

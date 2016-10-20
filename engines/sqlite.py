@@ -1,5 +1,6 @@
 from builtins import range
 import os
+import sys
 import platform
 from retriever.lib.models import Engine, no_cleanup
 from retriever import DATA_DIR
@@ -41,8 +42,8 @@ class engine(Engine):
 
         This places ?'s instead of the actual values so that executemany() can
         operate as designed
-
         """
+        self.set_engine_encoding()
         columns = self.table.get_insert_columns()
         types = self.table.get_column_datatypes()
         columncount = len(self.table.get_insert_columns(False))
@@ -60,10 +61,10 @@ class engine(Engine):
         Checks to see if a given file can be bulk inserted, and if so loads
         it in chunks and inserts those chunks into the database using
         executemany.
-
         """
         CHUNK_SIZE = 1000000
         self.get_cursor()
+        self.set_engine_encoding()
         ct = len([True for c in self.table.columns if c[1][0][:3] == "ct-"]) != 0
         if (([self.table.cleanup.function, self.table.header_rows] == [no_cleanup, 1])
             and not self.table.fixed_width
@@ -80,12 +81,12 @@ class engine(Engine):
                     data_chunk = [line.rstrip('\r\n') for line in data_chunk if line not in line_endings]
                     del(data_chunk[:self.table.header_rows])
                     while data_chunk:
-                        data_chunk_split = [row.split(self.table.delimiter)
+                        data_chunk_split = [(row.split(self.table.delimiter))
                                             for row in data_chunk]
                         self.cursor.executemany(bulk_insert_statement, data_chunk_split)
                         data_chunk = data_file.readlines(CHUNK_SIZE)
                 self.connection.commit()
-            except:
+            except AttributeError as e:
                 self.connection.rollback()
                 return Engine.insert_data_from_file(self, filename)
         else:
@@ -104,6 +105,9 @@ class engine(Engine):
     def to_csv(self):
         self.connection.text_factory = str
         Engine.to_csv(self)
+
+    def set_engine_encoding(self):
+        self.connection.text_factory = str
 
     def get_connection(self):
         """Gets the db connection."""
