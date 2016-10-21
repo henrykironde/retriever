@@ -99,7 +99,7 @@ CSV HEADER;"""
         """Returns a SQL statement to insert a set of values"""
         statement = Engine.insert_statement(self, values)
         if isinstance(statement, bytes):
-            statement = statement.decode("utf-8", "ignore")
+            statement = statement.decode(sys.getdefaultencoding(), "ignore")
         return statement
 
     def table_exists(self, dbname, tablename):

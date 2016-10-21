@@ -101,14 +101,15 @@ class Engine(object):
             real_line_length = sum(1 for _ in len_source)
 
         total = self.table.record_id + real_line_length
+        pos = 0
         count_iter = 1
         insert_limit = 1
         current = 0
         types = self.table.get_column_datatypes()
         multiple_values = []
         for line in real_lines:
-            if not self.table.fixed_width:
-                line = line.strip()
+            # if not self.table.fixed_width:
+            #     line = line.strip()
             if line:
                 self.table.record_id += 1
                 linevalues = self.table.values_from_line(line)
@@ -434,12 +435,12 @@ class Engine(object):
 
                 if filetype == 'zip':
                     archive = zipfile.ZipFile(archivename)
-                    open_archive_file = archive.open(filename, 'rU')
+                    open_archive_file = archive.open(filename, 'rb')
                 elif filetype == 'gz':
                     # gzip archives can only contain a single file
-                    open_archive_file = gzip.open(archivename, 'rU')
+                    open_archive_file = gzip.open(archivename, 'rb')
                 elif filetype == 'tar':
-                    archive = tarfile.open(filename, 'rU')
+                    archive = tarfile.open(filename, 'rb')
                     open_archive_file = archive.extractfile(filename)
 
                 fileloc = self.format_filename(os.path.join(archivebase,
@@ -627,6 +628,7 @@ class Engine(object):
         """The default function to insert data from a file. This function
         simply inserts the data row by row. Database platforms with support
         for inserting bulk data from files can override this function."""
+        self.execute("SET CLIENT_ENCODING TO '{0}';".format(sys.getdefaultencoding()))
         data_source = (skip_rows,
                        (self.table.header_rows,
                         (io.open, (filename, 'r', -1, 'latin-1'))))
