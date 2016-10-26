@@ -695,10 +695,6 @@ class Engine(object):
         data_source = (skip_rows,
                        (self.table.header_rows, load_data(filename, self.table.delimiter)))
 
-        print (data_source,"line 636 engine")
-
-        self.add_to_table(data_source)
-
     def insert_data_from_url(self, url):
         """Insert data from a web resource, such as a text file."""
         filename = filename_from_url(url)
@@ -764,10 +760,10 @@ def load_data(filename, delimeter="\t"):
             print( repr (row))
             temp_list =[]
             for fields in row:
-                x=fields.decode("latin-1").encode('utf-8').strip( )
-                clean = reg.sub("KKKKKKKKKKK",x )
+                x = fields.decode("latin-1").encode('utf-8').strip( )
+                clean = reg.sub(" ", x )
                 temp_list.append(clean)
-            print (temp_list,os.linesep)
+            yield ','.join(temp_list)
             # print(','.join([ reg.sub(" ", fields.decode("latin-1").encode('utf-8')).strip() for fields in row]))
             # # yield ','.join([ reg.sub(" ", fields.decode("latin-1").encode('utf-8')).strip() for fields in row])
 
