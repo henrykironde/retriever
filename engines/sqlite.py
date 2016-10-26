@@ -103,11 +103,11 @@ class engine(Engine):
         return self.table_name(name=tablename, dbname=dbname).lower() in self.existing_table_names
 
     def to_csv(self):
-        self.connection.text_factory = str
+        self.connection.text_factory = unicode
         Engine.to_csv(self)
 
     def set_engine_encoding(self):
-        self.connection.text_factory = str
+        self.connection.text_factory = unicode
 
     def get_connection(self):
         """Gets the db connection."""
