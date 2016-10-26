@@ -69,7 +69,6 @@ class Engine(object):
     def add_to_table(self, data_source):
         """This function adds data to a table from one or more lines specified
         in engine.table.source."""
-
         if self.table.columns[-1][1][0][:3] == "ct-":
             # cross-tab data
 
@@ -97,9 +96,8 @@ class Engine(object):
             # this function returns a generator that iterates over the lines in
             # the source data
             def source_gen():
-                for line in gen_from_source(data_source):
-                    if line.strip('\n\r\t '):
-                        yield line
+                return (line for line in gen_from_source(data_source)
+                        if line.strip('\n\r\t '))
 
             # use one generator to compute the length of the input
             real_lines, len_source = tee(source_gen())
@@ -108,12 +106,15 @@ class Engine(object):
         total = self.table.record_id + real_line_length
         pos = 0
         count_iter = 1
-        insert_limit = 200
+        insert_limit = 1
         current = 0
         types = self.table.get_column_datatypes()
         multiple_values = []
         for line in real_lines:
-            line = line.decode("latin-1")
+            if not self.table.fixed_width:
+                # This replaces end of line characters that exist in a single line
+                # eg. "one \nline has multiple end of lines\n"
+                line = line.replace('\n', '').strip()
             if line:
                 self.table.record_id += 1
                 linevalues = self.table.values_from_line(line)
@@ -143,7 +144,6 @@ class Engine(object):
                     multiple_values = []
 
                     try:
-                        self.connection.text_factory = str
                         self.execute(insert_stmt, commit=False)
                         current += insert_limit
                         if current > real_line_length:
@@ -174,7 +174,8 @@ class Engine(object):
         file_path = self.find_file(filename)
 
         source = (skip_rows,
-                  (self.table.column_names_row - 1, load_data(file_path)))
+                  (self.table.column_names_row - 1,
+                   (io.open, (file_path, 'r', -1, 'latin-1'))))
         lines = gen_from_source(source)
 
         header = next(lines)
@@ -182,7 +183,7 @@ class Engine(object):
 
         if not self.table.delimiter:
             self.auto_get_delimiter(header)
-        exit()
+
         source = (skip_rows,
                   (self.table.header_rows, load_data(file_path, self.table.delimiter)))
 
@@ -328,7 +329,7 @@ class Engine(object):
                     self.connection.rollback()
                 except:
                     pass
-                print("New database not created, {}Trying to continue installation.....".format(e))
+                print("Couldn't create database (%s). Trying to continue anyway." % e)
 
     def create_db_statement(self):
         """Returns a SQL statement to create a database."""
@@ -633,6 +634,7 @@ class Engine(object):
         for inserting bulk data from files can override this function."""
         data_source = (skip_rows,
                        (self.table.header_rows, load_data(filename, self.table.delimiter)))
+        self.add_to_table(data_source)
 
     def insert_data_from_url(self, url):
         """Insert data from a web resource, such as a text file."""
@@ -654,22 +656,19 @@ class Engine(object):
         types = self.table.get_column_datatypes()
         columncount = len(self.table.get_insert_columns(join=False, create=False))
         insert_stmt = "INSERT INTO {} ({}) VALUES ".format(self.table_name(), columns)
-        for rows in values:
-            vals = rows
-            insert_stmt2 = " ("
-            for i in range(0, columncount):
-                insert_stmt2 += "%s, "
-            insert_stmt2 = insert_stmt2.rstrip(", ") + "),"
-            n = 0
-            while len(vals) < insert_stmt.count("%s"):
-                vals.append(self.format_insert_value(None, types[n]))
-                n += 1
-            insert_stmt2 %= tuple([str(value) for value in vals])
-            insert_stmt += insert_stmt2
+        for row in values:
+            row_length = len(row)
+            # Add None with appropriate value type for empty cells
+            for i in range(columncount - row_length):
+                row.append(self.format_insert_value(None, types[row_length + i]))
+
+            insert_stmt += " (" + ", ".join([str(val) for val in row]) +"), "
         insert_stmt = insert_stmt.rstrip(", ") + ";"
         if self.debug:
             print(insert_stmt)
-        return insert_stmt
+        # print (type(insert_stmt))
+        # exit()
+        return insert_stmt.decode("latin-1").encode('utf-8').strip( )
 
     def table_exists(self, dbname, tablename):
         """This can be overridden to return True if a table exists. It
@@ -695,9 +694,15 @@ def load_data(filename, delimiter="\t"):
     reg = re.compile("\\r\\n|\n|\r")
     with open(filename, "rb") as dataset_file:
         for row in csv.reader(dataset_file, delimiter="{0}".format("\t")):
+            # print(row,"LLLLLL")
+            # print(row,"LLLLLL")
             temp_list =[]
             for fields in row:
-                x = fields.decode("latin-1").encode('utf-8').strip( )
+                # if len(fields.split('\n'):
+                #     print (row)
+                #     exit()
+                x = fields.decode("latin-1").strip( ).strip("\n").replace("\n", "").decode("latin-1").encode('utf-8')
+                # x = fields.decode("latin-1").encode('utf-8').strip( ).strip("\n")
                 clean = reg.sub(" ", x )
                 temp_list.append(clean)
             yield '{0}'.format(delimiter).join(temp_list)

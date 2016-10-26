@@ -6,41 +6,211 @@
         "Taxon > Birds",
         "Data Type > Compilation"
     ],
-    "name": "EltonTraits",
+    "name": "Elss",
     "resources": [
         {
             "dialect": {},
             "name": "BirdFuncDat",
-            "schema": {},
+            "schema": {
+                "fields": [
+                    {
+                        "name": "specid",
+                        "type": "char"
+                    },
+                    {
+                        "name": "passnonpass",
+                        "type": "char"
+                    },
+                    {
+                        "name": "iocorder",
+                        "type": "char"
+                    },
+                    {
+                        "name": "blfamilylatin",
+                        "type": "char"
+                    },
+                    {
+                        "name": "blfamilyenglish",
+                        "type": "char"
+                    },
+                    {
+                        "name": "blfamsequid",
+                        "size": "20",
+                        "type": "char"
+                    },
+                    {
+                        "name": "taxo",
+                        "size": "20",
+                        "type": "char"
+                    },
+                    {
+                        "name": "scientific",
+                        "type": "char"
+                    },
+                    {
+                        "name": "english",
+                        "type": "char"
+                    },
+                    {
+                        "name": "diet_inv",
+                        "size": "20",
+                        "type": "char"
+                    },
+                    {
+                        "name": "diet_vend",
+                        "size": "20",
+                        "type": "char"
+                    },
+                    {
+                        "name": "diet_vect",
+                        "size": "20",
+                        "type": "char"
+                    },
+                    {
+                        "name": "diet_vfish",
+                        "size": "20",
+                        "type": "char"
+                    },
+                    {
+                        "name": "diet_vunk",
+                        "size": "20",
+                        "type": "char"
+                    },
+                    {
+                        "name": "diet_scav",
+                        "size": "20",
+                        "type": "char"
+                    },
+                    {
+                        "name": "diet_fruit",
+                        "size": "20",
+                        "type": "char"
+                    },
+                    {
+                        "name": "diet_nect",
+                        "size": "20",
+                        "type": "char"
+                    },
+                    {
+                        "name": "diet_seed",
+                        "size": "20",
+                        "type": "char"
+                    },
+                    {
+                        "name": "diet_planto",
+                        "size": "20",
+                        "type": "char"
+                    },
+                    {
+                        "name": "diet_5cat",
+                        "size": "20",
+                        "type": "char"
+                    },
+                    {
+                        "name": "diet_source",
+                        "size": "20",
+                        "type": "char"
+                    },
+                    {
+                        "name": "diet_certainty",
+                        "size": "10",
+                        "type": "char"
+                    },
+                    {
+                        "name": "diet_enteredby",
+                        "size": "20",
+                        "type": "char"
+                    },
+                    {
+                        "name": "forstrat_watbelowsurf",
+                        "size": "20",
+                        "type": "char"
+                    },
+                    {
+                        "name": "forstrat_wataroundsurf",
+                        "size": "20",
+                        "type": "char"
+                    },
+                    {
+                        "name": "forstrat_ground",
+                        "size": "20",
+                        "type": "char"
+                    },
+                    {
+                        "name": "forstrat_understory",
+                        "size": "20",
+                        "type": "char"
+                    },
+                    {
+                        "name": "forstrat_midhigh",
+                        "size": "20",
+                        "type": "char"
+                    },
+                    {
+                        "name": "forstrat_canopy",
+                        "size": "20",
+                        "type": "char"
+                    },
+                    {
+                        "name": "forstrat_aerial",
+                        "size": "20",
+                        "type": "char"
+                    },
+                    {
+                        "name": "pelagicspecialist",
+                        "size": "20",
+                        "type": "char"
+                    },
+                    {
+                        "name": "forstrat_source",
+                        "type": "char"
+                    },
+                    {
+                        "name": "forstrat_speclevel",
+                        "size": "20",
+                        "type": "char"
+                    },
+                    {
+                        "name": "forstrat_enteredby",
+                        "type": "char"
+                    },
+                    {
+                        "name": "nocturnal",
+                        "type": "char"
+                    },
+                    {
+                        "name": "bodymass_value",
+                        "type": "char"
+                    },
+                    {
+                        "name": "bodymass_source",
+                        "type": "double"
+                    },
+                    {
+                        "name": "bodymass_speclevel",
+                        "size": "20",
+                        "type": "char"
+                    },
+                    {
+                        "name": "bodymass_comment",
+                        "type": "char"
+                    },
+                    {
+                        "name": "record_comment",
+                        "type": "char"
+                    }
+                ]
+            },
             "url": "http://esapubs.org/archive/ecol/E095/178/BirdFuncDat.txt"
-        },
-        {
-            "dialect": {},
-            "name": "MammFuncDat",
-            "schema": {},
-            "url": "http://esapubs.org/archive/ecol/E095/178/MamFuncDat.txt"
-        },
-        {
-            "dialect": {},
-            "name": "BirdCitations",
-            "schema": {},
-            "url": "http://esapubs.org/archive/ecol/E095/178/BirdFuncDatSources.txt"
-        },
-        {
-            "dialect": {},
-            "name": "MammCitations",
-            "schema": {},
-            "url": "http://esapubs.org/archive/ecol/E095/178/MamFuncDatSources.txt"
         }
     ],
     "retriever": "True",
     "retriever_minimum_version": "2.0.dev",
     "title": "Mammal and Bird foraging attributes -- Wilman, et al., 2014",
     "urls": {
-        "BirdCitations": "http://esapubs.org/archive/ecol/E095/178/BirdFuncDatSources.txt",
-        "BirdFuncDat": "http://esapubs.org/archive/ecol/E095/178/BirdFuncDat.txt",
-        "MammCitations": "http://esapubs.org/archive/ecol/E095/178/MamFuncDatSources.txt",
-        "MammFuncDat": "http://esapubs.org/archive/ecol/E095/178/MamFuncDat.txt"
+
+        "BirdFuncDat": "http://esapubs.org/archive/ecol/E095/178/BirdFuncDat.txt"
+
     },
     "version": 1.0
 }

@@ -65,6 +65,7 @@ class engine(Engine):
         CHUNK_SIZE = 1000000
         self.get_cursor()
         self.set_engine_encoding()
+        self.connection.text_factory = str
         ct = len([True for c in self.table.columns if c[1][0][:3] == "ct-"]) != 0
         if (([self.table.cleanup.function, self.table.header_rows] == [no_cleanup, 1])
             and not self.table.fixed_width
@@ -88,6 +89,7 @@ class engine(Engine):
                 self.connection.commit()
             except AttributeError as e:
                 self.connection.rollback()
+                self.connection.text_factory = str
                 return Engine.insert_data_from_file(self, filename)
         else:
             return Engine.insert_data_from_file(self, filename)
@@ -103,11 +105,11 @@ class engine(Engine):
         return self.table_name(name=tablename, dbname=dbname).lower() in self.existing_table_names
 
     def to_csv(self):
-        self.connection.text_factory = unicode
+        self.connection.text_factory = str
         Engine.to_csv(self)
 
     def set_engine_encoding(self):
-        self.connection.text_factory = unicode
+        self.connection.text_factory = str
 
     def get_connection(self):
         """Gets the db connection."""
