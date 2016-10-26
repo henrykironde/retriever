@@ -70,29 +70,10 @@ class Engine(object):
         """This function adds data to a table from one or more lines specified
         in engine.table.source."""
 
-        print (data_source,"add to table 70")
-
-        # for line in gen_from_source(data_source):
-        #     e = line
-        #     print (e)
-        #
-        #     print (type(e))
-        #
-        #
-        # exit()
-
-
         if self.table.columns[-1][1][0][:3] == "ct-":
             # cross-tab data
 
             lines = gen_from_source(data_source)
-            # for line in lines:
-            #     print (lines.next())
-            #     e = lines.next()
-            #     print (type(e))
-            # print(lines)
-            # print (type((lines)))
-            # exit()
             real_lines = []
             for line in lines:
                 split_line = self.table.extract_values(line)
@@ -120,59 +101,19 @@ class Engine(object):
                     if line.strip('\n\r\t '):
                         yield line
 
-                # return (line.next() for line in gen_from_source(data_source)
-                #         if line.strip('\n\r\t '))
-
             # use one generator to compute the length of the input
             real_lines, len_source = tee(source_gen())
             real_line_length = sum(1 for _ in len_source)
 
-            # # use one generator to compute the length of the input
-            # real_lines, len_source = gen_from_source(data_source), gen_from_source(data_source)
-            # # real_line_length = sum(1 for _ in len_source)
-
-        # # print (real_lines.next(),"MMMMM111")
-        # print ( (real_lines),"MMMMM222")
-        # print (type(real_lines),"dfsaddd")
-        # print (real_lines.next(),"hhhhh")
-        # print (real_lines.next(),"1111")
-        # print (next(real_lines),"next2")
-        # print (real_line_length)
-        # # print (dir(real_lines))
-        # # print (next(next(real_lines)))
-        #
-        # for line in real_lines:
-        #
-        #     e = line
-        #     print (e)
-        #     print (type(e),"MMMMM444")
-        #
-        #
-        # exit()
-
-        self.connection.text_factory = unicode
-
         total = self.table.record_id + real_line_length
         pos = 0
         count_iter = 1
-        insert_limit = 1
+        insert_limit = 200
         current = 0
         types = self.table.get_column_datatypes()
         multiple_values = []
-        # print( "kkkkkkkk",real_line_length)
-        # print (real_lines)
-        # print (type(real_lines))
-        #
-        # for lines in real_lines:
-        #
-        #     e = lines
-        #     print(e,"kkkkkkkk")
-        # exit()
         for line in real_lines:
             line = line.decode("latin-1")
-            print (line.decode("latin-1"))
-            # if not self.table.fixed_width:
-            #     line = line.strip()
             if line:
                 self.table.record_id += 1
                 linevalues = self.table.values_from_line(line)
@@ -233,17 +174,17 @@ class Engine(object):
         file_path = self.find_file(filename)
 
         source = (skip_rows,
-                  (self.table.column_names_row - 1, load_data(file_path, self.table.delimiter)))
+                  (self.table.column_names_row - 1, load_data(file_path)))
         lines = gen_from_source(source)
 
         header = next(lines)
         lines.close()
 
-        source = (skip_rows,
-                  (self.table.header_rows, load_data(file_path, self.table.delimiter)))
-
         if not self.table.delimiter:
             self.auto_get_delimiter(header)
+        exit()
+        source = (skip_rows,
+                  (self.table.header_rows, load_data(file_path, self.table.delimiter)))
 
         if not self.table.columns:
             lines = gen_from_source(source)
@@ -690,8 +631,6 @@ class Engine(object):
         """The default function to insert data from a file. This function
         simply inserts the data row by row. Database platforms with support
         for inserting bulk data from files can override this function."""
-        # self.execute("SET CLIENT_ENCODING TO '{0}'"
-        #              ";".format(sys.getdefaultencoding()))
         data_source = (skip_rows,
                        (self.table.header_rows, load_data(filename, self.table.delimiter)))
 
@@ -752,36 +691,23 @@ class Engine(object):
         self.warnings.append(new_warning)
 
 
-def load_data(filename, delimeter="\t"):
+def load_data(filename, delimiter="\t"):
     reg = re.compile("\\r\\n|\n|\r")
-
     with open(filename, "rb") as dataset_file:
-        for row in csv.reader(dataset_file):
-            print( repr (row))
+        for row in csv.reader(dataset_file, delimiter="{0}".format("\t")):
             temp_list =[]
             for fields in row:
                 x = fields.decode("latin-1").encode('utf-8').strip( )
                 clean = reg.sub(" ", x )
                 temp_list.append(clean)
-            yield ','.join(temp_list)
-            # print(','.join([ reg.sub(" ", fields.decode("latin-1").encode('utf-8')).strip() for fields in row]))
-            # # yield ','.join([ reg.sub(" ", fields.decode("latin-1").encode('utf-8')).strip() for fields in row])
+            yield '{0}'.format(delimiter).join(temp_list)
 
-
-
-             # yield ','.join([fields.decode("latin-1").encode('utf-8').replace("\n", " ").replace("\r", " ").strip() for fields in row])
-                 # yield '{}'.format(delimeter).join([fields.decode("latin-1").encode('utf-8').replace("\n", " ").replace("\r", " ").strip() for fields in row])
-
-                # # yield
-                # # print(','.join(fields.decode("latin-1").encode('utf-8').replace("\n", "").replace("\r", "").strip() for fields in row))
-                # yield ','.join(fields.decode("latin-1").encode('utf-8').replace("\n", "").replace("\r", "").strip() for fields in row)
 
 def skip_rows(rows, source):
     """Skip over the header lines by reading them before processing."""
     lines = gen_from_source(source)
     for i in range(rows):
         next(lines)
-        print(lines)
     return lines
 
 
