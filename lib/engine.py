@@ -100,7 +100,7 @@ class Engine(object):
                         if line.strip('\n\r\t '))
 
             # use one generator to compute the length of the input
-            real_lines, len_source = tee(source_gen())
+            real_lines, len_source = source_gen(), source_gen()
             real_line_length = sum(1 for _ in len_source)
 
         total = self.table.record_id + real_line_length
@@ -713,7 +713,7 @@ def skip_rows(rows, source):
     lines = gen_from_source(source)
     for i in range(rows):
         next(lines)
-    return lines
+    return source
 
 
 def file_exists(path):

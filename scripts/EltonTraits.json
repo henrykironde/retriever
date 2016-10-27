@@ -6,7 +6,7 @@
         "Taxon > Birds",
         "Data Type > Compilation"
     ],
-    "name": "Elss",
+    "name": "EltonTraits",
     "resources": [
         {
             "dialect": {},
@@ -202,15 +202,34 @@
                 ]
             },
             "url": "http://esapubs.org/archive/ecol/E095/178/BirdFuncDat.txt"
+        },
+        {
+            "dialect": {},
+            "name": "MammFuncDat",
+            "schema": {},
+            "url": "http://esapubs.org/archive/ecol/E095/178/MamFuncDat.txt"
+        },
+        {
+            "dialect": {},
+            "name": "BirdCitations",
+            "schema": {},
+            "url": "http://esapubs.org/archive/ecol/E095/178/BirdFuncDatSources.txt"
+        },
+        {
+            "dialect": {},
+            "name": "MammCitations",
+            "schema": {},
+            "url": "http://esapubs.org/archive/ecol/E095/178/MamFuncDatSources.txt"
         }
     ],
     "retriever": "True",
     "retriever_minimum_version": "2.0.dev",
     "title": "Mammal and Bird foraging attributes -- Wilman, et al., 2014",
     "urls": {
-
-        "BirdFuncDat": "http://esapubs.org/archive/ecol/E095/178/BirdFuncDat.txt"
-
+        "BirdCitations": "http://esapubs.org/archive/ecol/E095/178/BirdFuncDatSources.txt",
+        "BirdFuncDat": "http://esapubs.org/archive/ecol/E095/178/BirdFuncDat.txt",
+        "MammCitations": "http://esapubs.org/archive/ecol/E095/178/MamFuncDatSources.txt",
+        "MammFuncDat": "http://esapubs.org/archive/ecol/E095/178/MamFuncDat.txt"
     },
     "version": 1.0
 }
