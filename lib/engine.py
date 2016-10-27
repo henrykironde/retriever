@@ -69,38 +69,14 @@ class Engine(object):
     def add_to_table(self, data_source):
         """This function adds data to a table from one or more lines specified
         in engine.table.source."""
+        lines = gen_from_source(data_source)
+
         if self.table.columns[-1][1][0][:3] == "ct-":
             # cross-tab data
-
-            lines = gen_from_source(data_source)
             real_lines = []
-            for line in lines:
-                split_line = self.table.extract_values(line)
-                initial_cols = len(self.table.columns) - (3 if hasattr(self.table, "ct_names") else 2)
-                # add one if auto increment is not set to get the right initial columns
-                if not self.table.columns[0][1][0] == "pk-auto":
-                    initial_cols += 1
-                begin = split_line[:initial_cols]
-                rest = split_line[initial_cols:]
-                n = 0
-                for item in rest:
-                    if hasattr(self.table, "ct_names"):
-                        name = [self.table.ct_names[n]]
-                        n += 1
-                    else:
-                        name = []
-                    real_lines.append(
-                        self.table.combine_on_delimiter(begin + name + [item]))
-            real_line_length = len(real_lines)
+            real_line_length = self.method_nametest(lines, real_lines)
         else:
-            # this function returns a generator that iterates over the lines in
-            # the source data
-            def source_gen():
-                return (line for line in gen_from_source(data_source)
-                        if line.strip('\n\r\t '))
-
-            # use one generator to compute the length of the input
-            real_lines, len_source = source_gen(), source_gen()
+            real_lines, len_source = tee(lines)
             real_line_length = sum(1 for _ in len_source)
 
         total = self.table.record_id + real_line_length
@@ -160,6 +136,27 @@ class Engine(object):
                 count_iter += 1
         print ("\n")
         self.connection.commit()
+
+    def method_nametest(self, lines, real_lines):
+        for line in lines:
+            split_line = self.table.extract_values(line)
+            initial_cols = len(self.table.columns) - (3 if hasattr(self.table, "ct_names") else 2)
+            # add one if auto increment is not set to get the right initial columns
+            if not self.table.columns[0][1][0] == "pk-auto":
+                initial_cols += 1
+            begin = split_line[:initial_cols]
+            rest = split_line[initial_cols:]
+            n = 0
+            for item in rest:
+                if hasattr(self.table, "ct_names"):
+                    name = [self.table.ct_names[n]]
+                    n += 1
+                else:
+                    name = []
+                real_lines.append(
+                    self.table.combine_on_delimiter(begin + name + [item]))
+        real_line_length = len(real_lines)
+        return real_line_length
 
     def auto_create_table(self, table, url=None, filename=None, pk=None):
         """Creates a table automatically by analyzing a data source and
@@ -692,8 +689,9 @@ class Engine(object):
 
 def load_data(filename, delimiter="\t"):
     reg = re.compile("\\r\\n|\n|\r")
-    with open(filename, "rb") as dataset_file:
-        for row in csv.reader(dataset_file, delimiter="{0}".format("\t")):
+    # print (filename)C:\Users\Henry\.retriever\raw_data\MoM2003\MOMv3.3.txt
+    with open(filename, "rU") as dataset_file:
+        for row in csv.reader(dataset_file,  delimiter="\t",  quoting=csv.QUOTE_MINIMAL):
             # print(row,"LLLLLL")
             # print(row,"LLLLLL")
             temp_list =[]
@@ -707,12 +705,30 @@ def load_data(filename, delimiter="\t"):
                 temp_list.append(clean)
             yield '{0}'.format(delimiter).join(temp_list)
 
+# def load_data(filename, delimiter="\t"):
+#     reg = re.compile("\\r\\n|\n|\r")
+#     with open(filename, "r") as dataset_file:
+#         return csv.reader(dataset_file, delimiter="{0}".format("\t"))
+#             #
+#             # # print(row,"LLLLLL")
+#             # # print(row,"LLLLLL")
+#             # temp_list =[]
+#             # for fields in row:
+#             #     # if len(fields.split('\n'):
+#             #     #     print (row)
+#             #     #     exit()
+#             #     x = fields.decode("latin-1").strip( ).strip("\n").replace("\n", "").decode("latin-1").encode('utf-8')
+#             #     # x = fields.decode("latin-1").encode('utf-8').strip( ).strip("\n")
+#             #     clean = reg.sub(" ", x )
+#             #     temp_list.append(clean)
+#             # yield '{0}'.format(delimiter).join(temp_list)
 
 def skip_rows(rows, source):
     """Skip over the header lines by reading them before processing."""
     lines = gen_from_source(source)
     for i in range(rows):
         next(lines)
+    # return lines
     return source
 
 
