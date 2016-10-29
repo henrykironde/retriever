@@ -70,6 +70,7 @@ class engine(Engine):
         if (([self.table.cleanup.function, self.table.header_rows] == [no_cleanup, 1])
             and not self.table.fixed_width
             and not ct
+            and not self.table.columns[0][1][0] == "pk-auto"
             and (not hasattr(self.table, "do_not_bulk_insert") or not self.table.do_not_bulk_insert)
             ):
             columns = self.table.get_insert_columns()
