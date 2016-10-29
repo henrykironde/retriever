@@ -46,13 +46,13 @@ class engine(Engine):
         self.set_engine_encoding()
         columns = self.table.get_insert_columns()
         types = self.table.get_column_datatypes()
-        columncount = len(self.table.get_insert_columns(False))
+        column_count = len(self.table.get_insert_columns(False))
         insert_stmt = "INSERT INTO " + self.table_name()
         insert_stmt += " (" + columns + ")"
         insert_stmt += " VALUES ("
-        for i in range(0, columncount):
+        for i in range(0, column_count):
             insert_stmt += "?, "
-        insert_stmt = insert_stmt.rstrip(", ") + ");"
+        insert_stmt = insert_stmt.rstrip(", ") + ")"
         return insert_stmt
 
     def insert_data_from_file(self, filename):
@@ -73,17 +73,21 @@ class engine(Engine):
             and (not hasattr(self.table, "do_not_bulk_insert") or not self.table.do_not_bulk_insert)
             ):
             columns = self.table.get_insert_columns()
+            column_len = columns.split(self.table.delimiter)
             filename = os.path.abspath(filename)
             try:
                 bulk_insert_statement = self.get_bulk_insert_statement()
                 line_endings = set(['\n', '\r', '\r\n'])
                 with open(filename, 'r') as data_file:
                     data_chunk = data_file.readlines(CHUNK_SIZE)
-                    data_chunk = [line.rstrip('\r\n') for line in data_chunk if line not in line_endings]
+                    data_chunk = [line.rstrip('\r\n') for line in data_chunk if line.rstrip('\r\n') not in line_endings]
                     del(data_chunk[:self.table.header_rows])
                     while data_chunk:
-                        data_chunk_split = [(row.split(self.table.delimiter))
-                                            for row in data_chunk]
+                        data_chunk_split = []
+                        for row in data_chunk:
+                            row_values = row.split(self.table.delimiter)
+                            if len(row_values) != column_len:
+                                row_values = [None] * (len(column_len) - len(row_values))
                         self.cursor.executemany(bulk_insert_statement, data_chunk_split)
                         data_chunk = data_file.readlines(CHUNK_SIZE)
                 self.connection.commit()
