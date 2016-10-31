@@ -40,12 +40,10 @@
                     },
                     {
                         "name": "species",
-                        "size": "4",
                         "type": "char"
                     },
                     {
                         "name": "treatment",
-                        "size": "20",
                         "type": "char"
                     },
                     {
@@ -145,7 +143,6 @@
                     },
                     {
                         "name": "treatment",
-                        "size": "20",
                         "type": "char"
                     },
                     {
@@ -210,12 +207,10 @@
                     },
                     {
                         "name": "species",
-                        "size": "4",
                         "type": "char"
                     },
                     {
                         "name": "treatment",
-                        "size": "20",
                         "type": "char"
                     },
                     {
