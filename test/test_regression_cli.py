@@ -118,11 +118,11 @@ def test_download_regression(dataset, expected):
     assert current_md5 == expected
 
 
-def test_issues():
-    os.system("retriever install postgres -U postgres -d testdb -h localhost FrayJorge")
-    os.system("retriever install postgres -U postgres -d testdb -h localhost EltonTraits")
-    os.system("retriever install postgres -U postgres -d testdb -h localhost Palmer2007")
-    os.system("retriever install mysql gwdd -u travis")
-    os.system("retriever install mysql EltonTraits -u travis ")
-    os.system("retriever install mysql leaf_herbivory -u travis")
-    assert True == True
+# def test_issues():
+#     os.system("retriever install FrayJorge postgres -U postgres -d testdb -h localhost ")
+#     os.system("retriever install postgres -U postgres -d testdb -h localhost ")
+#     os.system("retriever install postgres -U postgres -d testdb -h localhost Palmer2007")
+#     os.system("retriever install mysql gwdd -u travis")
+#     os.system("retriever install mysql EltonTraits -u travis ")
+#     os.system("retriever install mysql leaf_herbivory -u travis")
+#     assert True == True
