@@ -665,7 +665,7 @@ class Engine(object):
             print(insert_stmt)
         # print (type(insert_stmt))
         # exit()
-        return insert_stmt.decode("latin-1").encode('utf-8').strip( )
+        return insert_stmt
 
     def table_exists(self, dbname, tablename):
         """This can be overridden to return True if a table exists. It
@@ -690,20 +690,22 @@ class Engine(object):
 def load_data(filename, delimiter="\t"):
     reg = re.compile("\\r\\n|\n|\r")
     # print (filename)C:\Users\Henry\.retriever\raw_data\MoM2003\MOMv3.3.txt
-    with open(filename, "rU") as dataset_file:
+    with io.open(filename,  newline='', encoding='latin-1') as dataset_file:
         for row in csv.reader(dataset_file,  delimiter="\t",  quoting=csv.QUOTE_MINIMAL):
             # print(row,"LLLLLL")
-            # print(row,"LLLLLL")
+            # print(type(row[0]),"import io")
             temp_list =[]
             for fields in row:
                 # if len(fields.split('\n'):
                 #     print (row)
                 #     exit()
-                x = fields.decode("latin-1").strip( ).strip("\n").replace("\n", "").decode("latin-1").encode('utf-8')
+                x = fields
+                # x = fields.decode("latin-1").strip( ).strip("\n").replace("\n", "").decode("latin-1").encode('utf-8')
                 # x = fields.decode("latin-1").encode('utf-8').strip( ).strip("\n")
                 clean = reg.sub(" ", x )
                 temp_list.append(clean)
             yield '{0}'.format(delimiter).join(temp_list)
+            # yield "hhhhh"
 
 # def load_data(filename, delimiter="\t"):
 #     reg = re.compile("\\r\\n|\n|\r")

@@ -1,7 +1,9 @@
+# -*- coding: latin-1 -*-
 from builtins import range
 import os
 import sys
 import platform
+import io
 from retriever.lib.models import Engine, no_cleanup
 from retriever import DATA_DIR
 
@@ -79,7 +81,7 @@ class engine(Engine):
             try:
                 bulk_insert_statement = self.get_bulk_insert_statement()
                 line_endings = set(['\n', '\r', '\r\n'])
-                with open(filename, 'r') as data_file:
+                with io.open(filename, 'rt', newline='', encoding='latin-1') as data_file:
                     data_chunk = data_file.readlines(CHUNK_SIZE)
                     data_chunk = [line.rstrip('\r\n') for line in data_chunk if line.rstrip('\r\n') not in line_endings]
                     del(data_chunk[:self.table.header_rows])
@@ -96,6 +98,7 @@ class engine(Engine):
                 self.connection.rollback()
                 self.connection.text_factory = str
                 return Engine.insert_data_from_file(self, filename)
+            print("Bulk insert complete for table {}\n".format(self.table_name()))
         else:
             return Engine.insert_data_from_file(self, filename)
 
