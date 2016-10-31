@@ -63,9 +63,9 @@ build_script:
   - "python setup.py install"
   - echo "Installed retriever:"
   - retriever --version
-  - retriever  install postgres FrayJorge -u postgres --host  localhost
-  - retriever  install postgres EltonTraits -u postgres --host  localhost
-  - retriever  install postgres Palmer2007 -u postgres  --host  localhost
+  - retriever  install postgres FrayJorge -u postgres --host  localhost -P Password12!
+  - retriever  install postgres EltonTraits -u postgres --host  localhost -P Password12!
+  - retriever  install postgres Palmer2007 -u postgres  --host  localhost -P Password12!
   - retriever  install mysql gwdd -u travis
   - retriever  install mysql EltonTraits -u travis
   - retriever  install mysql leaf_herbivory -u travis

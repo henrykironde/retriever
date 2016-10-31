@@ -141,7 +141,6 @@
                     },
                     {
                         "name": "species",
-                        "size": "4",
                         "type": "char"
                     },
                     {
