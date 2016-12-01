@@ -199,29 +199,29 @@ skip_csv = {'name': 'skip_csv',
                 """,
             'expect_out': 'b,c\n2,3\n5,6\n'}
 
-extra_newline = {'name': 'extra_newline',
-                 'raw_data': 'col1,col2,col3\n1,2\n,3\n',
-                 'script': """{\n
-                        "name": "extra_newline",\n
-                        "resources": [\n
-                            {\n
-                                "dialect": {},\n
-                                "name": "extra_newline",\n
-                                "schema": {},\n
-                                "url": "http://example.com/extra_newline.txt"\n
-                            }\n
-                        ],\n
-                        "retriever": "True",\n
-                        "retriever_minimum_version": "2.0.dev",\n
-                        "version": 1.0,\n
-                        "urls": {\n
-                            "extra_newline": "http://example.com/extra_newline.txt"\n
-                        }\n
-                    }\n
-                    """,
-                 'expect_out': 'col1,col2,col3\n1,2,3\n'}
+# extra_newline = {'name': 'extra_newline',
+#                  'raw_data': 'col1,col2,col3\n1,2\n,3\n',
+#                  'script': """{\n
+#                         "name": "extra_newline",\n
+#                         "resources": [\n
+#                             {\n
+#                                 "dialect": {},\n
+#                                 "name": "extra_newline",\n
+#                                 "schema": {},\n
+#                                 "url": "http://example.com/extra_newline.txt"\n
+#                             }\n
+#                         ],\n
+#                         "retriever": "True",\n
+#                         "retriever_minimum_version": "2.0.dev",\n
+#                         "version": 1.0,\n
+#                         "urls": {\n
+#                             "extra_newline": "http://example.com/extra_newline.txt"\n
+#                         }\n
+#                     }\n
+#                     """,
+#                  'expect_out': 'col1,col2,col3\n1,2,3\n'}
 
-tests = [simple_csv, autopk_csv, crosstab, autopk_crosstab, skip_csv, extra_newline]
+tests = [simple_csv, autopk_csv, crosstab, autopk_crosstab, skip_csv ]
 
 # Create a tuple of all test scripts and expected values
 # (simple_csv, '"a","b","c"\n1,2,3\n4,5,6')

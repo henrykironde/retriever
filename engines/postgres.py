@@ -1,4 +1,5 @@
 import os
+import sys
 from builtins import str
 from retriever.lib.models import Engine, no_cleanup
 
@@ -70,6 +71,7 @@ class engine(Engine):
     def insert_data_from_file(self, filename):
         """Use PostgreSQL's "COPY FROM" statement to perform a bulk insert."""
         self.get_cursor()
+        self.set_engine_encoding()
         ct = len([True for c in self.table.columns if c[1][0][:3] == "ct-"]) != 0
         if (([self.table.cleanup.function, self.table.delimiter,
               self.table.header_rows] == [no_cleanup, ",", 1])
@@ -82,7 +84,7 @@ class engine(Engine):
 COPY """ + self.table_name() + " (" + columns + """)
 FROM '""" + filename.replace("\\", "\\\\") + """'
 WITH DELIMITER ','
-CSV HEADER"""
+CSV HEADER;"""
             try:
                 self.execute("BEGIN")
                 self.execute(statement)
@@ -97,7 +99,7 @@ CSV HEADER"""
         """Returns a SQL statement to insert a set of values"""
         statement = Engine.insert_statement(self, values)
         if isinstance(statement, bytes):
-            statement = statement.decode("utf-8", "ignore")
+            statement = statement
         return statement
 
     def table_exists(self, dbname, tablename):
@@ -121,6 +123,9 @@ CSV HEADER"""
             except:
                 pass
         return Engine.format_insert_value(self, value, datatype)
+
+    def set_engine_encoding(self):
+        self.execute("SET CLIENT_ENCODING TO '{0}';".format(sys.getdefaultencoding()))
 
     def get_connection(self):
         """Gets the db connection."""

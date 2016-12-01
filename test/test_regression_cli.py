@@ -116,3 +116,13 @@ def test_download_regression(dataset, expected):
     os.system("retriever download {0} -p raw_data/{0}".format(dataset))
     current_md5 = getmd5(data="raw_data/{0}".format(dataset), data_type='dir', mode="rU")
     assert current_md5 == expected
+
+
+# def test_issues():
+#     os.system("retriever install FrayJorge postgres -U postgres -d testdb -h localhost ")
+#     os.system("retriever install postgres -U postgres -d testdb -h localhost ")
+#     os.system("retriever install postgres -U postgres -d testdb -h localhost Palmer2007")
+#     os.system("retriever install mysql gwdd -u travis")
+#     os.system("retriever install mysql EltonTraits -u travis ")
+#     os.system("retriever install mysql leaf_herbivory -u travis")
+#     assert True == True

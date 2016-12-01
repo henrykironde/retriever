@@ -1,3 +1,4 @@
+# -*- coding: latin-1 -*-
 from __future__ import print_function
 from __future__ import division
 from future import standard_library
@@ -8,6 +9,7 @@ from builtins import input
 from builtins import zip
 from builtins import next
 from builtins import str
+from itertools import tee
 import sys
 import os
 import getpass
@@ -15,6 +17,7 @@ import zipfile
 import gzip
 import tarfile
 import csv
+import re
 import io
 from urllib.request import urlretrieve
 from retriever import DATA_SEARCH_PATHS, DATA_WRITE_PATH
@@ -63,44 +66,20 @@ class Engine(object):
     def add_to_table(self, data_source):
         """This function adds data to a table from one or more lines specified
         in engine.table.source."""
+        lines = gen_from_source(data_source)
+
         if self.table.columns[-1][1][0][:3] == "ct-":
             # cross-tab data
-
-            lines = gen_from_source(data_source)
             real_lines = []
-            for line in lines:
-                split_line = self.table.extract_values(line)
-                initial_cols = len(self.table.columns) - (3 if hasattr(self.table, "ct_names") else 2)
-                # add one if auto increment is not set to get the right initial columns
-                if not self.table.columns[0][1][0] == "pk-auto":
-                    initial_cols += 1
-                begin = split_line[:initial_cols]
-                rest = split_line[initial_cols:]
-                n = 0
-                for item in rest:
-                    if hasattr(self.table, "ct_names"):
-                        name = [self.table.ct_names[n]]
-                        n += 1
-                    else:
-                        name = []
-                    real_lines.append(
-                        self.table.combine_on_delimiter(begin + name + [item]))
-            real_line_length = len(real_lines)
+            real_line_length = self.method_nametest(lines, real_lines)
         else:
-            # this function returns a generator that iterates over the lines in
-            # the source data
-            def source_gen():
-                return (line for line in gen_from_source(data_source)
-                        if line.strip('\n\r\t '))
-
-            # use one generator to compute the length of the input
-            real_lines, len_source = source_gen(), source_gen()
+            real_lines, len_source = tee(lines)
             real_line_length = sum(1 for _ in len_source)
 
         total = self.table.record_id + real_line_length
         pos = 0
         count_iter = 1
-        insert_limit = 200
+        insert_limit = 400
         current = 0
         types = self.table.get_column_datatypes()
         multiple_values = []
@@ -108,25 +87,10 @@ class Engine(object):
             if not self.table.fixed_width:
                 # This replaces end of line characters that exist in a single line
                 # eg. "one \nline has multiple end of lines\n"
-                line.replace('\n', '').strip()
+                line = line.replace('\n', '').strip()
             if line:
                 self.table.record_id += 1
-
-                # Check for single row distributed over multiple lines
-                val_list = self.table.extract_values(line)
-                while len(val_list) < len(self.table.get_column_datatypes()):
-                    line = line.rstrip('\n')
-                    if type(real_lines) != list:
-                        line += next(real_lines)
-                    else:
-                        line += real_lines[pos+1]
-                        real_lines.pop(pos+1)
-                    real_line_length -= 1
-                    val_list = (self.table.extract_values(line))
-                pos += 1
-
                 linevalues = self.table.values_from_line(line)
-
                 # Build insert statement with the correct # of values
                 try:
                     cleanvalues = [self.format_insert_value(self.table.cleanup.function
@@ -170,6 +134,27 @@ class Engine(object):
         print ("\n")
         self.connection.commit()
 
+    def method_nametest(self, lines, real_lines):
+        for line in lines:
+            split_line = self.table.extract_values(line)
+            initial_cols = len(self.table.columns) - (3 if hasattr(self.table, "ct_names") else 2)
+            # add one if auto increment is not set to get the right initial columns
+            if not self.table.columns[0][1][0] == "pk-auto":
+                initial_cols += 1
+            begin = split_line[:initial_cols]
+            rest = split_line[initial_cols:]
+            n = 0
+            for item in rest:
+                if hasattr(self.table, "ct_names"):
+                    name = [self.table.ct_names[n]]
+                    n += 1
+                else:
+                    name = []
+                real_lines.append(
+                    self.table.combine_on_delimiter(begin + name + [item]))
+        real_line_length = len(real_lines)
+        return real_line_length
+
     def auto_create_table(self, table, url=None, filename=None, pk=None):
         """Creates a table automatically by analyzing a data source and
         predicting column names, data types, delimiter, etc."""
@@ -190,12 +175,11 @@ class Engine(object):
         header = next(lines)
         lines.close()
 
-        source = (skip_rows,
-                  (self.table.header_rows,
-                   (io.open, (file_path, 'r', -1, 'latin-1'))))
-
         if not self.table.delimiter:
             self.auto_get_delimiter(header)
+
+        source = (skip_rows,
+                  (self.table.header_rows, load_data(file_path, self.table.delimiter)))
 
         if not self.table.columns:
             lines = gen_from_source(source)
@@ -449,12 +433,12 @@ class Engine(object):
 
                 if filetype == 'zip':
                     archive = zipfile.ZipFile(archivename)
-                    open_archive_file = archive.open(filename, 'r')
+                    open_archive_file = archive.open(filename, 'rb')
                 elif filetype == 'gz':
                     # gzip archives can only contain a single file
-                    open_archive_file = gzip.open(archivename, 'r')
+                    open_archive_file = gzip.open(archivename, 'rb')
                 elif filetype == 'tar':
-                    archive = tarfile.open(filename, 'r')
+                    archive = tarfile.open(filename, 'rb')
                     open_archive_file = archive.extractfile(filename)
 
                 fileloc = self.format_filename(os.path.join(archivebase,
@@ -643,8 +627,7 @@ class Engine(object):
         simply inserts the data row by row. Database platforms with support
         for inserting bulk data from files can override this function."""
         data_source = (skip_rows,
-                       (self.table.header_rows,
-                        (io.open, (filename, 'r', -1, 'latin-1'))))
+                       (self.table.header_rows, load_data(filename, self.table.delimiter)))
         self.add_to_table(data_source)
 
     def insert_data_from_url(self, url):
@@ -677,6 +660,8 @@ class Engine(object):
         insert_stmt = insert_stmt.rstrip(", ") + ";"
         if self.debug:
             print(insert_stmt)
+        # print (type(insert_stmt))
+        # exit()
         return insert_stmt
 
     def table_exists(self, dbname, tablename):
@@ -699,12 +684,51 @@ class Engine(object):
         self.warnings.append(new_warning)
 
 
+def load_data(filename, delimiter="\t"):
+    reg = re.compile("\\r\\n|\n|\r")
+    # print (filename)C:\Users\Henry\.retriever\raw_data\MoM2003\MOMv3.3.txt
+    with io.open(filename,  newline='', encoding='latin-1') as dataset_file:
+        for row in csv.reader(dataset_file,  delimiter="\t",  quoting=csv.QUOTE_MINIMAL):
+            # print(row,"LLLLLL")
+            # print(type(row[0]),"import io")
+            temp_list =[]
+            for fields in row:
+                # if len(fields.split('\n'):
+                #     print (row)
+                #     exit()
+                x = fields
+                # x = fields.decode("latin-1").strip( ).strip("\n").replace("\n", "").decode("latin-1").encode('utf-8')
+                # x = fields.decode("latin-1").encode('utf-8').strip( ).strip("\n")
+                clean = reg.sub(" ", x )
+                temp_list.append(clean)
+            yield '{0}'.format(delimiter).join(temp_list)
+            # yield "hhhhh"
+
+# def load_data(filename, delimiter="\t"):
+#     reg = re.compile("\\r\\n|\n|\r")
+#     with open(filename, "r") as dataset_file:
+#         return csv.reader(dataset_file, delimiter="{0}".format("\t"))
+#             #
+#             # # print(row,"LLLLLL")
+#             # # print(row,"LLLLLL")
+#             # temp_list =[]
+#             # for fields in row:
+#             #     # if len(fields.split('\n'):
+#             #     #     print (row)
+#             #     #     exit()
+#             #     x = fields.decode("latin-1").strip( ).strip("\n").replace("\n", "").decode("latin-1").encode('utf-8')
+#             #     # x = fields.decode("latin-1").encode('utf-8').strip( ).strip("\n")
+#             #     clean = reg.sub(" ", x )
+#             #     temp_list.append(clean)
+#             # yield '{0}'.format(delimiter).join(temp_list)
+
 def skip_rows(rows, source):
     """Skip over the header lines by reading them before processing."""
     lines = gen_from_source(source)
     for i in range(rows):
         next(lines)
-    return lines
+    # return lines
+    return source
 
 
 def file_exists(path):

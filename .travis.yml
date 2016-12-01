@@ -34,6 +34,12 @@ before_script:
 
 after_success:
   - codecov
+  - retriever  install postgres FrayJorge -u postgres -d testdb
+  - retriever  install postgres EltonTraits -u postgres -d testdb
+  - retriever  install postgres Palmer2007 -u postgres -d testdb
+  - retriever  install mysql gwdd -u travis
+  - retriever  install mysql EltonTraits -u travis
+  - retriever  install mysql leaf_herbivory -u travis
 
 notifications:
   slack:
