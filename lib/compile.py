@@ -86,7 +86,8 @@ def compile_json(json_file):
         json_object = json.load(open(json_file + ".json", "r"))
     except ValueError as e:
         pass
-
+    if type(json_object) is not dict:
+        return
     if "retriever" not in json_object.keys():
         # Compile only files that have retriever key
         return
@@ -106,6 +107,9 @@ def compile_json(json_file):
 
         elif key == "description":
             values["description"] = "\"" + str(value) + "\""
+
+        elif key == "addendum":
+            values["addendum"] = "\"" + str(value) + "\""
 
         elif key == "homepage":
             values["ref"] = "\"" + str(value) + "\""
