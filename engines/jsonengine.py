@@ -7,7 +7,7 @@ import os
 import json
 
 from retriever.lib.models import Engine
-from retriever import DATA_DIR, open_fr, open_fw
+from retriever import DATA_DIR, open_fw, open_fr
 from collections import OrderedDict
 from retriever.lib.tools import json2csv, sort_csv
 
@@ -70,7 +70,7 @@ class engine(Engine):
         if self.table_names:
             for output_file_i, file_name in self.table_names:
                 output_file_i.close()
-                current_input_file = open_fr(file_name, "r")
+                current_input_file = open_fr(file_name, encode=False)
                 file_contents = current_input_file.readlines()
                 current_input_file.close()
                 file_contents[-1] = file_contents[-1].strip(',\n')
@@ -120,6 +120,8 @@ class engine(Engine):
         tuples = (zip(keys, [value for value in values]))
         write_data = OrderedDict(tuples)
         return json.dumps(write_data, ensure_ascii=False)
+
+    
 
     def table_exists(self, dbname, tablename):
         """Check to see if the data file currently exists"""

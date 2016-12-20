@@ -63,18 +63,21 @@ DATA_WRITE_PATH = DATA_SEARCH_PATHS[-1]
 DATA_DIR = '.'
 
 
-def open_fr(file_name, mode='r', use=False):
+def open_fr(file_name, mode='r', encode=True):
     if sys.version_info >= (3, 0, 0):
         if os.name == 'nt':
             file_obj = io.open(file_name, 'r', newline='', encoding='ISO-8859-1')
         else:
-            file_obj = open(file_name, "r")
+            if encode:
+                file_obj = open(file_name, "r", encoding='ISO-8859-1')
+            else:
+                file_obj = open(file_name, "r")
     else:
         file_obj = io.open(file_name, encoding='latin-1')
     return file_obj
 
 
-def open_fw(file_name, mode='w', use=False):
+def open_fw(file_name, mode='w', encode=True):
     "not sure yet"
     # file_obj = io.open(file_name, 'w',)
     if sys.version_info >= (3, 0, 0):
@@ -84,7 +87,7 @@ def open_fw(file_name, mode='w', use=False):
     return file_obj
 
 
-def open_csvw(csv_file, mode='w', use=False):
+def open_csvw(csv_file, mode='w', encode=True):
 
     if os.name == 'nt':
         csv_writer = csv.writer(csv_file, dialect='excel', escapechar='\\', lineterminator='\n')

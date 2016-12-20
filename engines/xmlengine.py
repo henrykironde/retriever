@@ -68,11 +68,11 @@ class engine(Engine):
         if self.table_names:
             for output_file_i, file_name in self.table_names:
                 output_file_i.close()
-                current_input_file = open_fr(file_name, "r")
+                current_input_file = open_fr(file_name, encode=False)
                 file_contents = current_input_file.readlines()
                 current_input_file.close()
                 file_contents[-1] = file_contents[-1].strip(',')
-                current_output_file = open_fw(file_name, "w")
+                current_output_file = open_fw(file_name)
                 current_output_file.writelines(file_contents)
                 current_output_file.write(u'\n</root>')
                 current_output_file.close()
