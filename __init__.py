@@ -84,16 +84,12 @@ def open_fw(file_name, mode='w', use=False):
     return file_obj
 
 
-def open_csvw(file_name, mode='w', use=False):
-    if sys.version_info >= (3, 0, 0):
-        csv_out = io.open(file_name, 'w', newline='', encoding='ISO-8859-1')
-    else:
-        csv_out = io.open(file_name, 'wb')
+def open_csvw(csv_file, mode='w', use=False):
 
     if os.name == 'nt':
-        csv_writer = csv.writer(csv_out, dialect='excel', escapechar='\\', lineterminator='\n')
+        csv_writer = csv.writer(csv_file, dialect='excel', escapechar='\\', lineterminator='\n')
     else:
-        csv_writer = csv.writer(csv_out, dialect='excel', escapechar='\\')
+        csv_writer = csv.writer(csv_file, dialect='excel', escapechar='\\')
     return csv_writer
 
 

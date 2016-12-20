@@ -21,7 +21,7 @@ import shutil
 from decimal import Decimal
 from hashlib import md5
 
-from retriever import HOME_DIR, open_fr
+from retriever import HOME_DIR, open_fr, open_fw, open_csvw
 from retriever.lib.models import *
 import csv
 import json
@@ -301,16 +301,10 @@ def sort_csv(filename):
     input_file = open_fr(filename)
     csv_reader_infile = csv.reader(input_file, escapechar="\\")
     #  write the data to a temporary file and sort it
-    temp_file = os.path.normpath("tempfile")
-    open_csvw()
+    temp_path = os.path.normpath("tempfile")
+    temp_file = open_fw(temp_path)
 
-
-    file_temp = open_fw(temp_file)
-
-    if os.name == 'nt':
-        csv_writer = csv.writer(file_temp, dialect='excel', escapechar='\\', lineterminator='\n')
-    else:
-        csv_writer = csv.writer(file_temp, dialect='excel', escapechar='\\', lineterminator='\n')
+    csv_writer = open_csvw(temp_file)
     i = 0
     for row in csv_reader_infile:
         if i == 0:
@@ -319,54 +313,20 @@ def sort_csv(filename):
             i += 1
         else:
             csv_writer.writerow(row)
-
-    file_temp.close()
     input_file.close()
-
+    temp_file.close()
 
     # sort the temp file
-    sorted_txt = sort_file(temp_file)
-
-
-
-    # write sorted row content to csv filename with header "infields"
-    # tmp = open(sorted_txt, "rU")
-    # in_txt = csv.reader(tmp, delimiter=',')
-    if sys.version_info >= (3, 0, 0):
-        if os.name == 'nt':
-            tmp = io.open(sorted_txt, 'r',newline='', encoding='ISO-8859-1')
-        else:
-            tmp = open(sorted_txt, 'r', encoding='ISO-8859-1')
-    else:
-        tmp = io.open(sorted_txt, encoding='latin-1')
-
+    sorted_txt = sort_file(temp_path)
+    tmp = open_fr(sorted_txt)
     in_txt = csv.reader(tmp, delimiter=',', escapechar="\\")
-
-
-
-    # if os.name == 'nt':
-    #     out_csv = csv.writer(open(filename, 'w'), lineterminator='\n')
-    # else:
-    #     out_csv = csv.writer(open(filename, 'w'))
-
-    if sys.version_info >= (3, 0, 0):
-        if os.name == 'nt':
-            file_temp = io.open(filename, 'w', newline='', encoding='ISO-8859-1')
-        else:
-            file_temp = io.open(filename, 'w', encoding='ISO-8859-1')
-    else:
-        file_temp = io.open(filename, 'wb')
-
-    if os.name == 'nt':
-        csv_writer = csv.writer(file_temp, dialect='excel', escapechar='\\', lineterminator='\n')
-    else:
-        csv_writer = csv.writer(file_temp, dialect='excel', escapechar='\\')
-
+    csv_file = open_fw(filename)
+    csv_writer = open_csvw(csv_file)
     csv_writer.writerow(infields)
     csv_writer.writerows(in_txt)
     tmp.close()
-    file_temp.close()
-    os.remove(os.path.normpath(temp_file))
+    csv_file.close()
+    os.remove(os.path.normpath(temp_path))
     return filename
 
 
