@@ -24,7 +24,7 @@ install:
 # command to run tests using py.test
 
 script:
-  - py.test -v --cov=retriever
+  - py.test -v --cov=retriever/retriever
 
 # database setup
 before_script:
