@@ -22,7 +22,6 @@ Datasets Available
 
 
 """
-check_for_updates()
 script_list = SCRIPT_LIST()
 
 # write the title of dataset rst file
