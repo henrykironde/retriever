@@ -24,6 +24,9 @@ class main(Script):
             self.shortname = self.name
             self.name = self.title
             self.tags = self.keywords
+            self.cleanup_func_table = Cleanup(correct_invalid_value, nulls=['NA'])
+        else:
+            self.cleanup_func_table = Cleanup(correct_invalid_value, missingValues=['NA'])
     
     def download(self, engine=None, debug=False):
         Script.download(self, engine, debug)
@@ -37,12 +40,12 @@ class main(Script):
         engine.download_files_from_archive(self.urls["BAAD"], file_names)
 
         # creating data from baad_data.csv
-        engine.auto_create_table(Table("data", cleanup=Cleanup(correct_invalid_value, missingValues=['NA'])),
+        engine.auto_create_table(Table("data", cleanup=self.cleanup_func_table),
                                  filename="baad_data.csv")
         engine.insert_data_from_file(engine.format_filename("baad_data.csv"))
 
         # creating methods from baad_methods.csv
-        engine.auto_create_table(Table("methods", cleanup=Cleanup(correct_invalid_value, missingValues=['NA'])),
+        engine.auto_create_table(Table("methods", cleanup=self.cleanup_func_table),
                                  filename="baad_methods.csv")
         engine.insert_data_from_file(engine.format_filename("baad_methods.csv"))
 
