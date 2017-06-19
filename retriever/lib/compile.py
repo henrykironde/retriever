@@ -24,14 +24,14 @@ def add_dialect(table_dict, table):
     Reads dialect key of JSON script and extracts key-value pairs to store them
     in python script
 
-    Contains properties such 'nulls', delimiter', etc
+    Contains properties such 'missingValues', delimiter', etc
     """
     for (key, val) in table['dialect'].items():
         # dialect related key-value pairs
         # copied as is
         if key == "missingValues":
             table_dict[
-                'cleanup'] = "Cleanup(correct_invalid_value, nulls=" + str(val) + ")"
+                'cleanup'] = "Cleanup(correct_invalid_value, missing_values=" + str(val) + ")"
 
         elif key == "delimiter":
             table_dict[key] = "'" + str(val) + "'"
@@ -82,6 +82,7 @@ def compile_json(json_file):
     command line
     """
     json_object = {}
+    source_encoding = "latin-1"
     try:
         json_object = json.load(open(json_file + ".json", "r"))
     except ValueError as e:
@@ -100,10 +101,10 @@ def compile_json(json_file):
     for (key, value) in json_object.items():
 
         if key == "title":
-            values["name"] = "\"" + str(value) + "\""
+            values["title"] = "\"" + str(value) + "\""
 
         elif key == "name":
-            values["shortname"] = "\"" + str(value) + "\""
+            values["name"] = "\"" + str(value) + "\""
 
         elif key == "description":
             values["description"] = "\"" + str(value) + "\""
@@ -118,7 +119,7 @@ def compile_json(json_file):
             values["citation"] = "\"" + str(value) + "\""
 
         elif key == "keywords":
-            values["tags"] = value
+            values["keywords"] = value
 
         elif key == "version":
             values["version"] = "\"" + str(value) + "\""
@@ -126,12 +127,16 @@ def compile_json(json_file):
         elif key == "encoding":
             values["encoding"] = "\"" + str(value) + "\""
             # Adding the key 'encoding'
+            source_encoding = str(value)
 
         elif key == "dataset_availability":
             values["dataset_availability"] = "\"" + str(value) + "\""
 
         elif key == "retriever_minimum_version":
             values["retriever_minimum_version"] = "\"" + str(value) + "\""
+
+        elif key == "message":
+            values["message"] = "\"" + str(value) + "\""
 
         elif key == "resources":
             # Array of table objects
@@ -187,6 +192,6 @@ def compile_json(json_file):
     script_contents = (script_templates[template] % script_desc)
 
     new_script = open(json_file + '.py', 'w', encoding='utf-8')
-    new_script.write('# -*- latin-1 -*-\n')
+    new_script.write('# -*- coding: {}  -*-\n'.format(source_encoding.lower()))
     new_script.write(script_contents)
     new_script.close()

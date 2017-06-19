@@ -2,10 +2,12 @@ from __future__ import print_function
 from builtins import input
 import os
 import json
+import glob
+import re
 from time import sleep
 from retriever import SCRIPT_LIST, HOME_DIR, ENCODING
 
-short_names = [script.shortname.lower() for script in SCRIPT_LIST()]
+short_names = [script.name.lower() for script in SCRIPT_LIST()]
 
 
 def is_empty(val):
@@ -54,16 +56,16 @@ def get_replace_columns(dialect):
 
 
 def get_nulls(dialect):
-    """Get list of strings that denote null in the dataset"""
-    val = clean_input("nulls (separated by ';') (press return to skip): ",
+    """Get list of strings that denote missing value in the dataset"""
+    val = clean_input("missing values (separated by ';') (press return to skip): ",
                       split_char=';', ignore_empty=True)
     if val == "" or val == []:
         # return and dont add key to dialect dict if empty val
         return
-    dialect['nulls'] = val
+    dialect['missingValues'] = val
     # change list to single value if size == 1
-    if len(dialect['nulls']) == 1:
-        dialect['nulls'] = dialect['nulls'][0]
+    if len(dialect['missingValues']) == 1:
+        dialect['missingValues'] = dialect['missingValues'][0]
 
 
 def get_delimiter(dialect):
@@ -93,26 +95,6 @@ def get_contains_pk(dialect):
         # return and dont add key to dialect dict if empty val
         return
     dialect['contains_pk'] = val
-
-
-def get_escape_single_quotes(dialect):
-    """Set escape_single_quotes property"""
-    val = clean_input("escape_single_quotes (bool = True/False) (press return to skip): ",
-                      ignore_empty=True, dtype=bool)
-    if val == "" or val == []:
-        # return and dont add key to dialect dict if empty val
-        return
-    dialect['escape_single_quotes'] = val
-
-
-def get_escape_double_quotes(dialect):
-    """Set escape_double_quotes property"""
-    val = clean_input("escape_double_quotes (bool = True/False) (press return to skip): ",
-                      ignore_empty=True, dtype=bool)
-    if val == "" or val == []:
-        # return and dont add key to dialect dict if empty val
-        return
-    dialect['escape_double_quotes'] = val
 
 
 def get_fixed_width(dialect):
@@ -146,12 +128,17 @@ def create_json():
     contents = {}
     tableUrls = {}
 
+    invalid_name =True
     script_exists = True
-    while script_exists:
+    while script_exists or invalid_name:
         contents['name'] = clean_input("name (a short unique identifier; only lowercase letters and - allowed): ")
+        invalid_name=re.compile(r'[^a-z-]').search(contents['name'])
+        if invalid_name:
+            print("name can only contain lowercase letters and -")
+            continue
         script_exists = contents['name'].lower() in short_names
         if script_exists:
-            print("Dataset already available. Check the list or try a different shortname")
+            print("Dataset already available. Check the list or try a different name")
 
     contents['title'] = clean_input("title: ", ignore_empty=True)
     contents['description'] = clean_input("description: ", ignore_empty=True)
@@ -190,8 +177,6 @@ def create_json():
             get_delimiter(table['dialect'])
             get_do_not_bulk_insert(table['dialect'])
             get_contains_pk(table['dialect'])
-            get_escape_single_quotes(table['dialect'])
-            get_escape_double_quotes(table['dialect'])
             get_fixed_width(table['dialect'])
             get_header_rows(table['dialect'])
 
@@ -236,9 +221,14 @@ def create_json():
                 table['schema']['ct_column'] = ct_column
                 table['schema']['ct_names'] = ct_names
 
-            contents['resources'].append(table)  
+            contents['resources'].append(table)
+    give_message = clean_input(
+        "Would you like to add a Message? (y,N): ", ignore_empty=True)
+    if give_message.lower() in ["y", "yes"]:
+        contents['message'] = clean_input("Provide your Message: ", ignore_empty=True)
     contents['urls'] = tableUrls
     file_name = contents['name'] + ".json"
+    file_name = file_name.replace('-', '_')
     with open(os.path.join(HOME_DIR, 'scripts', file_name), 'w') as output_file:
         json_str = json.dumps(contents, output_file, sort_keys=True, indent=4,
                               separators=(',', ': '))
@@ -402,18 +392,19 @@ def edit_json(json_file):
     Edits existing datapackage.JSON script.
 
     Usage: retriever edit_json <script_name>
-    Note: Name of script is the dataset shortname.
+    Note: Name of script is the dataset name.
     '''
     try:
         contents = json.load(
             open(os.path.join(HOME_DIR, 'scripts', json_file), 'r'))
-    except FileNotFoundError:
+    except (IOError,OSError):
         print("Script not found.")
         return
 
     edit_dict(contents, 1)
 
     file_name = contents['name'] + ".json"
+    file_name = file_name.replace('-', '_')
     with open(os.path.join(HOME_DIR, 'scripts', file_name), 'w') as output_file:
         json_str = json.dumps(contents, output_file, sort_keys=True, indent=4,
                               separators=(',', ': '))
@@ -421,3 +412,23 @@ def edit_json(json_file):
         print("\nScript written to " +
               os.path.join(HOME_DIR, 'scripts', file_name))
         output_file.close()
+
+def delete_json(json_file):
+    try:
+        # delete scripts from home directory
+        if os.path.exists(os.path.join(HOME_DIR, 'scripts', json_file)):
+            os.remove(os.path.join(HOME_DIR, 'scripts', json_file))
+
+        [os.remove(x) for x in glob.glob(os.path.join(HOME_DIR, 'scripts', json_file[:-4] + 'py*'))]
+
+        # delete scripts from current directory if exists
+        if os.path.exists(os.path.join(os.getcwd(), 'scripts', json_file)):
+            os.remove(os.path.join(os.getcwd(), 'scripts', json_file))
+
+        [os.remove(x) for x in glob.glob(os.path.join(os.getcwd(), 'scripts', json_file[:-4] + 'py*'))]
+    except OSError:
+        print("Couldn't delete Script.")
+
+def get_script_filename(shortname):
+    return shortname.replace('-', '_')+'.json'
+

@@ -112,15 +112,15 @@ class Engine(object):
                         if self.debug:
                             print(cleanvalues)
                         raise
-                    multiple_values = []
                     try:
-                        self.execute(insert_stmt, commit=False)
+                        self.executemany(insert_stmt, multiple_values, commit=False)
                         prompt = "Progress: " + str(count_iter) + " / " + str(real_line_length) + " rows inserted into " + self.table_name() + " totaling " + str(total) + ":"
                         sys.stdout.write(prompt + "\b" * len(prompt))
                         sys.stdout.flush()
                     except:
                         print(insert_stmt)
                         raise
+                    multiple_values = []
                 else:
                     multiple_values.append(cleanvalues)
             count_iter += 1
@@ -377,7 +377,7 @@ class Engine(object):
         """Returns the name of the database"""
         if not name:
             try:
-                name = self.script.shortname
+                name = self.script.name
             except AttributeError:
                 name = "{db}"
         try:
@@ -422,7 +422,7 @@ class Engine(object):
         if keep_in_dir:
             archivebase = os.path.splitext(os.path.basename(archivename))[0]
             archivedir = os.path.join(DATA_WRITE_PATH, archivebase)
-            archivedir = archivedir.format(dataset=self.script.shortname)
+            archivedir = archivedir.format(dataset=self.script.name)
             if not os.path.exists(archivedir):
                 os.makedirs(archivedir)
         else:
@@ -474,24 +474,22 @@ class Engine(object):
         dropstatement = "DROP %s IF EXISTS %s" % (objecttype, objectname)
         return dropstatement
 
-    def escape_single_quotes(self, value):
-        """Escapes single quotes in the value"""
-        return value.replace("'", "\\'")
-
-    def escape_double_quotes(self, value):
-        """Escapes double quotes in the value"""
-        return value.replace('"', '\\"')
-
     def execute(self, statement, commit=True):
         """Executes the given statement"""
         self.cursor.execute(statement)
         if commit:
             self.connection.commit()
 
+    def executemany(self, statement, values, commit=True):
+        """Executes the given statement with multiple values"""
+        self.cursor.executemany(statement, values)
+        if commit:
+            self.connection.commit()
+
     def exists(self, script):
         """Checks to see if the given table exists"""
         return all([self.table_exists(
-            script.shortname,
+            script.name,
             key
         )
             for key in list(script.urls.keys()) if key])
@@ -506,7 +504,7 @@ class Engine(object):
     def find_file(self, filename):
         """Checks for an existing datafile"""
         for search_path in DATA_SEARCH_PATHS:
-            search_path = search_path.format(dataset=self.script.shortname)
+            search_path = search_path.format(dataset=self.script.name)
             file_path = os.path.normpath(os.path.join(search_path, filename))
             if file_exists(file_path):
                 return file_path
@@ -514,13 +512,13 @@ class Engine(object):
 
     def format_data_dir(self):
         """Returns the correctly formatted raw data directory location."""
-        return DATA_WRITE_PATH.format(dataset=self.script.shortname)
+        return DATA_WRITE_PATH.format(dataset=self.script.name)
 
     def format_filename(self, filename):
         """Returns the full path of a file in the archive directory."""
         return os.path.join(self.format_data_dir(), filename)
 
-    def format_insert_value(self, value, datatype, escape=True, processed=False):
+    def format_insert_value(self, value, datatype):
         """Format a value for an insert statement based on data type
 
         Different data types need to be formated differently to be properly
@@ -531,14 +529,7 @@ class Engine(object):
         2. Harmonizing null indicators
         3. Cleaning up badly formatted integers
         4. Obtaining consistent float representations of decimals
-
-        The optional `escape` argument controls whether additional quotes in
-        strings are escaped, as needed for SQL database management systems
-        (escape=True), or not escaped, as needed for flat file based engines
-        (escape=False).
-
-        The optional processed argument indicates that the engine has it's own
-        escaping mechanism. i.e the csv engine which uses its own dialect"""
+        """
         datatype = datatype.split('-')[-1]
         strvalue = str(value).strip()
 
@@ -546,43 +537,34 @@ class Engine(object):
         quotes = ["'", '"']
         if len(strvalue) > 1 and strvalue[0] == strvalue[-1] and strvalue[0] in quotes:
             strvalue = strvalue[1:-1]
-        nulls = ("null", "none")
-        if strvalue.lower() in nulls:
-            return "null"
+        missing_values = ("null", "none")
+        if strvalue.lower() in missing_values:
+            return None
         elif datatype in ("int", "bigint", "bool"):
             if strvalue:
                 intvalue = strvalue.split('.')[0]
                 if intvalue:
                     return int(intvalue)
                 else:
-                    return "null"
+                    return None
             else:
-                return "null"
+                return None
         elif datatype in ("double", "decimal"):
             if strvalue.strip():
                 try:
                     decimals = float(str(strvalue))
-                    return str(decimals)
+                    return decimals
                 except:
-                    return "null"
+                    return None
             else:
-                return "null"
+                return None
         elif datatype == "char":
-            if strvalue.lower() in nulls:
-                return "null"
-            if escape:
-                # automatically escape quotes in string fields
-                if hasattr(self.table, "escape_double_quotes") and self.table.escape_double_quotes:
-                    strvalue = self.escape_double_quotes(strvalue)
-                if hasattr(self.table, "escape_single_quotes") and self.table.escape_single_quotes:
-                    strvalue = self.escape_single_quotes(strvalue)
-                return "'" + strvalue + "'"
-            if processed:
-                return strvalue
+            if strvalue.lower() in missing_values:
+                return None
             else:
-                return "'" + strvalue + "'"
+                return strvalue
         else:
-            return "null"
+            return None
 
     def get_cursor(self):
         """Gets the db cursor."""
@@ -649,15 +631,19 @@ class Engine(object):
         columns = self.table.get_insert_columns()
         types = self.table.get_column_datatypes()
         columncount = len(self.table.get_insert_columns(join=False, create=False))
-        insert_stmt = "INSERT INTO {} ({}) VALUES ".format(self.table_name(), columns)
         for row in values:
             row_length = len(row)
             # Add None with appropriate value type for empty cells
             for i in range(columncount - row_length):
                 row.append(self.format_insert_value(None, types[row_length + i]))
 
-            insert_stmt += " (" + ", ".join([str(val) for val in row]) + "), "
-        insert_stmt = insert_stmt.rstrip(", ") + ";"
+        insert_stmt = "INSERT INTO " + self.table_name()
+        insert_stmt += " (" + columns + ")"
+        insert_stmt += " VALUES ("
+        for i in range(0, columncount):
+            insert_stmt += "{}, ".format(self.placeholder)
+        insert_stmt = insert_stmt.rstrip(", ") + ")"
+
         if self.debug:
             print(insert_stmt)
         return insert_stmt
@@ -707,7 +693,7 @@ class Engine(object):
         self.disconnect()
 
     def warning(self, warning):
-        new_warning = Warning('%s:%s' % (self.script.shortname, self.table.name), warning)
+        new_warning = Warning('%s:%s' % (self.script.name, self.table.name), warning)
         self.warnings.append(new_warning)
 
     def load_data(self, filename):
