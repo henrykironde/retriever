@@ -6,25 +6,7 @@ from retriever.lib.models import Engine
 from retriever.lib.scripts import open_fw, open_csvw
 from retriever.lib.defaults import DATA_DIR
 from retriever.lib.tools import sort_csv
-
-
-class DummyConnection(object):
-
-    def cursor(self):
-        pass
-
-    def commit(self):
-        pass
-
-    def rollback(self):
-        pass
-
-    def close(self):
-        pass
-
-
-class DummyCursor(DummyConnection):
-    pass
+from retriever.lib.dummy import DummyConnection, DummyCursor
 
 
 class engine(Engine):
@@ -68,9 +50,13 @@ class engine(Engine):
         """Write a line to the output file"""
         self.output_file.writerows(statement)
 
+    def executemany(self, statement, values, commit=True):
+        """Write a line to the output file"""
+        self.output_file.writerows(statement)
+
     def format_insert_value(self, value, datatype):
         """Formats a value for an insert statement"""
-        v = Engine.format_insert_value(self, value, datatype, escape=False, processed=True)
+        v = Engine.format_insert_value(self, value, datatype)
         if v == 'null':
             return ""
         try:

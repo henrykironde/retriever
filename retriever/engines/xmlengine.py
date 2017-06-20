@@ -3,27 +3,7 @@ import os
 from builtins import object
 from retriever.lib.models import Engine
 from retriever.lib.tools import xml2csv, sort_csv
-from retriever.lib.scripts import open_fr, open_fw
-from retriever.lib.defaults import DATA_DIR
-
-
-class DummyConnection(object):
-
-    def cursor(self):
-        pass
-
-    def commit(self):
-        pass
-
-    def rollback(self):
-        pass
-
-    def close(self):
-        pass
-
-
-class DummyCursor(DummyConnection):
-    pass
+from retriever.lib.dummy import DummyConnection, DummyCursor
 
 
 class engine(Engine):
@@ -81,10 +61,14 @@ class engine(Engine):
         """Write a line to the output file"""
         self.output_file.writelines(statement)
 
+    def executemany(self, statement, values, commit=True):
+        """Write a line to the output file"""
+        self.output_file.writelines(statement)
+
     def format_insert_value(self, value, datatype):
         """Formats a value for an insert statement"""
-        v = Engine.format_insert_value(self, value, datatype, escape=False, processed=True)
-        if v == 'null':
+        v = Engine.format_insert_value(self, value, datatype)
+        if v == None:
             return ""
         try:
             if len(v) > 1 and v[0] == v[-1] == "'":

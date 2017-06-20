@@ -23,10 +23,11 @@ import warnings
 from hashlib import md5
 from io import StringIO as newfile
 from retriever.lib.defaults import HOME_DIR, ENCODING
-from retriever.lib.scripts import open_fr, open_fw, open_csvw
+
 from retriever.lib.models import *
 import xml.etree.ElementTree as ET
 warnings.filterwarnings("ignore")
+
 
 TEST_ENGINES = dict()
 
@@ -321,3 +322,21 @@ def set_proxy():
                 for i in proxies:
                     os.environ[i] = os.environ[proxy]
                 break
+
+
+def get_module_version():
+    """This function gets the version number of the scripts and returns them in array form."""
+    modules = MODULE_LIST()
+    scripts = []
+    for module in modules:
+        if module.SCRIPT.public:
+            if os.path.isfile('.'.join(module.__file__.split('.')[:-1]) + '.json') and module.SCRIPT.version:
+                module_name = module.__name__ + '.json'
+                scripts.append(','.join([module_name, str(module.SCRIPT.version)]))
+            elif os.path.isfile('.'.join(module.__file__.split('.')[:-1]) + '.py') and \
+                    not os.path.isfile('.'.join(module.__file__.split('.')[:-1]) + '.json'):
+                module_name = module.__name__ + '.py'
+                scripts.append(','.join([module_name, str(module.SCRIPT.version)]))
+
+    scripts = sorted(scripts, key=str.lower)
+    return scripts
