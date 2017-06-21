@@ -312,6 +312,7 @@ def file_2string(input_file):
     return obs_out
 
 
+
 def set_proxy():
     """Check for proxies and makes them available to urllib"""
     proxies = ["https_proxy", "http_proxy", "ftp_proxy",
@@ -322,6 +323,7 @@ def set_proxy():
                 for i in proxies:
                     os.environ[i] = os.environ[proxy]
                 break
+
 
 
 def get_module_version():
