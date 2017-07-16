@@ -1,34 +1,7 @@
-sudo: false
 language: python
 
 matrix:
   include:
-    - os: linux
-      python: "3.5"
-      addons:
-        postgresql: "9.4"
-        apt:
-          sources:
-            - travis-ci/sqlite3
-          packages:
-            - sqlite3
-
-      services:
-        - postgresql
-
-    - os: linux
-      python: "2.7"
-      addons:
-        postgresql: "9.4"
-        apt:
-          sources:
-            - travis-ci/sqlite3
-          packages:
-            - sqlite3
-
-      services:
-        - postgresql
-
     - os: osx
       language: generic
       env:
@@ -49,21 +22,6 @@ matrix:
         - mysql.server start
         - brew services start postgresql
 
-
-
-    - os: osx
-      language: generic
-      env:
-        - PYTHON_VERSION=3.3.6
-      before_install:
-        - brew tap homebrew/php
-        - brew update
-        - mysql.server start
-        - brew services start postgresql
-
-
-
-
 install:
   - pip install -r requirements.txt
   - pip install -e .
@@ -80,7 +38,9 @@ script:
 # database setup
 before_script:
   - sqlite3 --version
-  - mysql -e 'create database myapp_test;'
+  - printf "[client]\nusername=travis\npassword= \n" > ~/.my.cnf
+  - mysql -e "CREATE USER 'travis'@'localhost' IDENTIFIED BY '';" -uroot
+  - mysql -e 'create database myapp_test;' -uroot
   - psql -c 'create database testdb;' -U postgres
 
 after_success:
