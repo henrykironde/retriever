@@ -13,11 +13,21 @@ matrix:
       language: generic
       env:
         - PYTHON_VERSION=3.3.6
+      # before_install:
+      #   - brew tap homebrew/php
+      #   - brew update
+      #   - mysql.server start
+      #   - brew services start postgresql
 
     - os: osx
       language: generic
       env:
         - PYTHON_VERSION=2.7.12
+      # before_install:
+      #   - brew tap homebrew/php
+      #   - brew update
+      #   - mysql.server start
+      #   - brew services start postgresql
 
 addons:
   postgresql: "9.4"
@@ -29,6 +39,7 @@ addons:
 
 services:
   - postgresql
+  - mysql
 install:
   - pip install -r requirements.txt
   - pip install -e .
