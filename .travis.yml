@@ -38,9 +38,8 @@ script:
 # database setup
 before_script:
   - sqlite3 --version
-  - printf "[client]\nusername=travis\npassword= \n" > ~/.my.cnf
-  - mysql -e "CREATE USER 'travis'@'localhost' IDENTIFIED BY '';" -uroot
-  - mysql -e 'create database myapp_test;' -uroot
+  - mysql -e "create database IF NOT EXISTS test;" -uroot
+  - mysql -e "CREATE USER 'billy'@'localhost' IDENTIFIED BY 'supersecret';" -uroot
   - psql -c 'create database testdb;' -U postgres
 
 after_success:
