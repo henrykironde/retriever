@@ -40,7 +40,7 @@ before_script:
   - sqlite3 --version
   - mysql -e "create database IF NOT EXISTS test;" -uroot
   - mysql -e "CREATE USER 'billy'@'localhost' IDENTIFIED BY 'supersecret';" -uroot
-  - psql -c 'create database testdb;' -U postgres
+
 
 after_success:
   - codecov
