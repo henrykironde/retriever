@@ -1,5 +1,6 @@
 language: python
-
+sudo: required
+dist: trusty
 matrix:
   include:
     - os: osx
@@ -40,7 +41,21 @@ before_script:
   - sqlite3 --version
   - mysql -e "create database IF NOT EXISTS test;" -uroot
   - mysql -e "CREATE USER 'billy'@'localhost' IDENTIFIED BY 'supersecret';" -uroot
+  - mysql -e "create database sqlectron;" -uroot
+  - mysql -e "CREATE USER 'travis'@'localhost';GRANT ALL PRIVILEGES ON *.* TO 'travis'@'localhost';GRANT FILE ON *.* TO 'travis'@'localhost';" -uroot
+  # - printf "[client]\nusername=travis\npassword=supersecret\n" > ~/.my.cnf
+# # postgres
 
+# before_script:
+#   # - psql -c "CREATE DATABASE testing_db;" -U postgres
+#   # - psql -c "CREATE USER foo WITH PASSWORD 'bar';" -U postgres
+#   # - printf ("[rs-dbi]\nusername=billy\npassword=supersecret\n") > ~/.my.cnf
+#   # - printf "localhost:*:testdb:postgres:Password12!" > ~/.my.cnf
+
+  - psql -c "CREATE USER postgres WITH PASSWORD 'Password12!'" -U postgres
+  - psql -c 'CREATE DATABASE testdb' -U postgres
+  - psql -c 'GRANT ALL PRIVILEGES ON DATABASE testdb to postgres'
+  - printf "localhost:*:testdb:postgres:Password12!" > ~/.pgpass
 
 after_success:
   - codecov
