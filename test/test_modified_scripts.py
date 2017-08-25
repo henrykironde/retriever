@@ -1,8 +1,9 @@
 """This module, when run, attempts to install datasets for modified Retriever
 scripts in the /scripts folder (except for those listed in ignore_list)
 """
-from __future__ import print_function
 from __future__ import absolute_import
+from __future__ import print_function
+
 from future import standard_library
 
 standard_library.install_aliases()
@@ -108,9 +109,7 @@ def install_modified(engine_list=ENGINE_LIST()):
         "sqlite": {'engine': 'sqlite',
                    'file': dbfile, 'table_name': '{db}_{table}'}
     }
-
-    test_engines = {}
-    for engine in engine_list:
+    for engine in engine_list_install:
         if engine.abbreviation in engine_test:
             try:
                 opts = engine_test[engine.abbreviation]
@@ -147,16 +146,7 @@ def test_install_modified():
 
 
 def main():
-    engine_list = ENGINE_LIST()
-    # If engine argument, tests are only run on given engines
-    if len(sys.argv) > 1:
-        engine_list = [
-            e for e in engine_list
-            if e.name in sys.argv[1:] or
-            e.abbreviation in sys.argv[1:]
-            ]
-
-    errors = install_modified(engine_list)
+    errors = install_modified()
     if errors:
         print("Engine, Dataset, Error")
         for error in errors:
