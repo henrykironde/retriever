@@ -20,6 +20,8 @@ Contents:
    rdataretriever.rst
    datasets.rst
    modules.rst
+   pyretriever.rst
+   retrieverjl.rst
 
 
 Indices and tables
