@@ -8,6 +8,7 @@ from retriever import ENCODING
 
 encoding = ENCODING.lower()
 
+
 reload(sys)
 if hasattr(sys, 'setdefaultencoding'):
     sys.setdefaultencoding(encoding)
