@@ -167,7 +167,7 @@ def test_csv_regression(dataset, expected, tmpdir):
 
 
 @pytest.mark.parametrize("dataset, expected", download_md5)
-def test_download_regression(dataset, expected, tmpdir):
+def test_download_regression(dataset, expected):
     """Test download regression."""
     os.chdir(retriever_root_dir)
     download(dataset, "raw_data/{0}".format(dataset))
