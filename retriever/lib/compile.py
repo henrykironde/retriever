@@ -122,7 +122,7 @@ def compile_json(json_file, debug=False):
             values["version"] = str(value)
 
         elif key == "encoding":
-            values["encoding"] = "\"" + str(value) + "\""
+            values["encoding"] = str(value)
             # Adding the key 'encoding'
             source_encoding = str(value)
 
@@ -130,7 +130,7 @@ def compile_json(json_file, debug=False):
             values["retriever_minimum_version"] = str(value)
 
         elif key == "message":
-            values["message"] = "\"" + str(value) + "\""
+            values["message"] = str(value)
 
         elif key == "resources":
             # Array of table objects
