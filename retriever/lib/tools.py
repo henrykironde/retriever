@@ -20,7 +20,6 @@ from retriever.lib.scripts import open_fr, open_fw, open_csvw
 from hashlib import md5
 from io import StringIO as newfile
 from retriever.lib.defaults import HOME_DIR, ENCODING
-from retriever.lib.compile import MODULE_LIST
 from retriever.lib.models import *
 import xml.etree.ElementTree as ET
 
@@ -196,6 +195,7 @@ def file_2list(input_file):
 
 def get_module_version():
     """This function gets the version number of the scripts and returns them in array form."""
+    from retriever.lib.scripts import MODULE_LIST
     modules = MODULE_LIST()
     scripts = []
     for module in modules:

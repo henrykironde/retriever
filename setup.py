@@ -105,12 +105,12 @@ if current_platform != "windows":
     # register for the current shell
     os.system(argcomplete_command)
 
-#problem here
-try:
-    from retriever.compile import compile
-    from retriever.lib.repository import check_for_updates
 
-    check_for_updates(False)
-    compile()
-except:
-    pass
+# try:
+#     from retriever.compile import compile
+#     from retriever.lib.repository import check_for_updates
+#
+#     compile()
+#     check_for_updates(False)
+# except:
+#     pass

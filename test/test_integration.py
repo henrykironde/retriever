@@ -2,7 +2,6 @@
 # """Integrations tests for Data Retriever"""
 from __future__ import print_function
 
-import imp
 import json
 import os
 import shutil
@@ -29,6 +28,10 @@ if os.name == "nt":
     os_password = "Password12!"
 else:
     os_password = ""
+
+
+mysql_engine, postgres_engine, sqlite_engine, msaccess_engine, \
+csv_engine, download_engine, json_engine, xml_engine = engine_list
 
 simple_csv = {
     'name': 'simple_csv',
@@ -383,6 +386,11 @@ def teardown_module():
         os.system("rm testdb.sqlite")
 
 
+def get_script_module(script_name):
+    """Load a script module."""
+    return compile_json(os.path.join(HOME_DIR, "scripts", script_name))
+
+
 def get_output_as_csv(dataset, engines, tmpdir, db):
     """Install dataset and return the output as a string version of the csv."""
     workdir = tmpdir.mkdtemp()
@@ -403,16 +411,6 @@ def get_output_as_csv(dataset, engines, tmpdir, db):
     obs_out = file_2list(csv_file)
     os.chdir(retriever_root_dir)
     return obs_out
-
-
-def get_script_module(script_name):
-    """Load a script module"""
-    return compile_json(os.path.join(HOME_DIR, "scripts", script_name))
-
-
-mysql_engine, postgres_engine, sqlite_engine, msaccess_engine, \
-csv_engine, download_engine, json_engine, xml_engine = engine_list
-
 
 @pytest.mark.parametrize("dataset, expected", test_parameters)
 def test_csv_integration(dataset, expected, tmpdir):
