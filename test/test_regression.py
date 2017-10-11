@@ -16,6 +16,9 @@ from retriever import install_postgres
 from retriever import install_sqlite
 from retriever import install_xml
 from retriever.lib.defaults import ENCODING
+from retriever.lib.defaults import HOME_DIR
+from retriever.lib.compile import compile_json
+
 
 encoding = ENCODING.lower()
 
@@ -53,26 +56,6 @@ db_md5 = [
 ]
 
 
-def get_script_module(script_name):
-    """Load a script module from the scripts directory in the retriever."""
-    file, pathname, desc = imp.find_module(script_name, [working_script_dir])
-    return imp.load_module(script_name, file, pathname, desc)
-
-
-def get_csv_md5(dataset, engine, tmpdir, install_function, config):
-    workdir = tmpdir.mkdtemp()
-    os.system("cp -r {} {}/".format(os.path.join(retriever_root_dir, 'scripts'),
-                                             os.path.join(str(workdir), 'scripts')))
-    workdir.chdir()
-    script_module = get_script_module(dataset)
-    install_function(dataset.replace("_", "-"), **config)
-    engine_obj = script_module.SCRIPT.checkengine(engine)
-    engine_obj.to_csv()
-    os.system("rm -r scripts") # need to remove scripts before checking md5 on dir
-    current_md5 = getmd5(data=str(workdir), data_type='dir')
-    return current_md5
-
-
 def setup_module():
     """Update retriever scripts and cd to test directory to find data."""
     os.chdir(retriever_root_dir)
@@ -85,6 +68,24 @@ def teardown_module():
     os.system("rm -r output*")
     shutil.rmtree(os.path.join(retriever_root_dir, "raw_data"))
     os.system("rm testdb.sqlite")
+
+
+def get_script_module(script_name):
+    """Load a script module"""
+    return compile_json(os.path.join(HOME_DIR, "scripts", script_name))
+
+
+def get_csv_md5(dataset, engine, tmpdir, install_function, config):
+    workdir = tmpdir.mkdtemp()
+    os.system("cp -r {} {}/".format(os.path.join(retriever_root_dir, 'scripts'), os.path.join(str(workdir), 'scripts')))
+    workdir.chdir()
+    script_module = get_script_module(dataset)
+    install_function(dataset.replace("_", "-"), **config)
+    engine_obj = script_module.checkengine(engine)
+    engine_obj.to_csv()
+    os.system("rm -r scripts") # need to remove scripts before checking md5 on dir
+    current_md5 = getmd5(data=str(workdir), data_type='dir')
+    return current_md5
 
 
 @pytest.mark.parametrize("dataset, expected", db_md5)

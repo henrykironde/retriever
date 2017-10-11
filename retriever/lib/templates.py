@@ -105,6 +105,8 @@ class BasicTextTemplate(Script):
 
     def __init__(self, **kwargs):
         Script.__init__(self, **kwargs)
+        for key in kwargs:
+            setattr(self, key, kwargs[key])
 
     def download(self, engine=None, debug=False):
         """Defines the download processes for scripts that utilize the default
@@ -164,7 +166,7 @@ class HtmlTableTemplate(Script):
     pass
 
 
-TEMPLATES = [
-    ("Basic Text", BasicTextTemplate),
-    ("HTML Table", HtmlTableTemplate),
-]
+TEMPLATES = {
+    "default": BasicTextTemplate,
+    "html_table": HtmlTableTemplate
+}

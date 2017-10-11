@@ -27,6 +27,8 @@ from retriever.lib.tools import create_file
 from retriever.lib.tools import file_2list
 from retriever.lib.datapackage import clean_input, is_empty
 from retriever.lib.compile import add_dialect, add_schema
+from retriever.lib.cleanup import Cleanup
+
 
 # Create simple engine fixture
 test_engine = Engine()
@@ -414,8 +416,8 @@ def test_add_dialect():
     table['dialect']['dummy_key'] = 'dummy_value'
 
     result = {}
-    result['cleanup'] = 'Cleanup(correct_invalid_value, missing_values=\x00)'
-    result['delimiter'] = "'\t'"
+    result['cleanup'] = Cleanup(correct_invalid_value, missing_values='\x00')
+    result['delimiter'] = '\t'
     result['dummy_key'] = 'dummy_value'
 
     add_dialect(table_dict, table)

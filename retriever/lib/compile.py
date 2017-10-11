@@ -1,23 +1,12 @@
 import json
 import sys
+import pprint
 from builtins import str
 
 if sys.version_info[0] < 3:
     from codecs import open
-
-script_templates = {
-    "default": """#retriever
-from retriever.lib.templates import BasicTextTemplate
-from retriever.lib.models import Table, Cleanup, correct_invalid_value
-
-SCRIPT = BasicTextTemplate(%s)""",
-
-    "html_table": """#retriever
-from retriever.lib.templates import HtmlTableTemplate
-from retriever.lib.models import Table, Cleanup, correct_invalid_value
-
-SCRIPT = HtmlTableTemplate(%s)""",
-}
+from retriever.lib.templates import TEMPLATES
+from retriever.lib.models import Cleanup, Table, correct_invalid_value
 
 
 def add_dialect(table_dict, table):
@@ -31,11 +20,10 @@ def add_dialect(table_dict, table):
         # dialect related key-value pairs
         # copied as is
         if key == "missingValues":
-            table_dict[
-                'cleanup'] = "Cleanup(correct_invalid_value, missing_values=" + str(val) + ")"
+            table_dict['cleanup'] = Cleanup(correct_invalid_value, missing_values=val)
 
         elif key == "delimiter":
-            table_dict[key] = "'" + str(val) + "'"
+            table_dict[key] = str(val)
         else:
             table_dict[key] = val
 
@@ -76,12 +64,13 @@ def add_schema(table_dict, table):
             table_dict[key] = val
 
 
-def compile_json(json_file):
+def compile_json(json_file, debug=False):
     """
     Function to compile JSON script files to python scripts
     The scripts are created with `retriever new_json <script_name>` using
     command line
     """
+    pp = pprint.PrettyPrinter(indent=4)
     json_object = {}
     source_encoding = "latin-1"
     try:
@@ -94,30 +83,34 @@ def compile_json(json_file):
         # Compile only files that have retriever key
         return
 
-    values = {}
-    values['urls'] = {}
+    values = {'urls': {}}
 
     keys_to_ignore = ["template"]
+
+    required_fields = {
+        "name": "name",
+        "tables": "tables"
+    }
 
     for (key, value) in json_object.items():
 
         if key == "title":
-            values["title"] = "\"" + str(value) + "\""
+            values["title"] = str(value)
 
         elif key == "name":
-            values["name"] = "\"" + str(value) + "\""
+            values["name"] = str(value)
 
         elif key == "description":
-            values["description"] = "\"" + str(value) + "\""
+            values["description"] = str(value)
 
         elif key == "addendum":
-            values["addendum"] = "\"" + str(value) + "\""
+            values["addendum"] = str(value)
 
         elif key == "homepage":
-            values["ref"] = "\"" + str(value) + "\""
+            values["ref"] = str(value)
 
         elif key == "citation":
-            values["citation"] = "\"" + str(value) + "\""
+            values["citation"] = str(value)
 
         elif key == "licenses":
             values["licenses"] = value
@@ -126,7 +119,7 @@ def compile_json(json_file):
             values["keywords"] = value
 
         elif key == "version":
-            values["version"] = "\"" + str(value) + "\""
+            values["version"] = str(value)
 
         elif key == "encoding":
             values["encoding"] = "\"" + str(value) + "\""
@@ -134,7 +127,7 @@ def compile_json(json_file):
             source_encoding = str(value)
 
         elif key == "retriever_minimum_version":
-            values["retriever_minimum_version"] = "\"" + str(value) + "\""
+            values["retriever_minimum_version"] = str(value)
 
         elif key == "message":
             values["message"] = "\"" + str(value) + "\""
@@ -149,7 +142,8 @@ def compile_json(json_file):
                 try:
                     values['urls'][table['name']] = table['url']
                 except Exception as e:
-                    print(e, "\nError in reading table: " + table)
+                    print(e, "\nError in reading table: ")
+                    pp.pprint(table)
                     continue
 
                 if table["schema"] == {} and table["dialect"] == {}:
@@ -169,31 +163,30 @@ def compile_json(json_file):
             values[key] = value
 
     # Create a Table object string using the tables dict
-    table_desc = "{"
+    table_obj = {}
     for (key, value) in tables.items():
-        table_desc += "'" + key + "': Table('" + key + "', "
-        table_desc += ','.join([key + "=" + str(value)
-                                for key, value, in value.items()])
-        table_desc += "),"
-    if table_desc != '{':
-        table_desc = table_desc[:-1]
-    table_desc += "}"
+        table_obj[key] = Table(key, **value)
 
-    values["tables"] = table_desc
-
-    script_desc = []
-    for key, value in values.items():
-        if key not in keys_to_ignore:
-            script_desc.append(key + "=" + str(value))
-    script_desc = (',\n' + ' ' * 27).join(script_desc)
+    values["tables"] = table_obj
 
     if 'template' in values.keys():
         template = values["template"]
     else:
         template = "default"
-    script_contents = (script_templates[template] % script_desc)
 
-    new_script = open(json_file + '.py', 'w', encoding='utf-8')
-    new_script.write('# -*- coding: {}  -*-\n'.format(source_encoding.lower()))
-    new_script.write(script_contents)
-    new_script.close()
+    check=True
+    fields = []
+    for item in required_fields.keys():
+        if item not in values:
+            fields.append(required_fields[item])
+            check = False
+
+    if check:
+        if debug:
+            print("Values being passed to template: ")
+            pp.pprint(values)
+        return TEMPLATES[template](**values)
+    else:
+        print(json_file + " is missing parameters: \n")
+        print(fields)
+        sys.exit()
