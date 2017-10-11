@@ -28,6 +28,9 @@ def MODULE_LIST(force_compile=False):
             script_name = '.'.join(script.split('.')[:-1])
             if script_name not in loaded_scripts:
                 compiled_script = compile_json(join(search_path, script_name))
+                print(compiled_script)
+                if compiled_script is None:
+                    continue
                 setattr(compiled_script, "_file", os.path.join(search_path, script))
                 setattr(compiled_script, "_name", script_name)
                 modules.append(compiled_script)

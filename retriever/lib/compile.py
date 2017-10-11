@@ -1,7 +1,18 @@
+from __future__ import division
+from __future__ import print_function
+
+from future import standard_library
+
+standard_library.install_aliases()
+from builtins import object
+from builtins import range
+from builtins import input
+from builtins import zip
+from builtins import next
+from builtins import str
 import json
 import sys
 import pprint
-from builtins import str
 
 if sys.version_info[0] < 3:
     from codecs import open
@@ -23,6 +34,8 @@ def add_dialect(table_dict, table):
             table_dict['cleanup'] = Cleanup(correct_invalid_value, missing_values=val)
 
         elif key == "delimiter":
+            print(type(str(val)))
+            print(type(val))
             table_dict[key] = str(val)
         else:
             table_dict[key] = val
@@ -84,6 +97,8 @@ def compile_json(json_file, debug=False):
 
     values = {'urls': {}}
 
+    if "breast_cancer_wi" != json_file:
+        return
     required_fields = {
         "name": "name",
         "tables": "tables"

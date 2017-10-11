@@ -10,7 +10,15 @@ from functools import reduce
 from retriever.lib.cleanup import *
 
 
-class Table(object):
+class MainTable(object):
+    """Refactor table moddule since raster, vector and tabular data
+
+    all have some common table features
+    """
+    pass
+
+
+class Table(MainTable):
     """Information about a database table."""
 
     def __init__(self, name, **kwargs):
@@ -169,3 +177,51 @@ class Table(object):
                     columns.append(column[1][0])
 
         return columns
+
+
+class RasterTable(MainTable):
+    """Raster table implementation"""
+
+    pass
+
+
+class VectorTable(MainTable):
+    """Vector table implementation"""
+
+    def __init__(self, name, **kwargs):
+        self.pk = True
+        self.contains_pk = False
+        self.feature_count = 0
+        self.attributes = []
+        self.attributes_dict = {}
+        self.fields_dict = {}
+        self.extent = []
+        self.saptialref = None
+
+    def create_table_statement(self):
+        """Return create table statment for vector data"""
+        self.fields_dict
+
+    def drop_vetor_data_tabe(self):
+        """Drop the table for vector data
+
+        NOTE: This may require droping the foreign keys cascaded
+        """
+        self.fields_dict
+
+    def insert_to_table(self):
+        """This function is used to insert to table"""
+        self.fields_dict
+
+    def extract_table(self):
+        """Select a set of data from the table"""
+        self.fields_dict
+
+    def to_raster(self):
+        """Convert vector to Raster"""
+
+        self.fields_dict
+
+    def project_to_WGS1984(self, package_proj = None):
+        if not package_proj:
+            self.fields_dict
