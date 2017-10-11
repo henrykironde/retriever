@@ -2,7 +2,6 @@
 # """Integrations tests for Data Retriever"""
 from __future__ import print_function
 
-import imp
 import json
 import os
 import shutil

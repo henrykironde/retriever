@@ -72,7 +72,6 @@ def compile_json(json_file, debug=False):
     """
     pp = pprint.PrettyPrinter(indent=4)
     json_object = {}
-    source_encoding = "latin-1"
     try:
         json_object = json.load(open(json_file + ".json", "r"))
     except ValueError:
@@ -84,8 +83,6 @@ def compile_json(json_file, debug=False):
         return
 
     values = {'urls': {}}
-
-    keys_to_ignore = ["template"]
 
     required_fields = {
         "name": "name",

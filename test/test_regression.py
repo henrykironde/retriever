@@ -1,6 +1,5 @@
 from __future__ import absolute_import
 
-import imp
 import io
 import os
 import shutil
