@@ -22,8 +22,8 @@ class TableMain(object):
 class Table(TableMain):
     """Information about a database table."""
 
-    def __init__(self, name, **kwargs):
-        self.name = name
+    def __init__(self, **kwargs):
+        self.name = None
         self.pk = True
         self.contains_pk = False
         self.delimiter = None
@@ -37,6 +37,8 @@ class Table(TableMain):
         self.cleaned_columns = False
         for key, item in list(kwargs.items()):
             setattr(self, key, item[0] if isinstance(item, tuple) else item)
+
+
 
     def auto_get_columns(self, header):
         """Get column names from the header row.
@@ -182,9 +184,9 @@ class Table(TableMain):
 
 class TableRaster(TableMain):
     """Raster table implementation"""
-    def __init__(self, name, **kwargs):
-        self.group = None
+    def __init__(self, **kwargs):
         self.name = False
+        self.group = None
         self.relative_path = 0
         self.resolution = None
         self.resolution_units = None
@@ -196,10 +198,12 @@ class TableRaster(TableMain):
         for key, item in list(kwargs.items()):
             setattr(self, key, item[0] if isinstance(item, tuple) else item)
 
+
 class TableVector(TableMain):
     """Vector table implementation"""
 
-    def __init__(self, name, **kwargs):
+    def __init__(self, **kwargs):
+        self.name = False
         self.pk = True
         self.contains_pk = False
         self.feature_count = 0
@@ -210,6 +214,7 @@ class TableVector(TableMain):
         self.saptialref = None
         for key, item in list(kwargs.items()):
             setattr(self, key, item[0] if isinstance(item, tuple) else item)
+
     def create_table_statement(self):
         """Return create table statment for vector data"""
         self.fields_dict

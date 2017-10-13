@@ -19,7 +19,7 @@ if sys.version_info[0] < 3:
     from codecs import open
 from retriever.lib.templates import TEMPLATES
 # from retriever.lib.models import Cleanup, correct_invalid_value
-# from retriever.lib.models import TableMain, Table, TableRaster, TableVector
+from retriever.lib.models import myTables # TableMain, Table, TableRaster, TableVector
 
 
 def add_dialect(table_dict, table):
@@ -76,6 +76,7 @@ def add_schema(table_dict, table):
         else:
             table_dict[key] = val
 
+
 def compile_json(json_file, debug=False):
     """
     Function to compile JSON script files to python scripts
@@ -83,24 +84,72 @@ def compile_json(json_file, debug=False):
     command line
     """
     json_object = OrderedDict()
+    json_file = str(json_file) + ".json"
+
     try:
-        json_object = json.load(open(json_file + ".json", "r"))
+        json_object = json.load(open(json_file, "r"))
     except ValueError:
         pass
+
     if type(json_object) is not dict:
-        return
+        raise ValueError("not a json dictionary, Format file correctly")
+
     if "retriever" not in json_object.keys():
         # Compile only files that have retriever key
         return
-    table_names = [item["name"] for item in json_object["resources"]]
-    json_object["tables"] = dict(zip(table_names, json_object["resources"]))
-    json_object.pop("resources", None)
-    print(json_object)
+
+    if "format" not in json_object:
+        json_object["format"] = "tabular"
+
+    resource_dict ={}
+    for resource_item in json_object["resources"]:
+        # Check for required resource fields
+        spec_list = ["name", "url"]
+
+        rspec = set(spec_list)
+        if not rspec.intersection(resource_item.keys()) == rspec:
+            raise ValueError("Check either {} fields in  Package {}".format(rspec, json_file))
+
+        for spec in spec_list:
+            if not resource_item[spec]:
+                raise ValueError("Check either {} for missing values.\n Package {}".format(rspec, json_file))
+
+        # create tables from list of resources
+        for (t_key, t_val) in resource_item.items():
+
+    # table_names = [item["name"] for item in json_object["resources"]]
+    # json_object["tables"] = dict(zip(table_names, json_object["resources"]))
+    # json_object.pop("resources", None)
+
+        # print(["name", "url"] in resource_item.keys())
+        # for key, values in resource_item.items():
+        #
+        #
+        #     if key == "name":
+        #
+        #     resource_dict["name"] =  resource_item["name"]
+        # if "dialect" in resource_item.items():
+
+
+
+    # table_names = [item["name"] for item in json_object["resources"]]
+    # json_object["tables"] = dict(zip(table_names, json_object["resources"]))
+    #
+    # json_object["tables"] = dict(zip(table_names,  json_object["resources"]).items())
+    # json_object.pop("resources", None)
+    #
+    # table_obj = {}
+    #
+    # for table_name, table_schema in json_object["tables"].items():
+    #     table_obj[table_name] = myTables[json_object["format"]]
+    #
+    # c = table_names
+    # print(table_obj)
+
 
     #  for item in json_object["resources"]:
     #      json_object["tables"][item["name"]]= item
-    #
-    #
+
     # json_object["tables"]= json_object["resources"]
     # # for item in json_object["resources"]:
     # #     json_object["tables"][item["name"]]= item
@@ -223,6 +272,6 @@ def compile_json(json_file, debug=False):
     #     sys.exit()
 
 if __name__ == '__main__':
-    # compile_json("C:/Users/Henry/Documents/GitHub/retriever/scripts/croche_vegetation_data")
+    compile_json("C:/Users/Henry/Documents/GitHub/retriever/scripts/croche_vegetation_data")
     # compile_json("C:/Users/Henry/Documents/GitHub/weav/scripts/cumbria")
-    compile_json("C:/Users/Henry/Documents/GitHub/retriever/scripts/breast_cancer_wi")
+    # compile_json("C:/Users/Henry/Documents/GitHub/retriever/scripts/breast_cancer_wi")
