@@ -7,8 +7,8 @@ from os.path import join, isfile, getmtime, exists
 
 from pkg_resources import parse_version
 
-from retriever.lib.compile import compile_json
 from retriever.lib.defaults import SCRIPT_SEARCH_PATHS, VERSION, ENCODING
+from retriever.lib.compile import compile_json
 
 
 def MODULE_LIST(force_compile=False):
@@ -28,9 +28,6 @@ def MODULE_LIST(force_compile=False):
             script_name = '.'.join(script.split('.')[:-1])
             if script_name not in loaded_scripts:
                 compiled_script = compile_json(join(search_path, script_name))
-                print(compiled_script)
-                if compiled_script is None:
-                    continue
                 setattr(compiled_script, "_file", os.path.join(search_path, script))
                 setattr(compiled_script, "_name", script_name)
                 modules.append(compiled_script)
@@ -39,8 +36,6 @@ def MODULE_LIST(force_compile=False):
         files = [file for file in os.listdir(search_path)
                  if file[-3:] == ".py" and file[0] != "_" and
                  '#retriever' in ' '.join(open(join(search_path, file), 'r').readlines()[:2]).lower()]
-
-
         for script in files:
             script_name = '.'.join(script.split('.')[:-1])
             if script_name not in loaded_scripts:

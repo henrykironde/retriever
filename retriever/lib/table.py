@@ -6,11 +6,12 @@ import csv
 import io
 import sys
 from functools import reduce
+from collections import OrderedDict
 
 from retriever.lib.cleanup import *
 
 
-class MainTable(object):
+class TableMain(object):
     """Refactor table moddule since raster, vector and tabular data
 
     all have some common table features
@@ -18,7 +19,7 @@ class MainTable(object):
     pass
 
 
-class Table(MainTable):
+class Table(TableMain):
     """Information about a database table."""
 
     def __init__(self, name, **kwargs):
@@ -179,13 +180,23 @@ class Table(MainTable):
         return columns
 
 
-class RasterTable(MainTable):
+class TableRaster(TableMain):
     """Raster table implementation"""
+    def __init__(self, name, **kwargs):
+        self.group = None
+        self.name = False
+        self.relative_path = 0
+        self.resolution = None
+        self.resolution_units = None
+        self.dimensions = None
+        self.noDataValue = None
+        self.geoTransform = None
+        self.parameter = None
+        self.extent = None
+        for key, item in list(kwargs.items()):
+            setattr(self, key, item[0] if isinstance(item, tuple) else item)
 
-    pass
-
-
-class VectorTable(MainTable):
+class TableVector(TableMain):
     """Vector table implementation"""
 
     def __init__(self, name, **kwargs):
@@ -195,9 +206,10 @@ class VectorTable(MainTable):
         self.attributes = []
         self.attributes_dict = {}
         self.fields_dict = {}
-        self.extent = []
+        self.extent = {}
         self.saptialref = None
-
+        for key, item in list(kwargs.items()):
+            setattr(self, key, item[0] if isinstance(item, tuple) else item)
     def create_table_statement(self):
         """Return create table statment for vector data"""
         self.fields_dict
@@ -225,3 +237,10 @@ class VectorTable(MainTable):
     def project_to_WGS1984(self, package_proj = None):
         if not package_proj:
             self.fields_dict
+
+
+myTables = {
+    "vector": TableVector,
+    "raster": TableRaster,
+    "tabular": Table,
+}
