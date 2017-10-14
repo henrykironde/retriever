@@ -16,7 +16,10 @@ class TableMain(object):
 
     all have some common table features
     """
-    pass
+
+    def __init__(self, name=None, url=None):
+        self.name = name
+        self.url = name
 
 
 class Table(TableMain):
@@ -24,6 +27,7 @@ class Table(TableMain):
 
     def __init__(self, **kwargs):
         self.name = None
+        self.url = None
         self.pk = True
         self.contains_pk = False
         self.delimiter = None
@@ -34,11 +38,19 @@ class Table(TableMain):
         self.record_id = 0
         self.columns = []
         self.replace_columns = []
+        self.missing_values = None
         self.cleaned_columns = False
-        for key, item in list(kwargs.items()):
-            setattr(self, key, item[0] if isinstance(item, tuple) else item)
+        for key in kwargs:
+            setattr(self, key, kwargs[key])
+        # for key, item in list(kwargs.items()):
+        #     setattr(self, key, item[0] if isinstance(item, tuple) else item)
 
+        if self.missing_values is None:
+            del self.missing_values
+        else:
+            Cleanup(correct_invalid_value, missing_values=self.missing_values)
 
+        TableMain.__init__(self, self.name, self.url)
 
     def auto_get_columns(self, header):
         """Get column names from the header row.

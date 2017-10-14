@@ -1,147 +1,53 @@
 {
-  "retriever_minimum_version": "2.0.dev",
-  "description": "Database containing information on Wisconsin Breast Cancer Diagnostics",
-  "keywords": [
-    "cancer",
-    "health",
-    "disease",
-    "medicine"
-  ],
-  "version": "1.2.1",
-  "urls": {
-    "wdbc": "http://archive.ics.uci.edu/ml/machine-learning-databases/breast-cancer-wisconsin/wdbc.data",
-    "wpbc": "http://archive.ics.uci.edu/ml/machine-learning-databases/breast-cancer-wisconsin/wpbc.data",
-    "breastCancerWisconsin": "http://archive.ics.uci.edu/ml/machine-learning-databases/breast-cancer-wisconsin/breast-cancer-wisconsin.data"
-  },
-  "title": "Wisconsin Breast Cancer Database",
-  "citation": "Lichman, M. (2013). UCI Machine Learning Repository [http://archive.ics.uci.edu/ml]. Irvine, CA: University of California, School of Information and Computer Science.",
-  "retriever": "True",
-  "homepage": "http://archive.ics.uci.edu/ml/datasets/Breast+Cancer+Wisconsin+%28Diagnostic%29",
-  "name": "breast-cancer-wi",
-  "tables": {
-    "wdbc": {
-      "schema": {
-        "fields": [
-          {
-            "type": "int",
-            "name": "ID"
-          },
-          {
-            "type": "char",
-            "name": "Diagnosis"
-          },
-          {
-            "type": "double",
-            "name": "radius"
-          },
-          {
-            "type": "double",
-            "name": "texture"
-          },
-          {
-            "type": "double",
-            "name": "perimeter"
-          },
-          {
-            "type": "double",
-            "name": "area"
-          },
-          {
-            "type": "double",
-            "name": "smoothness"
-          },
-          {
-            "type": "double",
-            "name": "compactness"
-          },
-          {
-            "type": "double",
-            "name": "concavity"
-          },
-          {
-            "type": "double",
-            "name": "concave_points"
-          },
-          {
-            "type": "double",
-            "name": "symmetry"
-          },
-          {
-            "type": "double",
-            "name": "fractal_dimension"
-          }
-        ]
-      },
-      "name": "wdbc",
-      "url": "http://archive.ics.uci.edu/ml/machine-learning-databases/breast-cancer-wisconsin/wdbc.data",
-      "dialect": {
-        "delimiter": ",",
-        "header_rows": 0
-      }
-    },
-    "wpbc": {
-      "schema": {
-        "fields": [
-          {
-            "type": "int",
-            "name": "ID"
-          },
-          {
-            "type": "char",
-            "name": "Outcome"
-          },
-          {
-            "type": "int",
-            "name": "Time"
-          },
-          {
-            "type": "double",
-            "name": "radius"
-          },
-          {
-            "type": "double",
-            "name": "texture"
-          },
-          {
-            "type": "double",
-            "name": "perimeter"
-          },
-          {
-            "type": "double",
-            "name": "area"
-          },
-          {
-            "type": "double",
-            "name": "smoothness"
-          },
-          {
-            "type": "double",
-            "name": "compactness"
-          },
-          {
-            "type": "double",
-            "name": "concavity"
-          },
-          {
-            "type": "double",
-            "name": "concave_points"
-          },
-          {
-            "type": "double",
-            "name": "symmetry"
-          },
-          {
-            "type": "double",
-            "name": "fractal_dimension"
-          }
-        ]
-      },
-      "name": "wpbc",
-      "url": "http://archive.ics.uci.edu/ml/machine-learning-databases/breast-cancer-wisconsin/wpbc.data",
-      "dialect": {
-        "delimiter": ",",
-        "header_rows": 0
-      }
+    "citation": "R. A. Fisher. 1936. The Use of Multiple Measurements in Taxonomic Problems. and Asuncion, A. & Newman, D.J. (2007). UCI Machine Learning Repository [http://www.ics.uci.edu/~mlearn/MLRepository.html]. Irvine, CA: University of California, School of Information and Computer Science.",
+    "description": "Famous dataset from R. A. Fisher. This dataset has been corrected. Information Source: Asuncion, A. & Newman, D.J. (2007). UCI Machine Learning Repository [http://www.ics.uci.edu/~mlearn/MLRepository.html]. Irvine, CA: University of California, School of Information and Computer Science.",
+    "homepage": "http://mlr.cs.umass.edu/ml/datasets/Iris",
+    "keywords": [
+        "plants",
+        "literature-compilation",
+        "categorical"
+    ],
+    "name": "iris",
+    "resources": [
+        {
+            "dialect": {
+                "delimiter": ",",
+                "header_rows": 0
+            },
+            "name": "Iris",
+            "schema": {
+                "fields": [
+                    {
+                        "name": "sepal_length",
+                        "type": "double"
+                    },
+                    {
+                        "name": "sepal_width",
+                        "type": "double"
+                    },
+                    {
+                        "name": "petal_length",
+                        "type": "double"
+                    },
+                    {
+                        "name": "petal_width",
+                        "type": "double"
+                    },
+                    {
+                        "name": "class",
+                        "size": "20",
+                        "type": "char"
+                    }
+                ]
+            },
+            "url": "http://mlr.cs.umass.edu/ml/machine-learning-databases/iris/bezdekIris.data"
+        }
+    ],
+    "retriever": "True",
+    "retriever_minimum_version": "2.0.dev",
+    "title": "Iris Plants Database",
+    "urls": {
+        "Iris": "http://mlr.cs.umass.edu/ml/machine-learning-databases/iris/bezdekIris.data"
     },
     "breastCancerWisconsin": {
       "schema": {

@@ -90,188 +90,41 @@ def compile_json(json_file, debug=False):
         json_object = json.load(open(json_file, "r"))
     except ValueError:
         pass
+    # print(json_file)
+    if type(json_object) is dict and "resources" in json_object.keys():
+        if "format" not in json_object:
+            json_object["format"] = "tabular"
+        resource_dict ={}
+        for resource_item in json_object["resources"]:
+            # Check for required resource fields
+            spec_list = ["name", "url"]
 
-    if type(json_object) is not dict:
-        raise ValueError("not a json dictionary, Format file correctly")
+            rspec = set(spec_list)
+            if not rspec.intersection(resource_item.keys()) == rspec:
+                raise ValueError("Check either {} fields in  Package {}".format(rspec, json_file))
 
-    if "retriever" not in json_object.keys():
-        # Compile only files that have retriever key
-        return
+            for spec in spec_list:
+                if not resource_item[spec]:
+                    raise ValueError("Check either {} for missing values.\n Package {}".format(rspec, json_file))
 
-    if "format" not in json_object:
-        json_object["format"] = "tabular"
+            # create tables from list of resources
+            # for (t_key, t_val) in resource_item.items():
 
-    resource_dict ={}
-    for resource_item in json_object["resources"]:
-        # Check for required resource fields
-        spec_list = ["name", "url"]
+        json_object["tables"] = {}
+        temp_tables = {}
+        table_names = [item["name"] for item in json_object["resources"]]
+        temp_tables["tables"] = dict(zip(table_names, json_object["resources"]))
 
-        rspec = set(spec_list)
-        if not rspec.intersection(resource_item.keys()) == rspec:
-            raise ValueError("Check either {} fields in  Package {}".format(rspec, json_file))
+        for table_name, table_spec in temp_tables["tables"].items():
+            # print(type(table_spec))
+            json_object["tables"][table_name] = myTables[json_object["format"]](**table_spec)
 
-        for spec in spec_list:
-            if not resource_item[spec]:
-                raise ValueError("Check either {} for missing values.\n Package {}".format(rspec, json_file))
+        # json_object.pop("resources", None)
 
-        # create tables from list of resources
-        for (t_key, t_val) in resource_item.items():
+        return TEMPLATES["default"](**json_object)
+    return None
 
-    # table_names = [item["name"] for item in json_object["resources"]]
-    # json_object["tables"] = dict(zip(table_names, json_object["resources"]))
-    # json_object.pop("resources", None)
-
-        # print(["name", "url"] in resource_item.keys())
-        # for key, values in resource_item.items():
-        #
-        #
-        #     if key == "name":
-        #
-        #     resource_dict["name"] =  resource_item["name"]
-        # if "dialect" in resource_item.items():
-
-
-
-    # table_names = [item["name"] for item in json_object["resources"]]
-    # json_object["tables"] = dict(zip(table_names, json_object["resources"]))
-    #
-    # json_object["tables"] = dict(zip(table_names,  json_object["resources"]).items())
-    # json_object.pop("resources", None)
-    #
-    # table_obj = {}
-    #
-    # for table_name, table_schema in json_object["tables"].items():
-    #     table_obj[table_name] = myTables[json_object["format"]]
-    #
-    # c = table_names
-    # print(table_obj)
-
-
-    #  for item in json_object["resources"]:
-    #      json_object["tables"][item["name"]]= item
-
-    # json_object["tables"]= json_object["resources"]
-    # # for item in json_object["resources"]:
-    # #     json_object["tables"][item["name"]]= item
-
-    # print(json_object["tables"])
-
-    exit()
-
-
-
-    # exit()
-    # values = {'urls': {}}
-    # required_fields = {
-    #     "name": "name",
-    #     "tables": "tables"
-    # }
-    #
-    # for (key, value) in json_object.items():
-    #
-    #     if key == "title":
-    #         values["title"] = str(value)
-    #
-    #     elif key == "name":
-    #         values["name"] = str(value)
-    #
-    #     elif key == "description":
-    #         values["description"] = str(value)
-    #
-    #     elif key == "addendum":
-    #         values["addendum"] = str(value)
-    #
-    #     elif key == "homepage":
-    #         values["ref"] = str(value)
-    #
-    #     elif key == "citation":
-    #         values["citation"] = str(value)
-    #
-    #     elif key == "licenses":
-    #         values["licenses"] = value
-    #
-    #     elif key == "keywords":
-    #         values["keywords"] = value
-    #
-    #     elif key == "version":
-    #         values["version"] = str(value)
-    #
-    #     elif key == "encoding":
-    #         values["encoding"] = str(value)
-    #         # Adding the key 'encoding'
-    #         source_encoding = str(value)
-    #
-    #     elif key == "retriever_minimum_version":
-    #         values["retriever_minimum_version"] = str(value)
-    #
-    #     elif key == "message":
-    #         values["message"] = str(value)
-    #     elif key == "format"
-    #         values["vector"] =
-    #     elif key == "resources":
-    #
-    #         # Array of table objects
-    #         tables = {}
-    #         for table in value:
-    #             table_1 = co
-    #             tables_1[name]
-    #             # Maintain a dict for table keys and values
-    #             table_dict = {}
-    #
-    #             try:
-    #                 values['urls'][table['name']] = table['url']
-    #             except Exception as e:
-    #                 print(e, "\nError in reading table: ")
-    #                 pp.pprint(table)
-    #                 continue
-    #
-    #             if table["schema"] == {} and table["dialect"] == {}:
-    #                 continue
-    #
-    #             for (t_key, t_val) in table.items():
-    #
-    #                 if t_key == "dialect":
-    #                     add_dialect(table_dict, table)
-    #
-    #                 elif t_key == "schema":
-    #                     add_schema(table_dict, table)
-    #
-    #             tables[table["name"]] = table_dict
-    #
-    #     else:
-    #         values[key] = value
-    #
-    # # Create a Table object string using the tables dict
-    # table_obj = {}
-    # for (key, value) in tables.items():
-    #     # if
-    #     table_obj[key] = Table(key, **value)
-    #
-    # values["tables"] = table_obj
-    #
-    # if 'template' in values.keys():
-    #     template = values["template"]
-    # else:
-    #     template = "default"
-    #
-    # check=True
-    # fields = []
-    # for item in required_fields.keys():
-    #     if item not in values:
-    #         fields.append(required_fields[item])
-    #         check = False
-    #
-    # if check:
-    #     if debug:
-    #         print("Values being passed to template: ")
-    #         pp.pprint(values)
-    #     return TEMPLATES[template](**values)
-    # else:
-    #     print(json_file + " is missing parameters: \n")
-    #     print(fields)
-    #     sys.exit()
-
-if __name__ == '__main__':
-    compile_json("C:/Users/Henry/Documents/GitHub/retriever/scripts/croche_vegetation_data")
-    # compile_json("C:/Users/Henry/Documents/GitHub/weav/scripts/cumbria")
-    # compile_json("C:/Users/Henry/Documents/GitHub/retriever/scripts/breast_cancer_wi")
+# if __name__ == '__main__':
+#     compile_json("C:/Users/Henry/Documents/GitHub/retriever/scripts/croche_vegetation_data")
+#     # compile_json("C:/Users/Henry/Documents/GitHub/weav/scripts/cumbria")
+#     # compile_json("C:/Users/Henry/Documents/GitHub/retriever/scripts/breast_cancer_wi")
