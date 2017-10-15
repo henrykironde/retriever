@@ -4,11 +4,8 @@ functions available for inheritance by the scripts or datasets.
 """
 from __future__ import print_function
 
-import shutil
-
-from retriever.lib.models import *
 from retriever.engines import choose_engine
-from retriever.lib.defaults import DATA_DIR
+from retriever.lib.models import *
 
 
 class Script(object):
@@ -113,42 +110,59 @@ class BasicTextTemplate(Script):
         pre processing steps provided by the retriever."""
         Script.download(self, engine, debug)
         # make file name mandatory for simplicity
-        # if self.archived:
-        #     self.engine.download_files_from_archive(,self.archived)
 
-            # if'Mi' in  tabble_obj:
-        # print(self.tables)
-        # print(type(self.tables))
+        for i_table, table_obj in self.tables.items():
 
-        for i_table, tabble_obj in self.tables.items():
+            url = table_obj.url
+            if hasattr(self, "archived"):
+                files = [table_obj.path]
+                zips = self.archived
+                self.engine.download_files_from_archive(url=url,
+                                                        filenames=files,
+                                                        filetype=zips)
 
-            print(type(tabble_obj))
+                self.engine.auto_create_table(table_obj, filename=table_obj.path)
+                self.engine.insert_data_from_file(self.engine.format_filename(table_obj.path))
+                self.tables[i_table].record_id = 0
+            else:
+                self.engine.auto_create_table(table_obj, url=url)
+                self.engine.insert_data_from_url(url)
+                self.tables[i_table].record_id = 0
 
-        # exit()
-        # for i_table, _ in self.tables:
-        # for key in list(self.urls.keys()):
-        #     if key not in list(self.tables.keys()):
-        #         self.tables[key] = Table(key, cleanup=Cleanup(correct_invalid_value,
-        #                                                       missing_values=[-999]))
+
+                # if'Mi' in  tabble_obj:
+                # print(self.tables)
+                # print(type(self.tables))
+
+                # for i_table, tabble_obj in self.tables.items():
+                #
+                #     print(type(tabble_obj))
+
+                # exit()
+                # for i_table, _ in self.tables:
+                # for key in list(self.urls.keys()):
+                #     if key not in list(self.tables.keys()):
+                #         self.tables[key] = Table(key, cleanup=Cleanup(correct_invalid_value,
+                #                                                       missing_values=[-999]))
 
 
-    #     for key, value in list(self.urls.items()):
-    #         self.engine.auto_create_table(self.tables[key], url=value)
-    #         self.engine.insert_data_from_url(value)
-    #         self.tables[key].record_id = 0
-    #     self.print_message()
-    #     return self.engine
-    #
-    # def reference_url(self):
-    #     if self.ref:
-    #         return self.ref
-    #     else:
-    #         if len(self.urls) == 1:
-    #             return '/'.join(self.urls[list(self.urls.keys())[0]].split('/')[0:-1]) + '/'
-    #
-    # def print_message(self):
-    #     if self.message:
-    #         print(self.message)
+                #     for key, value in list(self.urls.items()):
+                #         self.engine.auto_create_table(self.tables[key], url=value)
+                #         self.engine.insert_data_from_url(value)
+                #         self.tables[key].record_id = 0
+                #     self.print_message()
+                #     return self.engine
+                #
+                # def reference_url(self):
+                #     if self.ref:
+                #         return self.ref
+                #     else:
+                #         if len(self.urls) == 1:
+                #             return '/'.join(self.urls[list(self.urls.keys())[0]].split('/')[0:-1]) + '/'
+                #
+                # def print_message(self):
+                #     if self.message:
+                #         print(self.message)
 
 
 # class DownloadOnlyTemplate(Script):

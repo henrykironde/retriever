@@ -94,7 +94,8 @@ def compile_json(json_file, debug=False):
     if type(json_object) is dict and "resources" in json_object.keys():
         if "format" not in json_object:
             json_object["format"] = "tabular"
-        resource_dict ={}
+        resource_dict = {}
+
         for resource_item in json_object["resources"]:
             # Check for required resource fields
             spec_list = ["name", "url"]
@@ -116,15 +117,17 @@ def compile_json(json_file, debug=False):
         temp_tables["tables"] = dict(zip(table_names, json_object["resources"]))
 
         for table_name, table_spec in temp_tables["tables"].items():
-            # print(type(table_spec))
             json_object["tables"][table_name] = myTables[json_object["format"]](**table_spec)
-
-        # json_object.pop("resources", None)
+        json_object.pop("resources", None)
 
         return TEMPLATES["default"](**json_object)
     return None
 
 # if __name__ == '__main__':
-#     compile_json("C:/Users/Henry/Documents/GitHub/retriever/scripts/croche_vegetation_data")
+#    x = compile_json("/Users/henrykironde/Documents/GitHub/retriever/scripts/croche_vegetation_data")
 #     # compile_json("C:/Users/Henry/Documents/GitHub/weav/scripts/cumbria")
 #     # compile_json("C:/Users/Henry/Documents/GitHub/retriever/scripts/breast_cancer_wi")
+#    # print (dir(x))
+#    # print (x.tables.items())
+#    # for table_name, tobj in x.tables.items():
+#    #     print (tobj.__dict__)

@@ -69,6 +69,7 @@ class Engine(object):
     def add_to_table(self, data_source):
         """This function adds data to a table from one or more lines specified
         in engine.table.source."""
+        print (self.table.columns)
         if self.table.columns[-1][1][0][:3] == "ct-":
             # cross-tab data
             real_line_length = self.get_ct_line_length(gen_from_source(data_source))
@@ -169,6 +170,10 @@ class Engine(object):
         if url and not filename:
             filename = filename_from_url(url)
         self.table = table
+        # x= self.table.columns
+        #
+        # print (x)
+        # exit()
 
         if url and not self.find_file(filename):
             # If the file doesn't exist, download it
@@ -177,6 +182,7 @@ class Engine(object):
 
         if not self.table.delimiter:
             self.set_table_delimiter(file_path)
+        print (self.table.columns)
 
         if self.table.header_rows > 0 and not self.table.columns:
             source = (skip_rows,

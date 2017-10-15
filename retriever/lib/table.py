@@ -19,7 +19,7 @@ class TableMain(object):
 
     def __init__(self, name=None, url=None):
         self.name = name
-        self.url = name
+        self.url = url
 
 
 class Table(TableMain):
@@ -48,7 +48,9 @@ class Table(TableMain):
         if self.missing_values is None:
             del self.missing_values
         else:
-            Cleanup(correct_invalid_value, missing_values=self.missing_values)
+            self.cleanup = Cleanup(correct_invalid_value, missing_values=self.missing_values)
+
+
 
         TableMain.__init__(self, self.name, self.url)
 
@@ -197,7 +199,7 @@ class Table(TableMain):
 class TableRaster(TableMain):
     """Raster table implementation"""
     def __init__(self, **kwargs):
-        self.name = False
+        self.name = None
         self.group = None
         self.relative_path = 0
         self.resolution = None
@@ -215,8 +217,8 @@ class TableVector(TableMain):
     """Vector table implementation"""
 
     def __init__(self, **kwargs):
-        self.name = False
-        self.pk = True
+        self.name = None
+        self.pk = None
         self.contains_pk = False
         self.feature_count = 0
         self.attributes = []

@@ -7,7 +7,7 @@
     "literature-compilation",
     "life-history"
   ],
-  "archived": "True",
+  "archived": "zip",
   "name": "pantheria",
   "resources": [
     {
@@ -16,7 +16,7 @@
           "NA"
         ]
       },
-
+      "path": "PanTHERIA_1-0_WR05_Aug2008.txt",
       "name": "data",
       "schema": {},
       "url": "https://ndownloader.figshare.com/files/5604752"
