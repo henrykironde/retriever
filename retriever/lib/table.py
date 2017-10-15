@@ -45,12 +45,54 @@ class Table(TableMain):
         # for key, item in list(kwargs.items()):
         #     setattr(self, key, item[0] if isinstance(item, tuple) else item)
 
-        if self.missing_values is None:
-            del self.missing_values
-        else:
-            self.cleanup = Cleanup(correct_invalid_value, missing_values=self.missing_values)
 
+        # if key == "fields":
+        #     # fields = columns of the table
+        #
+        #     # list of column tuples
+        #     column_list = []
+        #     for obj in val:
+        #         # fields is a collection of JSON objects
+        #         # (similar to a list of dicts in python)
+        #
+        #         if "size" in obj:
+        #             column_list.append((obj["name"],
+        #                                 (obj["type"], obj["size"])))
+        #         else:
+        #             column_list.append((obj["name"],
+        #                                 (obj["type"],)))
+        #
+        #     table_dict["columns"] = column_list
+        #
+        # elif key == "ct_column":
+        #     table_dict[key] = "'" + val + "'"
+        # for key in self.schema:
+        for key in self.schema:
+            if key == "fields":
+                column_list = []
+                for obj in self.schema["fields"]:
 
+                    if "size" in obj:
+                        column_list.append((obj["name"],
+                                            (obj["type"], obj["size"])))
+                    else:
+                        column_list.append((obj["name"],
+                                            (obj["type"],)))
+
+                self.columns = column_list
+            elif key == "ct_column":
+                setattr(self, key, "'" + self.schema[key] + "'")
+            else:
+                setattr(self, key, self.schema[key])
+
+        for key, val in self.dialect.items():
+            if key == "missing_values":
+                if self.dialect["missing_values"]:
+                    self.cleanup = Cleanup(correct_invalid_value, missing_values=self.missing_values)
+            elif key == "delimiter":
+                self.delimiter = str(self.dialect["delimiter"])
+            else:
+                setattr(self, key, self.dialect[key])
 
         TableMain.__init__(self, self.name, self.url)
 
