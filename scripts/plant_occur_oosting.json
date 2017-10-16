@@ -11,6 +11,35 @@
     "name": "plant-occur-oosting",
     "resources": [
         {
+            "dialect": {},
+            "name": "pres",
+            "schema": {},
+            "url": "https://ndownloader.figshare.com/files/5599961"
+        },
+        {
+            "dialect": {},
+            "name": "species",
+            "schema": {},
+            "url": "https://ndownloader.figshare.com/files/5599964"
+        },
+        {
+            "dialect": {
+                "missingValues": [
+                    ".",
+                    ""
+                ],
+                "replace_columns": [
+                    [
+                        "check",
+                        "checkrec"
+                    ]
+                ]
+            },
+            "name": "trees",
+            "schema": {},
+            "url": "https://ndownloader.figshare.com/files/5599967"
+        },
+        {
             "dialect": {
                 "replace_columns": [
                     [
