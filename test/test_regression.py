@@ -166,13 +166,13 @@ def test_csv_regression(dataset, expected, tmpdir):
     assert get_csv_md5(dataset, csv_engine, tmpdir, install_csv, interface_opts) == expected
 
 
-@pytest.mark.parametrize("dataset, expected", download_md5)
-def test_download_regression(dataset, expected):
-    """Test download regression."""
-    os.chdir(retriever_root_dir)
-    download(dataset, "raw_data/{0}".format(dataset))
-    current_md5 = getmd5(data="raw_data/{0}".format(dataset), data_type='dir')
-    assert current_md5 == expected
+# @pytest.mark.parametrize("dataset, expected", download_md5)
+# def test_download_regression(dataset, expected):
+#     """Test download regression."""
+#     os.chdir(retriever_root_dir)
+#     download(dataset, "raw_data/{0}".format(dataset))
+#     current_md5 = getmd5(data="raw_data/{0}".format(dataset), data_type='dir')
+#     assert current_md5 == expected
 
 
 # def test_scripts():
