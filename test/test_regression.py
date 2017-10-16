@@ -71,7 +71,7 @@ def teardown_module():
 
 def get_script_module(script_name):
     """Load a script module"""
-    return compile_json(os.path.join(HOME_DIR, "scripts", script_name))
+    return compile_json(os.path.join(retriever_root_dir, "scripts", script_name))
 
 
 def get_csv_md5(dataset, engine, tmpdir, install_function, config):

@@ -116,12 +116,12 @@ def test_auto_get_delimiter_semicolon():
 
 def test_correct_invalid_value_string():
     assert \
-        correct_invalid_value('NA', {'missing_values': ['NA', '-999']}) is None
+        correct_invalid_value('NA', {'missingValues': ['NA', '-999']}) is None
 
 
 def test_correct_invalid_value_number():
     assert \
-        correct_invalid_value(-999, {'missing_values': ['NA', '-999']}) is None
+        correct_invalid_value(-999, {'missingValues': ['NA', '-999']}) is None
 
 
 def test_correct_invalid_value_exception():
@@ -415,7 +415,7 @@ def test_clean_input_not_bool(monkeypatch):
 #     table['dialect']['dummy_key'] = 'dummy_value'
 #
 #     result = {}
-#     result['cleanup'] = Cleanup(correct_invalid_value, missing_values='\x00')
+#     result['cleanup'] = Cleanup(correct_invalid_value, missingValues='\x00')
 #     result['delimiter'] = '\t'
 #     result['dummy_key'] = 'dummy_value'
 #

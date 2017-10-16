@@ -33,7 +33,7 @@ def add_dialect(table_dict, table):
         # dialect related key-value pairs
         # copied as is
         if key == "missingValues":
-            table_dict['cleanup'] = "Cleanup(correct_invalid_value, missing_values=val)"
+            table_dict['cleanup'] = "Cleanup(correct_invalid_value, missingValues=val)"
 
         elif key == "delimiter":
             table_dict[key] = str(val)

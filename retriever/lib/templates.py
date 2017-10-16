@@ -143,7 +143,7 @@ class BasicTextTemplate(Script):
                 # for key in list(self.urls.keys()):
                 #     if key not in list(self.tables.keys()):
                 #         self.tables[key] = Table(key, cleanup=Cleanup(correct_invalid_value,
-                #                                                       missing_values=[-999]))
+                #                                                       missingValues=[-999]))
 
 
                 #     for key, value in list(self.urls.items()):

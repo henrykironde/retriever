@@ -38,7 +38,7 @@ class Table(TableMain):
         self.record_id = 0
         self.columns = []
         self.replace_columns = []
-        self.missing_values = None
+        self.missingValues = None
         self.cleaned_columns = False
         for key in kwargs:
             setattr(self, key, kwargs[key])
@@ -88,9 +88,10 @@ class Table(TableMain):
                     setattr(self, key, self.schema[key])
         if hasattr(self, 'dialect'):
             for key, val in self.dialect.items():
-                if key == "missing_values":
-                    if self.dialect["missing_values"]:
-                        self.cleanup = Cleanup(correct_invalid_value, missing_values=self.missing_values)
+                if key == "missingValues":
+                    if self.dialect["missingValues"]:
+                        self.missingValues = self.dialect["missingValues"]
+                        self.cleanup = Cleanup(correct_invalid_value, missingValues=self.missingValues)
                 elif key == "delimiter":
                     self.delimiter = str(self.dialect["delimiter"])
                 else:
