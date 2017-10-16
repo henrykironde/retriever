@@ -32,9 +32,8 @@ from retriever.lib.cleanup import Cleanup
 
 # Create simple engine fixture
 test_engine = Engine()
-test_engine.table = Table("test")
-test_engine.script = BasicTextTemplate(tables={'test': test_engine.table},
-                                       name='test')
+test_engine.table = Table(**{"name":"test"})
+test_engine.script = BasicTextTemplate(**{"tables": test_engine.table, "name":"test"})
 test_engine.opts = {'database_name': '{db}_abc'}
 HOMEDIR = os.path.expanduser('~')
 file_location = os.path.dirname(os.path.realpath(__file__))
