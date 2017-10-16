@@ -67,32 +67,34 @@ class Table(TableMain):
         # elif key == "ct_column":
         #     table_dict[key] = "'" + val + "'"
         # for key in self.schema:
-        for key in self.schema:
-            if key == "fields":
-                column_list = []
-                for obj in self.schema["fields"]:
+        if hasattr(self, 'schema'):
 
-                    if "size" in obj:
-                        column_list.append((obj["name"],
-                                            (obj["type"], obj["size"])))
-                    else:
-                        column_list.append((obj["name"],
-                                            (obj["type"],)))
+            for key in self.schema:
+                if key == "fields":
+                    column_list = []
+                    for obj in self.schema["fields"]:
 
-                self.columns = column_list
-            elif key == "ct_column":
-                setattr(self, key, "'" + self.schema[key] + "'")
-            else:
-                setattr(self, key, self.schema[key])
+                        if "size" in obj:
+                            column_list.append((obj["name"],
+                                                (obj["type"], obj["size"])))
+                        else:
+                            column_list.append((obj["name"],
+                                                (obj["type"],)))
 
-        for key, val in self.dialect.items():
-            if key == "missing_values":
-                if self.dialect["missing_values"]:
-                    self.cleanup = Cleanup(correct_invalid_value, missing_values=self.missing_values)
-            elif key == "delimiter":
-                self.delimiter = str(self.dialect["delimiter"])
-            else:
-                setattr(self, key, self.dialect[key])
+                    self.columns = column_list
+                elif key == "ct_column":
+                    setattr(self, key, "'" + self.schema[key] + "'")
+                else:
+                    setattr(self, key, self.schema[key])
+        if hasattr(self, 'dialect'):
+            for key, val in self.dialect.items():
+                if key == "missing_values":
+                    if self.dialect["missing_values"]:
+                        self.cleanup = Cleanup(correct_invalid_value, missing_values=self.missing_values)
+                elif key == "delimiter":
+                    self.delimiter = str(self.dialect["delimiter"])
+                else:
+                    setattr(self, key, self.dialect[key])
 
         TableMain.__init__(self, self.name, self.url)
 
