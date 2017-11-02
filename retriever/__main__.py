@@ -22,8 +22,8 @@ from retriever.lib.datasets import datasets, dataset_names, license
 from retriever.lib.defaults import sample_script, CITATION, ENCODING, SCRIPT_SEARCH_PATHS
 from retriever.lib.get_opts import parser
 from retriever.lib.repository import check_for_updates
-from retriever.lib.compile import SCRIPT_LIST, compile_json
-from retriever.lib.tools import name_matches, reset_retriever
+from retriever.lib.scripts import SCRIPT_LIST
+from retriever.lib.engine_tools import name_matches, reset_retriever
 
 encoding = ENCODING.lower()
 # sys removes the setdefaultencoding method at startup; reload to get it back
