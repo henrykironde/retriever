@@ -16,7 +16,6 @@ from pkg_resources import parse_version
 import xml.etree.ElementTree as ET
 import datetime
 try:
-    from retriever.lib.scripts import open_csvw
     from retriever.lib.tools import open_fw, open_csvw
     from retriever.lib.defaults import VERSION, DATA_WRITE_PATH
 except ImportError:
