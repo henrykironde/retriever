@@ -1,7 +1,7 @@
 import argparse
 import os
 from retriever.lib.defaults import VERSION
-from retriever.lib.compile import MODULE_LIST
+from retriever.lib.scripts import MODULE_LIST
 from retriever.engines import engine_list
 import argcomplete
 

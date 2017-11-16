@@ -17,6 +17,7 @@ from builtins import input
 from imp import reload
 
 from retriever.engines import engine_list, choose_engine
+from retriever.lib.compile import compile_json
 from retriever.lib.datapackage import create_json, edit_json, delete_json, get_script_filename
 from retriever.lib.datasets import datasets, dataset_names, license
 from retriever.lib.defaults import sample_script, CITATION, ENCODING, SCRIPT_SEARCH_PATHS

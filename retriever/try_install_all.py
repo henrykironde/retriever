@@ -14,7 +14,7 @@ import os
 import sys
 from imp import reload
 from retriever.lib.tools import choose_engine
-from retriever.lib.compile import MODULE_LIST, SCRIPT_LIST
+from retriever.lib.scripts import MODULE_LIST, SCRIPT_LIST
 from retriever import ENGINE_LIST
 
 reload(sys)
