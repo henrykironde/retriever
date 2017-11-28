@@ -3,7 +3,7 @@ title: 'Retriever: Data Retrieval Tool'
 tags:
   - data retrieval, data processing, python, data, data science, datasets
 authors:
- - name: Henry Kironde
+ - name: Henry Senyondo
    orcid: 0000-0001-7105-5808
    affiliation: 1
  - name: Benjamin D. Morris
@@ -25,6 +25,7 @@ authors:
    affiliation: 4
  - name: Deborah Gertrude Digges
    orcid: 0000-0002-7840-5054
+   affiliation: 10
  - name: Kapil Kumar
    orcid: 0000-0002-2292-1033
    affiliation: 7
@@ -37,8 +38,6 @@ authors:
  - name: Kevinkumar Amipara
    orcid: 0000-0001-5021-2018
    affiliation: 9
- - name : Prabh Simran Singh Baweja
-   orcid: 0000-0003-3997-4470
  - name: Ethan P. White
    orcid: 0000-0001-6728-7745
    affiliation: 1, 2
@@ -61,6 +60,8 @@ affiliations:
    index: 8
  - name: Sardar Vallabhbhai National Institute of Technology, Surat
    index: 9
+ - name: PES Institute of Technology, Bengaluru
+   index: 10
 
 
 date: 16 September 2017 
