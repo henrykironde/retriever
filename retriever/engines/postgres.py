@@ -2,7 +2,7 @@ import os
 
 from retriever.lib.defaults import ENCODING
 from retriever.lib.models import Engine, no_cleanup
-
+from retriever.lib.models import myTables
 
 class engine(Engine):
     """Engine instance for PostgreSQL."""
@@ -43,6 +43,25 @@ class engine(Engine):
                       "Format of table name",
                       "{db}.{table}"),
                      ]
+
+    def auto_create_table(self, table, url=None, filename=None, pk=None):
+        if table.dataset_type == "RasterDataset":
+            self.table = table
+            # print (Engine.table.dataset_type)
+
+            if url and not filename:
+                filename = Engine.filename_from_url(url)
+
+            if url and not self.find_file(filename):
+                # If the file doesn't exist, download it
+                self.download_file(url, filename)
+
+            file_path = self.find_file(filename)
+            filename, file_extension = os.path.splitext(os.path.basename(file_path))
+
+            Engine.create_db(self)
+        else:
+            Engine.auto_create_table(self, table, url, filename, pk)
 
     def create_db_statement(self):
         """In PostgreSQL, the equivalent of a SQL database is a schema."""
@@ -99,6 +118,33 @@ CSV HEADER;"""
         if isinstance(statement, bytes):
             statement = statement.decode("utf-8", "ignore")
         return statement
+
+    def supported_raster(self, path, ext=None):
+        path = os.path.normpath(os.path.abspath(path))
+        if ext:
+            raster_extensions = ext
+        else:
+            raster_extensions = ['.gif', '.img', '.bil', '.jpg', '.tif', '.tiff', '.hdf', '.l1b']
+
+        return [os.path.normpath(os.path.join(root, names)) for root, _, files in os.walk(path, topdown=False) for names in files if os.path.splitext(names)[1]  in raster_extensions ]
+
+    def insert_raster(self, path=None, SRID=4236):
+        # """raster2pgsql -I -C -s <SRID> <PATH/TO/RASTER FILE> <SCHEMA>.<DBTABLE> | psql -d <DATABASE>"""
+        # """raster2pgsql -I -s <SRID> $f `basename $f .tif` > `basename $f .tif`.sql"""
+        # """psql -U postgres -d gisdb -f elev.sql"""
+
+        if not path:
+            path = Engine.format_data_dir(self)
+        cmd_string = """raster2pgsql -I -s {SRID} {path} -F -t 100x100 {SCHEMA_DBTABLE} | psql -U {USER} -d {DATABASE}""".format(
+            SRID=SRID,
+            path=path,
+            SCHEMA_DBTABLE=self.table_name(),
+            USER=self.opts["user"],
+            DATABASE=self.opts["database"]
+        )
+        # "raster2pgsql -I -s 4236 /Users/henrykironde/.retriever/raw_data/usgs-elevation/USGS_NED_13_n40w095_IMG.img `postgres.usgs_elevation"
+        print(cmd_string)
+        os.system(cmd_string)
 
     def table_exists(self, dbname, tablename):
         """Check to see if the given table exists."""

@@ -428,17 +428,51 @@ class Engine(object):
                 # Download is complete, set to prevent repeated downloads
                 self.use_cache = True
                 progbar.close()
+    def supported_raster(self, path, ext=None):
+        raise "Not supported"
 
-    def download_files_from_archive(self, url, filenames, filetype="zip",
+    def extract_all_files(self, archivebase, archivename, filetype, url):
+        self.create_raw_data_dir()
+        self.download_file(url, archivename)
+
+        if filetype == 'zip':
+            try:
+                archive = zipfile.ZipFile(archivename)
+            except zipfile.BadZipFile as e:
+                print("file can't be extracted, may be corrupt ")
+        # elif filetype == 'gz':
+        #     # gzip archives can only contain a single file
+        #     open_archive_file = gzip.open(archivename, 'r')
+        # elif filetype == 'tar':
+        #     open_archive_file = tarfile.open(archivename, 'r')
+
+        filenames = archive.namelist()
+
+        filenames = [x.filename for x in archive.infolist() if not x.filename.endswith('/')]
+        for filename in filenames:
+            fileloc = self.format_filename(os.path.join(archivebase, filename))
+            fileloc = os.path.normpath(fileloc)
+            if not os.path.exists(os.path.dirname(fileloc)):
+                os.makedirs(os.path.dirname(fileloc))
+            unzipped_file = open(fileloc, 'wb')
+            open_archive_file = archive.open(filename, 'r')
+            for line in open_archive_file:
+                unzipped_file.write(line)
+            open_archive_file.close()
+            unzipped_file.close()
+        if 'archive' in locals():
+            archive.close()
+
+
+    def download_files_from_archive(self, url, filenames=None, filetype="zip",
                                     keep_in_dir=False, archivename=None):
         """Download files from an archive into the raw data directory."""
-        print()
+
         downloaded = False
         if archivename:
             archivename = self.format_filename(archivename)
         else:
             archivename = self.format_filename(filename_from_url(url))
-
         archivebase = ''
         if keep_in_dir:
             archivebase = os.path.splitext(os.path.basename(archivename))[0]
@@ -447,47 +481,48 @@ class Engine(object):
             if not os.path.exists(archivedir):
                 os.makedirs(archivedir)
 
-        for filename in filenames:
-            if not self.find_file(os.path.join(archivebase, filename)):
-                # if no local copy, download the data
-                self.create_raw_data_dir()
-                if not downloaded:
-                    self.download_file(url, archivename)
-                    downloaded = True
+        if not filenames:
+            self.extract_all_files(archivebase, archivename, filetype, url)
+        else:
+            for filename in filenames:
+                if not self.find_file(os.path.join(archivebase, filename)):
+                    # if no local copy, download the data
+                    self.create_raw_data_dir()
+                    if not downloaded:
+                        self.download_file(url, archivename)
+                        downloaded = True
+                    if filetype == 'zip':
+                        try:
+                            archive = zipfile.ZipFile(archivename)
+                            if archive.testzip():
+                                # This fixes an issue with the zip files that was causing errors on
+                                # Python 3. testzip() returns the names of any files with issues so if
+                                # it exists there is a problem. For details of the issue and the fix see:
+                                # see """https://stackoverflow.com/questions/41492984/
+                                # zipfile-testzip-returning-different-results-on-python-2-and-python-3"""
+                                archive.getinfo(filename).file_size += (2 ** 64) - 1
+                            open_archive_file = archive.open(filename, 'r')
+                        except zipfile.BadZipFile as e:
+                            print("\n{0} can't be extracted, may be corrupt \n{1}".format(filename, e))
+                    elif filetype == 'gz':
+                        # gzip archives can only contain a single file
+                        open_archive_file = gzip.open(archivename, 'r')
+                    elif filetype == 'tar':
+                        archive = tarfile.open(filename, 'r')
+                        open_archive_file = archive.extractfile(filename)
 
-                if filetype == 'zip':
-                    try:
-                        archive = zipfile.ZipFile(archivename)
-                        if archive.testzip():
-                            # This fixes an issue with the zip files that was causing errors on
-                            # Python 3. testzip() returns the names of any files with issues so if
-                            # it exists there is a problem. For details of the issue and the fix see:
-                            # see """https://stackoverflow.com/questions/41492984/
-                            # zipfile-testzip-returning-different-results-on-python-2-and-python-3"""
-                            archive.getinfo(filename).file_size += (2 ** 64) - 1
-                        open_archive_file = archive.open(filename, 'r')
-                    except zipfile.BadZipFile as e:
-                        print("\n{0} can't be extracted, may be corrupt \n{1}".format(filename, e))
+                    fileloc = self.format_filename(os.path.join(archivebase, filename))
+                    fileloc = os.path.normpath(fileloc)
+                    if not os.path.exists(os.path.dirname(fileloc)):
+                        os.makedirs(os.path.dirname(fileloc))
 
-                elif filetype == 'gz':
-                    # gzip archives can only contain a single file
-                    open_archive_file = gzip.open(archivename, 'r')
-                elif filetype == 'tar':
-                    archive = tarfile.open(filename, 'r')
-                    open_archive_file = archive.extractfile(filename)
-
-                fileloc = self.format_filename(os.path.join(archivebase, filename))
-                fileloc = os.path.normpath(fileloc)
-                if not os.path.exists(os.path.dirname(fileloc)):
-                    os.makedirs(os.path.dirname(fileloc))
-
-                unzipped_file = open(fileloc, 'wb')
-                for line in open_archive_file:
-                    unzipped_file.write(line)
-                open_archive_file.close()
-                unzipped_file.close()
-                if 'archive' in locals():
-                    archive.close()
+                    unzipped_file = open(fileloc, 'wb')
+                    for line in open_archive_file:
+                        unzipped_file.write(line)
+                    open_archive_file.close()
+                    unzipped_file.close()
+                    if 'archive' in locals():
+                        archive.close()
 
     def drop_statement(self, objecttype, objectname):
         """Return drop table or database SQL statement."""
