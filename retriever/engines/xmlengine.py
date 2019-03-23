@@ -44,11 +44,7 @@ class engine(Engine):
 
         # Register all tables created to enable
         # testing python files having custom download function
-        if self.script.name not in self.script_table_registry:
-            self.script_table_registry[self.script.name] = []
-        self.script_table_registry[self.script.name].append(
-            (self.table_name(), self.table)
-        )
+        Engine.register_tables(self)
 
     def disconnect(self):
         """Close out the xml files

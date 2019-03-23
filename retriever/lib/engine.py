@@ -2,6 +2,7 @@ from __future__ import division
 from __future__ import print_function
 
 from future import standard_library
+
 standard_library.install_aliases()  # noqa
 
 from builtins import object
@@ -417,11 +418,7 @@ class Engine(object):
             print(create_stmt)
         try:
             self.execute(create_stmt)
-            if self.script.name not in self.script_table_registry:
-                self.script_table_registry[self.script.name] = []
-            self.script_table_registry[self.script.name].append(
-                (self.table_name(), self.table)
-            )
+            self.register_tables()
 
             if self.table.name not in self.script.tables:
                 self.script.tables[self.table.name] = self.table
@@ -432,6 +429,13 @@ class Engine(object):
                 pass
             print(e)
             print("Replacing existing table")
+
+    def register_tables(self):
+        if self.script.name not in self.script_table_registry:
+            self.script_table_registry[self.script.name] = []
+        self.script_table_registry[self.script.name].append(
+            (self.table_name(), self.table)
+        )
 
     def create_table_statement(self):
         """Return SQL statement to create a table."""

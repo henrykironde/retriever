@@ -211,14 +211,8 @@ CSV HEADER;"""
         cmd_stmt = raster_sql + cmd_string
         if self.debug:
             print(cmd_stmt)
-        self.register_tables()
+        Engine.register_tables(self)
         subprocess.call(cmd_stmt, shell=True, stdout=subprocess.PIPE)
-
-    def register_tables(self):
-        if self.script.name not in self.script_table_registry:
-            self.script_table_registry[self.script.name] = []
-        self.script_table_registry[self.script.name].append(
-            (self.table_name(), self.table))
 
     def insert_vector(self, path=None, srid=4326):
         """Import Vector into Postgis Table
@@ -258,7 +252,7 @@ CSV HEADER;"""
         cmd_stmt = vector_sql + cmd_string
         if self.debug:
             print(cmd_stmt)
-        self.register_tables()
+        Engine.register_tables(self)
         subprocess.call(cmd_stmt, shell=True, stdout=subprocess.PIPE)
 
     def format_insert_value(self, value, datatype):
