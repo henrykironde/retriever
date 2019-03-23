@@ -1,11 +1,15 @@
 from __future__ import absolute_import
 
 import imp
+import numpy as np
 import os
 import shlex
 import shutil
 import subprocess
 import sys
+
+import time
+
 from imp import reload
 
 from retriever import download
@@ -18,23 +22,34 @@ from retriever import install_sqlite
 from retriever import install_xml
 from retriever.lib.defaults import ENCODING, DATA_DIR
 from retriever.lib.load_json import read_json
-
-import pytest
-from retriever.lib.engine_tools import getmd5
-from retriever.engines import engine_list
+from retriever.lib.scripts import reload_scripts
+from retriever.lib.defaults import HOME_DIR
 
 encoding = ENCODING.lower()
 
 reload(sys)
 if hasattr(sys, "setdefaultencoding"):
     sys.setdefaultencoding(encoding)
+import pytest
+from retriever.lib.engine_tools import getmd5
+from retriever.engines import engine_list
 
 # Set postgres password, Appveyor service needs the password given
 # The Travis service obtains the password from the config file.
+os_password = ""
+pgdb_host = "localhost"
+mysqldb_host = "localhost"
+testdb_retriever = "testdb_retriever"
+testschema = "testschema_retriever"
+
 if os.name == "nt":
     os_password = "Password12!"
-else:
-    os_password = ""
+
+docker_or_travis = os.environ.get("IN_DOCKER")
+if docker_or_travis == "true":
+    os_password = "Password12!"
+    pgdb_host = "pgdb_retriever"
+    mysqldb_host = "mysqldb_retriever"
 
 mysql_engine, postgres_engine, sqlite_engine, msaccess_engine, csv_engine, download_engine, json_engine, xml_engine = (
     engine_list
@@ -56,6 +71,22 @@ db_md5 = [
     ("bird_size", "98dcfdca19d729c90ee1c6db5221b775"),
     ("mammal_masses", "6fec0fc63007a4040d9bbc5cfcd9953e"),
 ]
+
+spatial_db_md5 = [
+    (
+        "test-eco-level-four",
+        ["gid", "us_l3code", "na_l3code", "na_l2code"],
+        "d1c01d8046143e9700f5cf92cbd6be3d",
+    ),
+    ("test-raster-bio1", ["rid", "filename"], "27e0472ddc2da9fe807bfb48b786a251"),
+    ("test-raster-bio2", ["rid", "filename"], "2983a9f7e099355db2ce2fa312a94cc6"),
+    (
+        "test-us-eco",
+        ["gid", "us_l3code", "na_l3code", "na_l2code"],
+        "eaab9fa30c745557ff6ba7c116910b45",
+    ),
+]
+
 
 # Tuple of (dataset_name, list of dict values corresponding to a table)
 fetch_tests = [
@@ -242,6 +273,22 @@ def setup_module():
     """Update retriever scripts and cd to test directory to find data."""
     os.chdir(retriever_root_dir)
     subprocess.call(["cp", "-r", "test/raw_data", retriever_root_dir])
+    for tests in spatial_db_md5:
+        test = tests[0]
+        spatial_src = os.path.join(
+            retriever_root_dir, "test/raw_data_gis", test.replace("-", "_") + ".zip"
+        )
+        if not os.path.exists(os.path.join(HOME_DIR, "raw_data", test)):
+            os.makedirs(os.path.join(HOME_DIR, "raw_data", test))
+        rd_path = os.path.join(HOME_DIR, "raw_data", test)
+        subprocess.call(["cp", "-r", spatial_src, rd_path])
+        path_js = os.path.join(
+            retriever_root_dir,
+            "test/raw_data_gis/scripts",
+            test.replace("-", "_") + ".json",
+        )
+        script_dest = os.path.join(HOME_DIR, "scripts")
+        subprocess.call(["cp", "-r", path_js, script_dest])
 
 
 def teardown_module():
@@ -259,16 +306,22 @@ def get_script_module(script_name):
     return read_json(os.path.join(retriever_root_dir, "scripts", script_name))
 
 
-def get_csv_md5(dataset, engine, tmpdir, install_function, config):
+def get_csv_md5(dataset, engine, tmpdir, install_function, config, cols=None):
     workdir = tmpdir.mkdtemp()
     src = os.path.join(retriever_root_dir, "scripts")
     dest = os.path.join(str(workdir), "scripts")
     subprocess.call(["cp", "-r", src, dest])
+    # Add spatail scripts
+    spatial_src = os.path.join(retriever_root_dir, "test/raw_data_gis/scripts/")
+    spatial_dest = os.path.join(str(workdir), "scripts/")
+    subprocess.call(["cp", "-r", spatial_src, spatial_dest])
+    reload_scripts()
     workdir.chdir()
     final_direct = os.getcwd()
     engine.script_table_registry = {}
     engine_obj = install_function(dataset.replace("_", "-"), **config)
-    engine_obj.to_csv()
+    time.sleep(5)
+    engine_obj.to_csv(select_columns=cols)
     # need to remove scripts before checking md5 on dir
     subprocess.call(["rm", "-r", "scripts"])
     current_md5 = getmd5(data=final_direct, data_type="dir")
@@ -302,23 +355,30 @@ def test_sqlite_regression(dataset, expected, tmpdir):
 def test_postgres_regression(dataset, expected, tmpdir):
     """Check for postgres regression."""
     cmd = (
-        "psql -U postgres -d testdb_retriever -h localhost -c "
-        '"DROP SCHEMA IF EXISTS testschema CASCADE"'
+        "psql -U postgres -d "
+        + testdb_retriever
+        + " -h "
+        + pgdb_host
+        + ' -w -c "DROP SCHEMA IF EXISTS '
+        + testschema
+        + ' CASCADE"'
     )
     subprocess.call(shlex.split(cmd))
     postgres_engine.opts = {
         "engine": "postgres",
         "user": "postgres",
         "password": os_password,
-        "host": "localhost",
+        "host": pgdb_host,
         "port": 5432,
-        "database": "testdb_retriever",
-        "database_name": "testschema",
+        "database": testdb_retriever,
+        "database_name": testschema,
         "table_name": "{db}.{table}",
     }
     interface_opts = {
         "user": "postgres",
         "password": postgres_engine.opts["password"],
+        "host": postgres_engine.opts["host"],
+        "port": postgres_engine.opts["port"],
         "database": postgres_engine.opts["database"],
         "database_name": postgres_engine.opts["database_name"],
         "table_name": postgres_engine.opts["table_name"],
@@ -331,20 +391,24 @@ def test_postgres_regression(dataset, expected, tmpdir):
 
 @pytest.mark.parametrize("dataset, expected", db_md5)
 def test_mysql_regression(dataset, expected, tmpdir):
-    """Check for mysql regression."""
-    cmd = 'mysql -u travis -Bse "DROP DATABASE IF EXISTS testdb_retriever"'
+    cmd = 'mysql -u travis -Bse "DROP DATABASE IF EXISTS {testdb_retriever}"'.format(
+        testdb_retriever=testdb_retriever
+    )
     subprocess.call(shlex.split(cmd))
     mysql_engine.opts = {
         "engine": "mysql",
         "user": "travis",
         "password": "",
-        "host": "localhost",
+        "host": mysqldb_host,
         "port": 3306,
-        "database_name": "testdb_retriever",
+        "database_name": testdb_retriever,
         "table_name": "{db}.{table}",
     }
     interface_opts = {
         "user": mysql_engine.opts["user"],
+        # 'password': mysql_engine.opts['password'],
+        "host": mysql_engine.opts["host"],
+        "port": mysql_engine.opts["port"],
         "database_name": mysql_engine.opts["database_name"],
         "table_name": mysql_engine.opts["table_name"],
     }
@@ -364,8 +428,7 @@ def test_xmlengine_regression(dataset, expected, tmpdir):
     }
     interface_opts = {"table_name": "{db}_output_{table}.xml"}
     assert (
-        get_csv_md5(dataset, xml_engine, tmpdir, install_xml, interface_opts)
-        == expected
+        get_csv_md5(dataset, xml_engine, tmpdir, install_xml, interface_opts) == expected
     )
 
 
@@ -394,8 +457,7 @@ def test_csv_regression(dataset, expected, tmpdir):
     }
     interface_opts = {"table_name": "{db}_output_{table}.csv"}
     assert (
-        get_csv_md5(dataset, csv_engine, tmpdir, install_csv, interface_opts)
-        == expected
+        get_csv_md5(dataset, csv_engine, tmpdir, install_csv, interface_opts) == expected
     )
 
 
@@ -437,3 +499,43 @@ def test_fetch_order(dataset, expected):
     """Test fetch dataframe order"""
     data_frame_dict = fetch(dataset)
     assert list(data_frame_dict.keys()) == expected
+
+
+@pytest.mark.parametrize("dataset, cols, expected", spatial_db_md5)
+def test_postgres_spatial(dataset, cols, expected, tmpdir):
+    """Check for postgres regression."""
+    cmd = (
+        "psql -U postgres -d "
+        + testdb_retriever
+        + " -h "
+        + pgdb_host
+        + ' -w -c "DROP SCHEMA IF EXISTS '
+        + testschema
+        + ' CASCADE"'
+    )
+    subprocess.call(shlex.split(cmd))
+    postgres_engine.opts = {
+        "engine": "postgres",
+        "user": "postgres",
+        "password": os_password,
+        "host": pgdb_host,
+        "port": 5432,
+        "database": testdb_retriever,
+        "database_name": testschema,
+        "table_name": "{db}.{table}",
+    }
+    interface_opts = {
+        "user": "postgres",
+        "password": postgres_engine.opts["password"],
+        "host": postgres_engine.opts["host"],
+        "port": postgres_engine.opts["port"],
+        "database": postgres_engine.opts["database"],
+        "database_name": postgres_engine.opts["database_name"],
+        "table_name": postgres_engine.opts["table_name"],
+    }
+    assert (
+        get_csv_md5(
+            dataset, postgres_engine, tmpdir, install_postgres, interface_opts, cols
+        )
+        == expected
+    )
