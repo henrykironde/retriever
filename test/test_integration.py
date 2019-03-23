@@ -12,6 +12,11 @@ from imp import reload
 
 from retriever.lib.defaults import ENCODING, DATA_DIR
 
+encoding = ENCODING.lower()
+
+reload(sys)
+if hasattr(sys, "setdefaultencoding"):
+    sys.setdefaultencoding(encoding)
 import pytest
 from retriever.lib.load_json import read_json
 from retriever.lib.defaults import HOME_DIR
@@ -19,18 +24,22 @@ from retriever.engines import engine_list
 from retriever.lib.engine_tools import file_2list
 from retriever.lib.engine_tools import create_file
 
-encoding = ENCODING.lower()
-
-reload(sys)
-if hasattr(sys, "setdefaultencoding"):
-    sys.setdefaultencoding(encoding)
-
 # Set postgres password, Appveyor service needs the password given
 # The Travis service obtains the password from the config file.
+os_password = ""
+pgdb_host = "localhost"
+mysqldb_host = "localhost"
+testdb_retriever = "testdb_retriever"
+testschema = "testschema_retriever"
+
 if os.name == "nt":
     os_password = "Password12!"
-else:
-    os_password = ""
+
+docker_or_travis = os.environ.get("IN_DOCKER")
+if docker_or_travis == "true":
+    os_password = "Password12!"
+    pgdb_host = "pgdb_retriever"
+    mysqldb_host = "mysqldb_retriever"
 
 mysql_engine, postgres_engine, sqlite_engine, msaccess_engine, csv_engine, download_engine, json_engine, xml_engine = (
     engine_list
@@ -128,7 +137,7 @@ data_no_header = {
 
 csv_latin1_encoding = {
     "name": "csv_latin1_encoding",
-    "raw_data": ["a,b,c", u'1,2,4Löve', "4,5,6"],
+    "raw_data": ["a,b,c", u"1,2,4Löve", "4,5,6"],
     "script": {
         "name": "csv_latin1_encoding",
         "resources": [
@@ -144,7 +153,7 @@ csv_latin1_encoding = {
         "version": "1.0.0",
         "urls": {"csv_latin1_encoding": "http://example.com/csv_latin1_encoding.txt"},
     },
-    "expect_out": [u"a,b,c", u'1,2,4Löve', u"4,5,6"],
+    "expect_out": [u"a,b,c", u"1,2,4Löve", u"4,5,6"],
 }
 
 autopk_csv = {
@@ -352,9 +361,7 @@ def setup_module():
     for test in tests:
         if not os.path.exists(os.path.join(HOME_DIR, "raw_data", test["name"])):
             os.makedirs(os.path.join(HOME_DIR, "raw_data", test["name"]))
-        rd_path = os.path.join(
-            HOME_DIR, "raw_data", test["name"], test["name"] + ".txt"
-        )
+        rd_path = os.path.join(HOME_DIR, "raw_data", test["name"], test["name"] + ".txt")
         create_file(test["raw_data"], rd_path)
 
         path_js = os.path.join(HOME_DIR, "scripts", test["name"] + ".json")
@@ -406,9 +413,7 @@ def test_csv_integration(dataset, expected, tmpdir):
         "table_name": "{db}_{table}",
         "data_dir": DATA_DIR,
     }
-    assert (
-        get_output_as_csv(dataset, csv_engine, tmpdir, db=dataset["name"]) == expected
-    )
+    assert get_output_as_csv(dataset, csv_engine, tmpdir, db=dataset["name"]) == expected
 
 
 @pytest.mark.parametrize("dataset, expected", test_parameters)
@@ -421,9 +426,7 @@ def test_sqlite_integration(dataset, expected, tmpdir):
         "data_dir": DATA_DIR,
     }
     subprocess.call(["rm", "-r", "testdb_retriever.sqlite"])
-    assert (
-        get_output_as_csv(dataset, sqlite_engine, tmpdir, dataset["name"]) == expected
-    )
+    assert get_output_as_csv(dataset, sqlite_engine, tmpdir, dataset["name"]) == expected
 
 
 @pytest.mark.parametrize("dataset, expected", xml_test_parameters)
@@ -434,9 +437,7 @@ def test_xmlengine_integration(dataset, expected, tmpdir):
         "table_name": "{db}_{table}",
         "data_dir": DATA_DIR,
     }
-    assert (
-        get_output_as_csv(dataset, xml_engine, tmpdir, db=dataset["name"]) == expected
-    )
+    assert get_output_as_csv(dataset, xml_engine, tmpdir, db=dataset["name"]) == expected
 
 
 @pytest.mark.parametrize("dataset, expected", test_parameters)
@@ -447,27 +448,30 @@ def test_jsonengine_integration(dataset, expected, tmpdir):
         "table_name": "{db}_{table}",
         "data_dir": DATA_DIR,
     }
-    assert (
-        get_output_as_csv(dataset, json_engine, tmpdir, db=dataset["name"]) == expected
-    )
+    assert get_output_as_csv(dataset, json_engine, tmpdir, db=dataset["name"]) == expected
 
 
 @pytest.mark.parametrize("dataset, expected", test_parameters)
 def test_postgres_integration(dataset, expected, tmpdir):
     """Check for postgres regression."""
     cmd = (
-        "psql -U postgres -d testdb_retriever -h localhost -c "
-        '"DROP SCHEMA IF EXISTS testschema CASCADE"'
+        "psql -U postgres -d "
+        + testdb_retriever
+        + " -h "
+        + pgdb_host
+        + ' -w -c "DROP SCHEMA IF EXISTS '
+        + testschema
+        + ' CASCADE"'
     )
     subprocess.call(shlex.split(cmd))
     postgres_engine.opts = {
         "engine": "postgres",
         "user": "postgres",
         "password": os_password,
-        "host": "localhost",
+        "host": pgdb_host,
         "port": 5432,
-        "database": "testdb_retriever",
-        "database_name": "testschema",
+        "database": testdb_retriever,
+        "database_name": testschema,
         "table_name": "{db}.{table}",
     }
     assert (
@@ -481,15 +485,17 @@ def test_postgres_integration(dataset, expected, tmpdir):
 @pytest.mark.parametrize("dataset, expected", test_parameters)
 def test_mysql_integration(dataset, expected, tmpdir):
     """Check for mysql regression."""
-    cmd = 'mysql -u travis -Bse "DROP DATABASE IF EXISTS testdb_retriever"'
+    cmd = 'mysql -u travis -Bse "DROP DATABASE IF EXISTS {testdb_retriever}"'.format(
+        testdb_retriever=testdb_retriever
+    )
     subprocess.call(shlex.split(cmd))
     mysql_engine.opts = {
         "engine": "mysql",
         "user": "travis",
         "password": "",
-        "host": "localhost",
+        "host": mysqldb_host,
         "port": 3306,
-        "database_name": "testdb_retriever",
+        "database_name": testdb_retriever,
         "table_name": "{db}.{table}",
     }
     assert (

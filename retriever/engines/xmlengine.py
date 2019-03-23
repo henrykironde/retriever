@@ -44,11 +44,7 @@ class engine(Engine):
 
         # Register all tables created to enable
         # testing python files having custom download function
-        if self.script.name not in self.script_table_registry:
-            self.script_table_registry[self.script.name] = []
-        self.script_table_registry[self.script.name].append(
-            (self.table_name(), self.table)
-        )
+        Engine.register_tables(self)
 
     def disconnect(self):
         """Close out the xml files
@@ -122,7 +118,7 @@ class engine(Engine):
         ]
         return "".join(row_values)
 
-    def to_csv(self, sort=True, path=None):
+    def to_csv(self, sort=True, path=None, select_columns=None):
         """Export table from xml engine to CSV file."""
         for table_item in self.script_table_registry[self.script.name]:
             header = table_item[1].get_insert_columns(join=False, create=True)

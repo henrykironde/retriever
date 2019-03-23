@@ -2,6 +2,7 @@ from __future__ import division
 from __future__ import print_function
 
 from future import standard_library
+
 standard_library.install_aliases()  # noqa
 
 from builtins import object
@@ -417,11 +418,7 @@ class Engine(object):
             print(create_stmt)
         try:
             self.execute(create_stmt)
-            if self.script.name not in self.script_table_registry:
-                self.script_table_registry[self.script.name] = []
-            self.script_table_registry[self.script.name].append(
-                (self.table_name(), self.table)
-            )
+            self.register_tables()
 
             if self.table.name not in self.script.tables:
                 self.script.tables[self.table.name] = self.table
@@ -432,6 +429,13 @@ class Engine(object):
                 pass
             print(e)
             print("Replacing existing table")
+
+    def register_tables(self):
+        if self.script.name not in self.script_table_registry:
+            self.script_table_registry[self.script.name] = []
+        self.script_table_registry[self.script.name].append(
+            (self.table_name(), self.table)
+        )
 
     def create_table_statement(self):
         """Return SQL statement to create a table."""
@@ -866,7 +870,14 @@ class Engine(object):
                 dbname = ""
         return self.opts["table_name"].format(db=dbname, table=name)
 
-    def to_csv(self, sort=True, path=None):
+    def to_csv(self, sort=True, path=None, select_columns=None):
+        """Create a CSV file from the a data store.
+
+        sort flag to create a sorted file,
+        path to write the flag else write to the PWD,
+        select_columns flag is used by large files to select
+        columns data and has SELECT LIMIT 3.
+        """
         # Due to Cyclic imports we can not move this import to the top
         from retriever.lib.engine_tools import sort_csv
 
@@ -879,7 +890,13 @@ class Engine(object):
             csv_writer = open_csvw(csv_file)
             self.get_cursor()
             self.set_engine_encoding()
-            self.cursor.execute("SELECT * FROM  {};".format(table_name[0]))
+            limit = ""
+            cols = "*"
+            if select_columns:
+                limit = "LIMIT 3"
+                cols = ",".join(select_columns)
+            sql_query = "SELECT {cols} FROM  {tab} {limit};"
+            self.cursor.execute(sql_query.format(cols=cols, tab=table_name[0], limit=limit))
             row = self.cursor.fetchone()
             column_names = [
                 u"{}".format(tuple_i[0]) for tuple_i in self.cursor.description
