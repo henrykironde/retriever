@@ -63,7 +63,7 @@ modified_staged_scripts = to_string(subprocess.check_output(
 added_deleted_staged_scripts = to_string(subprocess.check_output(
     "git diff --cached --name-only --diff-filter=AmD scripts", shell=True))
 
-if added_deleted_staged_scripts != "":
+if added_deleted_staged_scripts:
 	print("\nThe legacy scripts of Retriever cannot be added to or removed. To add scripts,\
 	use the retriever-recipes repository.")
 	exit(1)

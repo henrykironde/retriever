@@ -41,9 +41,7 @@ def datasets(keywords=None, licenses=None):
 def dataset_names():
     """Return list of all available dataset names."""
     all_scripts = datasets()
-    scripts_name = dict()
-    scripts_name['offline'] = []
-    scripts_name['online'] = []
+    scripts_name = dict({'online': [], 'offline': []})
     for offline_script in all_scripts['offline']:
         scripts_name['offline'].append(offline_script.name)
     for online_script in all_scripts['online']:
