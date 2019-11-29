@@ -133,8 +133,8 @@ class engine(Engine):
             header = table_item[1].get_insert_columns(join=False, create=True)
             outputfile = os.path.normpath(
                 os.path.join(path if path else '', os.path.splitext(os.path.basename(table_item[0]))[0] + '.csv'))
-            csv_outfile = json2csv(table_item[0], output_file=outputfile, header_values=header)
-            sort_csv(csv_outfile)
+            csv_outfile = json2csv(table_item[0], output_file=outputfile, header_values=header, encoding=self.encoding)
+            sort_csv(csv_outfile, encoding=self.encoding)
 
     def get_connection(self):
         """Gets the db connection."""

@@ -129,7 +129,7 @@ class engine(Engine):
             outputfile = os.path.normpath(
                 os.path.join(path if path else '', os.path.splitext(os.path.basename(table_item[0]))[0] + '.csv'))
             csv_outfile = xml2csv(table_item[0], outputfile=outputfile, header_values=header)
-            sort_csv(csv_outfile)
+            sort_csv(csv_outfile, encoding=self.encoding)
 
     def get_connection(self):
         """Get db connection."""

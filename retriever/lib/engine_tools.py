@@ -108,16 +108,16 @@ def reset_retriever(scope="all", ask_permission=True):
             print("can't find script {scp}".format(scp=scope))
 
 
-def json2csv(input_file, output_file=None, header_values=None):
+def json2csv(input_file, output_file=None, header_values=None, encoding=ENCODING):
     """Convert Json file to CSV.
 
     Function is used for only testing and can handle the file of the size.
     """
-    file_out = open_fr(input_file, encoding=ENCODING)
+    file_out = open_fr(input_file, encoding=encoding)
     # set output file name and write header
     if output_file is None:
         output_file = os.path.splitext(os.path.basename(input_file))[0] + ".csv"
-    csv_out = open_fw(output_file, encoding=ENCODING)
+    csv_out = open_fw(output_file, encoding=encoding)
     if os.name == 'nt':
         outfile = csv.DictWriter(csv_out, dialect='excel', escapechar="\\",
                                  lineterminator='\n',
