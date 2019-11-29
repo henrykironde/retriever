@@ -947,10 +947,7 @@ class Engine(object):
 
         if not self.table.delimiter:
             self.set_table_delimiter(filename)
-        if os.name == "nt":
-            dataset_file = open_fr(filename)
-        else:
-            dataset_file = open_fr(filename, encoding=self.encoding)
+        dataset_file = open_fr(filename, encoding=self.encoding)
         if self.table.fixed_width:
             for row in dataset_file:
                 yield self.extract_fixed_width(row)

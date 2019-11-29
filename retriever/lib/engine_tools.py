@@ -195,7 +195,7 @@ def sort_file(file_path, encoding=ENCODING):
     """
     file_path = os.path.normpath(file_path)
     input_file = open_fr(file_path, encoding)
-    lines = [line.strip().replace('\x00', '') for line in input_file]
+    lines = [line.strip() for line in input_file]
     input_file.close()
     outfile = open_fw(file_path, encoding)
     lines.sort()
@@ -205,7 +205,7 @@ def sort_file(file_path, encoding=ENCODING):
     return file_path
 
 
-def sort_csv(filename, encoding=None):
+def sort_csv(filename, encoding=ENCODING):
     """Sort CSV rows minus the header and return the file.
 
     Function is used for only testing and can handle the file of the size.
@@ -230,7 +230,7 @@ def sort_csv(filename, encoding=None):
     temp_file.close()
 
     # sort the temp file
-    sorted_txt = sort_file(temp_path)
+    sorted_txt = sort_file(temp_path, encoding)
     tmp = open_fr(sorted_txt, encoding)
     in_txt = csv.reader(tmp, delimiter=',', escapechar="\\")
     csv_file = open_fw(filename, encoding)
@@ -264,9 +264,9 @@ def file_2list(input_file):
 
 
 def to_str(object, object_encoding=sys.stdout, object_decoder=ENCODING):
-    if os.name == "nt":
-        enc = object_encoding.encoding
-        return str(object).encode(enc, errors='backslashreplace').decode(object_decoder)
+    # if os.name == "nt":
+    #     enc = object_encoding.encoding
+    #     return str(object).encode(enc, errors='backslashreplace').decode(object_decoder)
     return str(object)
 
 

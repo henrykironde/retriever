@@ -148,6 +148,7 @@ csv_latin1_encoding = {
                  u'1,2,4Löve',
                  '4,5,6'],
     'script': {"name": "csv_latin1_encoding",
+               "encoding": "latin-1",
                "resources": [
                    {"dialect": {"delimiter": ",","do_not_bulk_insert": "True"},
                     "name": "csv_latin1_encoding",
