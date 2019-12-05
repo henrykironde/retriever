@@ -76,8 +76,11 @@ class engine(Engine):
         PostgreSQL needs to commit operations individually.
         Enable PostGis extensions if a script has a non tabular table.
         """
-        if self.table and self.table.dataset_type and \
-                not self.table.dataset_type == "TabularDataset":
+        if (
+            self.table
+            and self.table.dataset_type
+            and not self.table.dataset_type == "TabularDataset"
+        ):
             try:
                 # Check if Postgis is installed and EXTENSION are Loaded
                 self.execute("SELECT PostGIS_full_version();")
@@ -105,8 +108,15 @@ class engine(Engine):
         self.get_cursor()
 
         ct = len([True for c in self.table.columns if c[1][0][:3] == "ct-"]) != 0
-        is_simple_table = [self.table.cleanup.function, self.table.delimiter, self.table.header_rows] == [no_cleanup, ",", 1]
-        can_bulk_insert = not hasattr(self.table, "do_not_bulk_insert") or not self.table.do_not_bulk_insert
+        is_simple_table = [
+            self.table.cleanup.function,
+            self.table.delimiter,
+            self.table.header_rows,
+        ] == [no_cleanup, ",", 1]
+        can_bulk_insert = (
+            not hasattr(self.table, "do_not_bulk_insert")
+            or not self.table.do_not_bulk_insert
+        )
 
         if is_simple_table and not self.table.fixed_width and not ct and can_bulk_insert:
             columns = self.table.get_insert_columns()

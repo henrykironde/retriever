@@ -1,6 +1,4 @@
 """Contains DBMS-specific Engine implementations."""
-import os
-
 from retriever.lib.engine import Engine
 
 engines = [
@@ -17,7 +15,7 @@ engines = [
 engine_module_list = [
     __import__("retriever.engines." + module, fromlist="engines")
     for module in engines
-    ]
+]
 
 engine_list = [module.engine() for module in engine_module_list]
 

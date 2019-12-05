@@ -1,6 +1,7 @@
 from retriever.lib.scripts import SCRIPT_LIST, get_script, get_dataset_names_upstream
 from retriever.lib.defaults import RETRIEVER_REPOSITORY
 
+
 def datasets(keywords=None, licenses=None):
     """Search all datasets by keywords and licenses."""
     script_list = SCRIPT_LIST()
