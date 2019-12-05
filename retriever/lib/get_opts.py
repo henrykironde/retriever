@@ -1,5 +1,4 @@
 import argparse
-import os
 
 import argcomplete
 from argcomplete.completers import ChoicesCompleter
@@ -125,7 +124,7 @@ for engine in engine_list:
 
     for arg in engine.required_opts:
         arg_name, help_msg, default = arg[:3]
-        potential_abbreviations = [char for char in arg_name if not char in abbreviations]
+        potential_abbreviations = [char for char in arg_name if char not in abbreviations]
         if potential_abbreviations:
             abbreviation = potential_abbreviations[0]
             abbreviations.add(abbreviation)

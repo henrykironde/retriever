@@ -31,27 +31,32 @@ def main():
         # otherwise, parse them
         args = parser.parse_args()
 
-        if args.command not in ['reset', 'update'] \
-        and not os.path.isdir(SCRIPT_SEARCH_PATHS[1]) \
-        and not [f for f in os.listdir(SCRIPT_SEARCH_PATHS[-1])
-            if os.path.exists(SCRIPT_SEARCH_PATHS[-1])]:
-                check_for_updates()
-                reload_scripts()
+        if (
+            args.command not in ["reset", "update"]
+            and not os.path.isdir(SCRIPT_SEARCH_PATHS[1])
+            and not [
+                f
+                for f in os.listdir(SCRIPT_SEARCH_PATHS[-1])
+                if os.path.exists(SCRIPT_SEARCH_PATHS[-1])
+            ]
+        ):
+            check_for_updates()
+            reload_scripts()
         script_list = SCRIPT_LIST()
 
         if args.command == "install" and not args.engine:
-            parser.parse_args(['install', '-h'])
+            parser.parse_args(["install", "-h"])
 
         if args.quiet:
-            sys.stdout = open(os.devnull, 'w')
+            sys.stdout = open(os.devnull, "w")
 
-        if args.command == 'help':
-            parser.parse_args(['-h'])
+        if args.command == "help":
+            parser.parse_args(["-h"])
 
-        if hasattr(args, 'compile') and args.compile:
+        if hasattr(args, "compile") and args.compile:
             script_list = reload_scripts()
 
-        if args.command == 'defaults':
+        if args.command == "defaults":
             for engine_item in engine_list:
                 print("Default options for engine ", engine_item.name)
                 for default_opts in engine_item.required_opts:
@@ -59,12 +64,12 @@ def main():
                 print()
             return
 
-        if args.command == 'update':
+        if args.command == "update":
             check_for_updates()
             reload_scripts()
             return
 
-        elif args.command == 'citation':
+        elif args.command == "citation":
             if args.dataset is None:
                 print("\nCitation for retriever:\n")
                 print(CITATION)
@@ -112,6 +117,7 @@ def main():
             if not (args.l or args.k or isinstance(args.v, list)):
                 all_scripts = dataset_names()
                 from retriever import lscolumns
+
                 all_scripts_combined = []
                 for dataset in all_scripts['offline']:
                     all_scripts_combined.append((dataset, True))
@@ -197,7 +203,9 @@ def main():
                         count += 1
 
                     count = 1
-                    searched_scripts_offline = [script.name for script in searched_scripts['offline']]
+                    searched_scripts_offline = [
+                        script.name for script in searched_scripts["offline"]
+                    ]
                     searched_scripts_online = []
                     for script in searched_scripts['online']:
                         if script in searched_scripts_offline:

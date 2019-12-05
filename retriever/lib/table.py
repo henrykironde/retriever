@@ -7,7 +7,7 @@ import io
 import sys
 from functools import reduce
 
-from retriever.lib.cleanup import *
+from retriever.lib.cleanup import correct_invalid_value, Cleanup
 
 
 class Dataset(object):
@@ -179,8 +179,8 @@ class TabularDataset(Dataset):
             "update": "updates",
             "date": "record_date",
             "index": "indices",
-            "repeat": "repeats", 
-            "system": "systems", 
+            "repeat": "repeats",
+            "system": "systems",
             "class": "classes",
             "left": "vleft",
             "right": "vright",
@@ -318,6 +318,7 @@ class VectorDataset(Dataset):
                 setattr(self, key, kwargs[key])
 
         Dataset.__init__(self, self.name, self.url)
+
 
 myTables = {
     "vector": VectorDataset,

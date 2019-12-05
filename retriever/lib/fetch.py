@@ -1,5 +1,4 @@
-import os
-from retriever.engines.sqlite import engine 
+from retriever.engines.sqlite import engine
 from retriever.lib.defaults import DATA_DIR
 from retriever.lib.install import install_sqlite
 

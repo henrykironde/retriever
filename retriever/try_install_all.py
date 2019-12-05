@@ -29,9 +29,7 @@ MODULE_LIST = SCRIPT_LIST()
 if len(sys.argv) > 1:
     engine_list = [
         e for e in engine_list
-        if e.name in sys.argv[1:] or
-        e.abbreviation in sys.argv[1:]
-        ]
+        if e.name in sys.argv[1:] or e.abbreviation in sys.argv[1:]]
 
 if os.path.exists("test_all"):
     os.system("rm -r test_all")
@@ -91,7 +89,7 @@ errors = []
 for module in MODULE_LIST:
     for (key, value) in list(TEST_ENGINES.items()):
         if module.SCRIPT.name.lower() not in IGNORE:
-            if value != None:
+            if value:
                 print("==>", module.__name__, value.name, "..........", module.SCRIPT.name)
                 try:
                     module.SCRIPT.download(value)

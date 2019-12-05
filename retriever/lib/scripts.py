@@ -31,7 +31,6 @@ from retriever.lib.defaults import (
     RETRIEVER_DATASETS
 )
 from retriever.lib.load_json import read_json
-from retriever.lib.repository import check_for_updates
 
 global_script_list = None
 

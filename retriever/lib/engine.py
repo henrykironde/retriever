@@ -829,7 +829,7 @@ class Engine(object):
         """Set up the encoding to be used."""
         self.encoding = ENCODING.lower()
         if self.script and self.script.encoding:
-                self.encoding = self.script.encoding.lower()
+            self.encoding = self.script.encoding.lower()
 
     def set_table_delimiter(self, file_path):
         """Get the delimiter from the data file and set it."""
@@ -925,7 +925,7 @@ class Engine(object):
                         file_obj = archive.open(file_name, 'r')
                     if file_obj:
                         # use shutil to copy in chunks
-                        shutil.copyfileobj(file_obj, unzipped_file,128*1024)
+                        shutil.copyfileobj(file_obj, unzipped_file, 128 * 1024)
                 finally:  # Ensure closed files
                     if file_obj:
                         file_obj.close()
@@ -1001,7 +1001,7 @@ def filename_from_url(url):
 def gen_from_source(source):
     """Return generator from a source tuple.
 
-    Source tuples are of the form (callable, args) where callable(\*args)
+    Source tuples are of the form (callable, args) where callable(`star` args)
     returns either a generator or another source tuple.
     This allows indefinite regeneration of data sources.
     """

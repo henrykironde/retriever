@@ -19,11 +19,17 @@ import warnings
 from hashlib import md5
 from io import StringIO as NewFile
 from retriever.lib.defaults import HOME_DIR, ENCODING
-
-from retriever.lib.models import *
+# try:
+#     from retriever.lib.models import *
+# except:
+#     pass
 import xml.etree.ElementTree as ET
+import os
+import sys
+import csv
 
 warnings.filterwarnings("ignore")
+from retriever.lib.tools import open_fr, open_csvw, open_fw
 
 TEST_ENGINES = dict()
 
