@@ -21,28 +21,15 @@ class engine(Engine):
     max_int = 2147483647
     placeholder = "%s"
     insert_limit = 1000
-    required_opts = [("user",
-                      "Enter your PostgreSQL username",
-                      "postgres"),
-                     ("password",
-                      "Enter your password",
-                      ""),
-                     ("host",
-                      "Enter your PostgreSQL host",
-                      "localhost"),
-                     ("port",
-                      "Enter your PostgreSQL port",
-                      5432),
-                     ("database",
-                      "Enter your PostgreSQL database name",
-                      "postgres"),
-                     ("database_name",
-                      "Format of schema name",
-                      "{db}"),
-                     ("table_name",
-                      "Format of table name",
-                      "{db}.{table}"),
-                     ]
+    required_opts = [
+        ("user", "Enter your PostgreSQL username", "postgres"),
+        ("password", "Enter your password", ""),
+        ("host", "Enter your PostgreSQL host", "localhost"),
+        ("port", "Enter your PostgreSQL port", 5432),
+        ("database", "Enter your PostgreSQL database name", "postgres"),
+        ("database_name", "Format of schema name", "{db}"),
+        ("table_name", "Format of table name", "{db}.{table}"),
+    ]
     spatial_support = True
     # default postgres encoding
     db_encoding = "Latin1"
@@ -96,30 +83,32 @@ class engine(Engine):
                 self.execute("SELECT PostGIS_full_version();")
             except BaseException as e:
                 print(e)
-                print("Make sure that you have PostGIS installed\n"
-                      "Open Postgres CLI or GUI(PgAdmin) and run:\n"
-                      "CREATE EXTENSION postgis;\n"
-                      "CREATE EXTENSION postgis_topology;")
+                print(
+                    "Make sure that you have PostGIS installed\n"
+                    "Open Postgres CLI or GUI(PgAdmin) and run:\n"
+                    "CREATE EXTENSION postgis;\n"
+                    "CREATE EXTENSION postgis_topology;"
+                )
                 exit()
             return
         Engine.create_table(self)
         self.connection.commit()
 
-    def drop_statement(self, objecttype, objectname):
+    def drop_statement(self, object_type, object_name):
         """In PostgreSQL, the equivalent of a SQL database is a schema."""
-        statement = Engine.drop_statement(self, objecttype, objectname)
+        statement = Engine.drop_statement(self, object_type, object_name)
         statement += " CASCADE;"
         return statement.replace(" DATABASE ", " SCHEMA ")
 
     def insert_data_from_file(self, filename):
         """Use PostgreSQL's "COPY FROM" statement to perform a bulk insert."""
         self.get_cursor()
+
         ct = len([True for c in self.table.columns if c[1][0][:3] == "ct-"]) != 0
-        if (([self.table.cleanup.function, self.table.delimiter,
-              self.table.header_rows] == [no_cleanup, ",", 1])
-            and not self.table.fixed_width
-            and not ct
-            and (not hasattr(self.table, "do_not_bulk_insert") or not self.table.do_not_bulk_insert)):
+        is_simple_table = [self.table.cleanup.function, self.table.delimiter, self.table.header_rows] == [no_cleanup, ",", 1]
+        can_bulk_insert = not hasattr(self.table, "do_not_bulk_insert") or not self.table.do_not_bulk_insert
+
+        if is_simple_table and not self.table.fixed_width and not ct and can_bulk_insert:
             columns = self.table.get_insert_columns()
             filename = os.path.abspath(filename)
             statement = """
@@ -271,9 +260,7 @@ CSV HEADER;"""
                              password=self.opts["password"],
                              database=self.opts["database"])
         self.set_engine_encoding()
-        encoding_lookup = {'iso-8859-1': 'Latin1',
-                           'latin-1': 'Latin1',
-                           'utf-8': 'UTF8'}
+        encoding_lookup = {'iso-8859-1': 'Latin1', 'latin-1': 'Latin1', 'utf-8': 'UTF8'}
         self.db_encoding = encoding_lookup.get(self.encoding)
         conn.set_client_encoding(self.db_encoding)
         return conn
