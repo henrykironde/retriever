@@ -35,7 +35,8 @@ class engine(Engine):
 
     def create_db_statement(self):
         """Return SQL statement to create a database."""
-        create_statement = "CREATE DATABASE IF NOT EXISTS " + self.database_name()
+        create_statement = "CREATE DATABASE IF NOT EXISTS " + self.database_name(
+        )
         return create_statement
 
     def insert_data_from_file(self, filename):
@@ -45,16 +46,12 @@ class engine(Engine):
         mysql_set_autocommit_on = """SET autocommit=1;"""
 
         self.get_cursor()
-        ct = len([True for c in self.table.columns if c[1][0][:3] == "ct-"]) != 0
-        if (
-            self.table.cleanup.function == no_cleanup
-            and not self.table.fixed_width
-            and not ct
-            and (
-                not hasattr(self.table, "do_not_bulk_insert")
-                or not self.table.do_not_bulk_insert
-            )
-        ):
+        ct = len([True for c in self.table.columns if c[1][0][:3] == "ct-"
+                 ]) != 0
+        if (self.table.cleanup.function == no_cleanup and
+                not self.table.fixed_width and not ct and
+            (not hasattr(self.table, "do_not_bulk_insert") or
+             not self.table.do_not_bulk_insert)):
 
             print("Inserting data from " + os.path.basename(filename) + "...")
 
@@ -75,7 +72,8 @@ IGNORE """ + str(self.table.header_rows) + """ LINES
                 self.cursor.execute(mysql_set_autocommit_on)
             except Exception as e:
                 self.cursor.execute("ROLLBACK;")
-                self.disconnect()  # If the execute fails the database connection can get hung up
+                self.disconnect(
+                )  # If the execute fails the database connection can get hung up
                 self.cursor.execute(mysql_set_autocommit_on)
                 return Engine.insert_data_from_file(self, filename)
         else:
@@ -87,8 +85,7 @@ IGNORE """ + str(self.table.header_rows) + """ LINES
             self.cursor.execute(
                 "SELECT table_schema, table_name "
                 "FROM information_schema.tables WHERE table_schema NOT IN "
-                "('mysql', 'information_schema', 'performance_schema');"
-            )
+                "('mysql', 'information_schema', 'performance_schema');")
             self.existing_table_names = set()
             for schema, table in self.cursor:
                 self.existing_table_names.add((schema.lower(), table.lower()))
@@ -110,7 +107,11 @@ IGNORE """ + str(self.table.header_rows) + """ LINES
         encoding = ENCODING.lower()
         if self.script.encoding:
             encoding = self.script.encoding.lower()
-        encoding_lookup = {'iso-8859-1': 'latin1', 'latin-1': 'latin1', 'utf-8': 'UTF8MB4'}
+        encoding_lookup = {
+            'iso-8859-1': 'latin1',
+            'latin-1': 'latin1',
+            'utf-8': 'UTF8MB4'
+        }
         db_encoding = encoding_lookup.get(encoding)
         return db_encoding
 
@@ -133,6 +134,6 @@ IGNORE """ + str(self.table.header_rows) + """ LINES
 
         args['client_flag'] = client.LOCAL_FILES
         self.get_input()
-        return dbapi.connect(
-            charset=self.lookup_encoding(), read_default_file='~/.my.cnf', **args
-        )
+        return dbapi.connect(charset=self.lookup_encoding(),
+                             read_default_file='~/.my.cnf',
+                             **args)

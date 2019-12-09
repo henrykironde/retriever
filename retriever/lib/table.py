@@ -21,15 +21,23 @@ class Dataset(object):
 class TabularDataset(Dataset):
     """Tabular database table."""
 
-    def __init__(self, name=None, url=None, pk=True,
-                 contains_pk=False, delimiter=None,
-                 header_rows=1, column_names_row=1,
-                 fixed_width=False, cleanup=Cleanup(),
+    def __init__(self,
+                 name=None,
+                 url=None,
+                 pk=True,
+                 contains_pk=False,
+                 delimiter=None,
+                 header_rows=1,
+                 column_names_row=1,
+                 fixed_width=False,
+                 cleanup=Cleanup(),
                  record_id=0,
                  columns=[],
                  replace_columns=[],
                  missingValues=None,
-                 cleaned_columns=False, number_of_records=None, **kwargs):
+                 cleaned_columns=False,
+                 number_of_records=None,
+                 **kwargs):
 
         self.name = name
         self.url = url
@@ -108,18 +116,16 @@ class TabularDataset(Dataset):
                 column_list = []
                 for obj in self.schema["fields"]:
                     type = None
-                    if str(obj["type"]).startswith("pk-") or str(obj["type"]).startswith("ct-"):
+                    if str(obj["type"]).startswith("pk-") or str(
+                            obj["type"]).startswith("ct-"):
                         type = obj["type"]
                     else:
                         type = spec_data_types.get(obj["type"], "char")
 
                     if "size" in obj:
-                        column_list.append((obj["name"],
-                                            (type,
-                                             obj["size"])))
+                        column_list.append((obj["name"], (type, obj["size"])))
                     else:
-                        column_list.append((obj["name"],
-                                            (type,)))
+                        column_list.append((obj["name"], (type,)))
                 self.columns = column_list
             elif key == "ct_column":
                 setattr(self, key, "'" + self.schema[key] + "'")
@@ -143,8 +149,9 @@ class TabularDataset(Dataset):
         remove leading whitespaces, replace sql key words, etc.
         """
         column_name = column_name.lower().strip().replace("\n", "")
-        replace_columns = {old.lower(): new.lower()
-                           for old, new in self.replace_columns}
+        replace_columns = {
+            old.lower(): new.lower() for old, new in self.replace_columns
+        }
         column_name = str(replace_columns.get(column_name, column_name).strip())
         replace = [
             ("%", "percent"),
@@ -156,7 +163,9 @@ class TabularDataset(Dataset):
             ("@", "_at_"),
         ]
         replace += [(x, '') for x in (")", "?", "#", ";" "\n", "\r", '"', "'")]
-        replace += [(x, '_') for x in (" ", "(", "/", ".", "+", "-", "*", ":", "[", "]")]
+        replace += [
+            (x, '_') for x in (" ", "(", "/", ".", "+", "-", "*", ":", "[", "]")
+        ]
 
         column_name = reduce(lambda x, y: x.replace(*y), replace, column_name)
 
@@ -202,7 +211,9 @@ class TabularDataset(Dataset):
             writer_file = io.StringIO()
         else:
             writer_file = io.BytesIO()
-        writer = csv.writer(writer_file, dialect=dialect, delimiter=self.delimiter)
+        writer = csv.writer(writer_file,
+                            dialect=dialect,
+                            delimiter=self.delimiter)
         writer.writerow(line_as_list)
         return writer_file.getvalue()
 
@@ -234,7 +245,8 @@ class TabularDataset(Dataset):
         # make sure we have enough values by padding with None
         keys = self.get_insert_columns(join=False, create=False)
         if len(linevalues) < len(keys):
-            linevalues.extend([None for _ in range(len(keys) - len(linevalues))])
+            linevalues.extend(
+                [None for _ in range(len(keys) - len(linevalues))])
 
         return linevalues
 
@@ -278,7 +290,11 @@ class TabularDataset(Dataset):
 class RasterDataset(Dataset):
     """Raster table implementation"""
 
-    def __init__(self, name=None, url=None, dataset_type="RasterDataset", **kwargs):
+    def __init__(self,
+                 name=None,
+                 url=None,
+                 dataset_type="RasterDataset",
+                 **kwargs):
         self.name = name
         self.group = None
         self.relative_path = 0
@@ -299,7 +315,11 @@ class RasterDataset(Dataset):
 class VectorDataset(Dataset):
     """Vector table implementation."""
 
-    def __init__(self, name=None, url=None, dataset_type="VectorDataset", **kwargs):
+    def __init__(self,
+                 name=None,
+                 url=None,
+                 dataset_type="VectorDataset",
+                 **kwargs):
         self.name = name
         self.pk = None
         self.contains_pk = False

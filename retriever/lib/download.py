@@ -9,7 +9,12 @@ from retriever.lib.repository import check_for_updates
 from retriever.lib.scripts import SCRIPT_LIST, name_matches
 
 
-def download(dataset, path='./', quiet=False, sub_dir='', debug=False, use_cache=True):
+def download(dataset,
+             path='./',
+             quiet=False,
+             sub_dir='',
+             debug=False,
+             use_cache=True):
     """Download scripts for retriever."""
     args = {
         'dataset': dataset,

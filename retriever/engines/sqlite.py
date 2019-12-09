@@ -41,11 +41,10 @@ class engine(Engine):
         """Return sqlite dataset as list of pandas dataframe."""
         connection = self.get_connection()
         sql_query = "SELECT * FROM {};"
-        data = OrderedDict([
-            (table[len(dataset) + 1:],
-             pd.read_sql_query(sql_query.format(table), connection))
-            for table in table_names
-        ])
+        data = OrderedDict([(table[len(dataset) + 1:],
+                             pd.read_sql_query(sql_query.format(table),
+                                               connection))
+                            for table in table_names])
         return data
 
     def get_bulk_insert_statement(self):
@@ -75,17 +74,14 @@ class engine(Engine):
         self.get_cursor()
 
         # Determine if the dataset includes cross-tab data
-        crosstab = len([True for c in self.table.columns if c[1][0][:3] == "ct-"]) != 0
+        crosstab = len(
+            [True for c in self.table.columns if c[1][0][:3] == "ct-"]) != 0
 
-        if (
-            ([self.table.cleanup.function, self.table.header_rows] == [no_cleanup, 1])
-            and not self.table.fixed_width
-            and not crosstab
-            and (
-                not hasattr(self.table, "do_not_bulk_insert")
-                or not self.table.do_not_bulk_insert
-            )
-        ):
+        if (([self.table.cleanup.function, self.table.header_rows
+             ] == [no_cleanup, 1]) and not self.table.fixed_width and
+                not crosstab and
+            (not hasattr(self.table, "do_not_bulk_insert") or
+             not self.table.do_not_bulk_insert)):
             filename = os.path.abspath(filename)
             try:
                 bulk_insert_statement = self.get_bulk_insert_statement()
@@ -97,12 +93,14 @@ class engine(Engine):
                         for line in data_chunk
                         if line not in line_endings
                     ]
-                    del data_chunk[: self.table.header_rows]
+                    del data_chunk[:self.table.header_rows]
                     while data_chunk:
                         data_chunk_split = [
-                            row.split(self.table.delimiter) for row in data_chunk
+                            row.split(self.table.delimiter)
+                            for row in data_chunk
                         ]
-                        self.cursor.executemany(bulk_insert_statement, data_chunk_split)
+                        self.cursor.executemany(bulk_insert_statement,
+                                                data_chunk_split)
                         data_chunk = data_file.readlines(chunk_size)
                 self.connection.commit()
             except:

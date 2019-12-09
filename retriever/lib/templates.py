@@ -15,12 +15,24 @@ class Script(object):
     it's Unique functionality.
     """
 
-    def __init__(self, title="", description="", name="", urls=dict(),
-                 tables=dict(), ref="", public=True, addendum=None,
+    def __init__(self,
+                 title="",
+                 description="",
+                 name="",
+                 urls=dict(),
+                 tables=dict(),
+                 ref="",
+                 public=True,
+                 addendum=None,
                  citation="Not currently available",
-                 licenses=[{'name': None}],
+                 licenses=[{
+                     'name': None
+                 }],
                  retriever_minimum_version="",
-                 version="", encoding="utf-8", message="", **kwargs):
+                 version="",
+                 encoding="utf-8",
+                 message="",
+                 **kwargs):
 
         self.title = title
         self.name = name
@@ -73,9 +85,8 @@ class Script(object):
 
     def matches_terms(self, terms):
         try:
-            search_string = ' '.join([self.name,
-                                      self.description,
-                                      self.name] + self.keywords).upper()
+            search_string = ' '.join([self.name, self.description, self.name] +
+                                     self.keywords).upper()
 
             for term in terms:
                 if not term.upper() in search_string:
@@ -145,9 +156,11 @@ class BasicTextTemplate(Script):
 
     def process_spatial_insert(self, table_obj):
         if table_obj.dataset_type == "RasterDataset":
-            self.engine.insert_raster(self.engine.format_filename(table_obj.path))
+            self.engine.insert_raster(
+                self.engine.format_filename(table_obj.path))
         elif table_obj.dataset_type == "VectorDataset":
-            self.engine.insert_vector(self.engine.format_filename(table_obj.path))
+            self.engine.insert_vector(
+                self.engine.format_filename(table_obj.path))
 
     def process_tables(self, table_obj, url):
         """Obtain the clean file and create a table
@@ -159,10 +172,13 @@ class BasicTextTemplate(Script):
             src_path = self.engine.format_filename(table_obj.xls_sheets[1])
             path_to_csv = self.engine.format_filename(table_obj.path)
             self.engine.download_file(url, table_obj.xls_sheets[1])
-            self.engine.excel_to_csv(src_path, path_to_csv, table_obj.xls_sheets, self.encoding)
+            self.engine.excel_to_csv(src_path, path_to_csv,
+                                     table_obj.xls_sheets, self.encoding)
 
         if hasattr(table_obj, "path"):
-            self.engine.auto_create_table(table_obj, url=url, filename=table_obj.path)
+            self.engine.auto_create_table(table_obj,
+                                          url=url,
+                                          filename=table_obj.path)
         else:
             self.engine.auto_create_table(table_obj, url=url)
 
@@ -201,7 +217,8 @@ class BasicTextTemplate(Script):
         if hasattr(self, "archive_name"):
             archive_name = self.archive_name
 
-        self.engine.download_files_from_archive(url=url, file_names=files,
+        self.engine.download_files_from_archive(url=url,
+                                                file_names=files,
                                                 archive_type=archive_type,
                                                 keep_in_dir=keep_in_dir,
                                                 archive_name=archive_name)
@@ -213,7 +230,4 @@ class HtmlTableTemplate(Script):
     pass
 
 
-TEMPLATES = {
-    "default": BasicTextTemplate,
-    "html_table": HtmlTableTemplate
-}
+TEMPLATES = {"default": BasicTextTemplate, "html_table": HtmlTableTemplate}

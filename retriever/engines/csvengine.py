@@ -24,12 +24,8 @@ class engine(Engine):
     }
     insert_limit = 1000
     required_opts = [
-        ("table_name",
-         "Format of table name",
-         "{db}_{table}.csv"),
-        ("data_dir",
-         "Install directory",
-         DATA_DIR),
+        ("table_name", "Format of table name", "{db}_{table}.csv"),
+        ("data_dir", "Install directory", DATA_DIR),
     ]
     table_names = []
 

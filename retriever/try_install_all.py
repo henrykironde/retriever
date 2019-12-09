@@ -29,7 +29,8 @@ MODULE_LIST = SCRIPT_LIST()
 if len(sys.argv) > 1:
     engine_list = [
         e for e in engine_list
-        if e.name in sys.argv[1:] or e.abbreviation in sys.argv[1:]]
+        if e.name in sys.argv[1:] or e.abbreviation in sys.argv[1:]
+    ]
 
 if os.path.exists("test_all"):
     os.system("rm -r test_all")
@@ -58,20 +59,29 @@ engine_test = {
         'database_name': 'testdb_retriever',
         'table_name': '{db}.{table}'
     },
-    "xml": {'engine': 'xml', 'table_name': 'output_file_{table}.xml'},
-    "json": {'engine': 'json', 'table_name': 'output_file_{table}.json'},
-    "csv": {'engine': 'csv', 'table_name': 'output_file_{table}.csv'},
-    "sqlite": {'engine': 'sqlite', 'file': dbfile, 'table_name': '{db}_{table}'}
+    "xml": {
+        'engine': 'xml',
+        'table_name': 'output_file_{table}.xml'
+    },
+    "json": {
+        'engine': 'json',
+        'table_name': 'output_file_{table}.json'
+    },
+    "csv": {
+        'engine': 'csv',
+        'table_name': 'output_file_{table}.csv'
+    },
+    "sqlite": {
+        'engine': 'sqlite',
+        'file': dbfile,
+        'table_name': '{db}_{table}'
+    }
 }
 
 SCRIPT_LIST = SCRIPT_LIST()
 TEST_ENGINES = {}
 IGNORE = [
-    "forest-inventory-analysis",
-    "bioclim",
-    "prism-climate",
-    "vertnet",
-    "NPN",
+    "forest-inventory-analysis", "bioclim", "prism-climate", "vertnet", "NPN",
     "mammal-super-tree"
 ]
 IGNORE = [dataset.lower() for dataset in IGNORE]
@@ -90,7 +100,8 @@ for module in MODULE_LIST:
     for (key, value) in list(TEST_ENGINES.items()):
         if module.SCRIPT.name.lower() not in IGNORE:
             if value:
-                print("==>", module.__name__, value.name, "..........", module.SCRIPT.name)
+                print("==>", module.__name__, value.name, "..........",
+                      module.SCRIPT.name)
                 try:
                     module.SCRIPT.download(value)
                 except KeyboardInterrupt:
@@ -99,7 +110,8 @@ for module in MODULE_LIST:
                     print("ERROR.")
                     errors.append((key, module.__name__, e))
             else:
-                errors.append((key, "No connection detected......" + module.SCRIPT.name))
+                errors.append(
+                    (key, "No connection detected......" + module.SCRIPT.name))
 print('')
 if errors:
     print("Engine, Dataset, Error")

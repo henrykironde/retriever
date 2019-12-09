@@ -5,6 +5,7 @@ This module contains dummy classes required for non-db based children of the Eng
 
 
 class DummyConnection(object):
+
     def cursor(self):
         pass
 

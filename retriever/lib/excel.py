@@ -8,6 +8,7 @@ from builtins import str
 
 
 class Excel(object):
+
     @staticmethod
     def empty_cell(cell):
         """Test if excel cell is empty or contains only whitespace."""

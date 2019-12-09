@@ -38,9 +38,8 @@ class engine(Engine):
         if hasattr(self, "all_files"):
             for file_name in self.all_files:
                 file_path, file_name_nopath = os.path.split(file_name)
-                dest_path = os.path.join(
-                    self.opts["path"], self.opts.get("sub_dir", "")
-                )
+                dest_path = os.path.join(self.opts["path"],
+                                         self.opts.get("sub_dir", ""))
                 if not os.path.isdir(dest_path):
                     print("Creating directory %s" % dest_path)
                     os.makedirs(dest_path)
@@ -49,7 +48,8 @@ class engine(Engine):
                     print("Keeping existing copy.")
                 else:
                     try:
-                        print("Copying %s from %s" % (file_name_nopath, file_path))
+                        print("Copying %s from %s" %
+                              (file_name_nopath, file_path))
                         shutil.copy(file_name, dest_path)
                     except:
                         print("Couldn't copy file to %s" % dest_path)
@@ -111,12 +111,8 @@ keep_methods = {
 }
 remove_methods = ["insert_data_from_file", "create_db", "create_table"]
 for name, method in methods:
-    if (
-        name not in keep_methods
-        and "download" not in name
-        and "file" not in name
-        and "dir" not in name
-    ):
+    if (name not in keep_methods and "download" not in name and
+            "file" not in name and "dir" not in name):
         setattr(engine, name, dummy_method)
 for name in remove_methods:
     setattr(engine, name, dummy_method)

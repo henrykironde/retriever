@@ -42,8 +42,9 @@ def create_home_dir():
 
     # create the necessary directory structure for storing scripts/raw_data
     # in the ~/.retriever directory
-    required_dirs = [os.path.join(HOME_DIR, dirs)
-                     for dirs in ['', 'raw_data', 'scripts']]
+    required_dirs = [
+        os.path.join(HOME_DIR, dirs) for dirs in ['', 'raw_data', 'scripts']
+    ]
     for dir in required_dirs:
         if not os.path.exists(dir):
             try:
@@ -67,15 +68,18 @@ def final_cleanup(engine):
 def reset_retriever(scope="all", ask_permission=True):
     """Remove stored information on scripts and data."""
     warning_messages = {
-        'all': "\nThis will remove existing scripts and cached data."
-               "\nSpecifically it will remove the scripts and raw_data folders "
-               "in {}\nDo you want to proceed? (y/N)\n",
-        'scripts': "\nThis will remove existing scripts."
-                   + "\nSpecifically it will remove the scripts folder in {}."
-                   + "\nDo you want to proceed? (y/N)\n",
-        'data': "\nThis will remove raw data cached by the Retriever."
-                + "\nSpecifically it will remove the raw_data folder in {}."
-                + "\nDo you want to proceed? (y/N)\n"
+        'all':
+            "\nThis will remove existing scripts and cached data."
+            "\nSpecifically it will remove the scripts and raw_data folders "
+            "in {}\nDo you want to proceed? (y/N)\n",
+        'scripts':
+            "\nThis will remove existing scripts." +
+            "\nSpecifically it will remove the scripts folder in {}." +
+            "\nDo you want to proceed? (y/N)\n",
+        'data':
+            "\nThis will remove raw data cached by the Retriever." +
+            "\nSpecifically it will remove the raw_data folder in {}." +
+            "\nDo you want to proceed? (y/N)\n"
     }
 
     path = os.path.normpath(HOME_DIR)
@@ -103,7 +107,8 @@ def reset_retriever(scope="all", ask_permission=True):
             shutil.rmtree(dataset_path)
         script = scope.replace('-', '_')
         script_path_py = os.path.normpath(os.path.join(sc_dir, script + ".py"))
-        script_path_json = os.path.normpath(os.path.join(sc_dir, script + ".json"))
+        script_path_json = os.path.normpath(
+            os.path.join(sc_dir, script + ".json"))
         if os.path.exists(script_path_py):
             os.remove(script_path_py)
             print("successfully removed the script {scp}".format(scp=scope))
@@ -114,7 +119,10 @@ def reset_retriever(scope="all", ask_permission=True):
             print("can't find script {scp}".format(scp=scope))
 
 
-def json2csv(input_file, output_file=None, header_values=None, encoding=ENCODING):
+def json2csv(input_file,
+             output_file=None,
+             header_values=None,
+             encoding=ENCODING):
     """Convert Json file to CSV.
 
     Function is used for only testing and can handle the file of the size.
@@ -125,12 +133,16 @@ def json2csv(input_file, output_file=None, header_values=None, encoding=ENCODING
         output_file = os.path.splitext(os.path.basename(input_file))[0] + ".csv"
     csv_out = open_fw(output_file, encoding=encoding)
     if os.name == 'nt':
-        outfile = csv.DictWriter(csv_out, dialect='excel', escapechar="\\",
+        outfile = csv.DictWriter(csv_out,
+                                 dialect='excel',
+                                 escapechar="\\",
                                  lineterminator='\n',
                                  fieldnames=header_values)
     else:
-        outfile = csv.DictWriter(csv_out, dialect='excel',
-                                 escapechar="\\", fieldnames=header_values)
+        outfile = csv.DictWriter(csv_out,
+                                 dialect='excel',
+                                 escapechar="\\",
+                                 fieldnames=header_values)
     raw_data = json.loads(file_out.read())
     outfile.writeheader()
 
@@ -152,8 +164,10 @@ def xml2csv(input_file, outputfile=None, header_values=None, row_tag="row"):
         outputfile = os.path.splitext(os.path.basename(input_file))[0] + ".csv"
     csv_out = open_fw(outputfile)
     if os.name == 'nt':
-        csv_writer = csv.writer(csv_out, dialect='excel',
-                                escapechar='\\', lineterminator='\n')
+        csv_writer = csv.writer(csv_out,
+                                dialect='excel',
+                                escapechar='\\',
+                                lineterminator='\n')
     else:
         csv_writer = csv.writer(csv_out, dialect='excel', escapechar='\\')
 
@@ -278,8 +292,10 @@ def to_str(object, object_encoding=sys.stdout, object_decoder=ENCODING):
 
 def set_proxy():
     """Check for proxies and makes them available to urllib."""
-    proxies = ["https_proxy", "http_proxy", "ftp_proxy",
-               "HTTP_PROXY", "HTTPS_PROXY", "FTP_PROXY"]
+    proxies = [
+        "https_proxy", "http_proxy", "ftp_proxy", "HTTP_PROXY", "HTTPS_PROXY",
+        "FTP_PROXY"
+    ]
     for proxy in proxies:
         if os.getenv(proxy):
             if os.environ[proxy]:

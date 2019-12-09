@@ -28,12 +28,8 @@ class engine(Engine):
     }
     insert_limit = 1000
     required_opts = [
-        ("table_name",
-         "Format of table name",
-         "{db}_{table}.json"),
-        ("data_dir",
-         "Install directory",
-         DATA_DIR),
+        ("table_name", "Format of table name", "{db}_{table}.json"),
+        ("data_dir", "Install directory", DATA_DIR),
     ]
     table_names = []
 
@@ -54,8 +50,7 @@ class engine(Engine):
         if self.script.name not in self.script_table_registry:
             self.script_table_registry[self.script.name] = []
         self.script_table_registry[self.script.name].append(
-            (self.table_name(), self.table)
-        )
+            (self.table_name(), self.table))
 
     def disconnect(self):
         """Close out the JSON with a `\\n]}` and close the file.
@@ -110,14 +105,17 @@ class engine(Engine):
         else:
             newrows = values
         json_dumps = []
-        pretty = True if "pretty" in self.opts and self.opts["pretty"] is True else False
+        pretty = True if "pretty" in self.opts and self.opts[
+            "pretty"] is True else False
         for line_data in newrows:
             tuples = (zip(keys, line_data))
             write_data = OrderedDict(tuples)
             if not pretty:
-                json_dumps.append(json.dumps(write_data, ensure_ascii=False) + ",")
+                json_dumps.append(
+                    json.dumps(write_data, ensure_ascii=False) + ",")
             else:
-                json_dumps.append(json.dumps(write_data, ensure_ascii=False, indent=2) + ",")
+                json_dumps.append(
+                    json.dumps(write_data, ensure_ascii=False, indent=2) + ",")
         return json_dumps
 
     def table_exists(self, dbname, tablename):
@@ -132,8 +130,14 @@ class engine(Engine):
         for table_item in self.script_table_registry[self.script.name]:
             header = table_item[1].get_insert_columns(join=False, create=True)
             outputfile = os.path.normpath(
-                os.path.join(path if path else '', os.path.splitext(os.path.basename(table_item[0]))[0] + '.csv'))
-            csv_outfile = json2csv(table_item[0], output_file=outputfile, header_values=header, encoding=self.encoding)
+                os.path.join(
+                    path if path else '',
+                    os.path.splitext(os.path.basename(table_item[0]))[0] +
+                    '.csv'))
+            csv_outfile = json2csv(table_item[0],
+                                   output_file=outputfile,
+                                   header_values=header,
+                                   encoding=self.encoding)
             sort_csv(csv_outfile, encoding=self.encoding)
 
     def get_connection(self):

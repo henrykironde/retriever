@@ -76,22 +76,17 @@ class engine(Engine):
         PostgreSQL needs to commit operations individually.
         Enable PostGis extensions if a script has a non tabular table.
         """
-        if (
-            self.table
-            and self.table.dataset_type
-            and not self.table.dataset_type == "TabularDataset"
-        ):
+        if (self.table and self.table.dataset_type and
+                not self.table.dataset_type == "TabularDataset"):
             try:
                 # Check if Postgis is installed and EXTENSION are Loaded
                 self.execute("SELECT PostGIS_full_version();")
             except BaseException as e:
                 print(e)
-                print(
-                    "Make sure that you have PostGIS installed\n"
-                    "Open Postgres CLI or GUI(PgAdmin) and run:\n"
-                    "CREATE EXTENSION postgis;\n"
-                    "CREATE EXTENSION postgis_topology;"
-                )
+                print("Make sure that you have PostGIS installed\n"
+                      "Open Postgres CLI or GUI(PgAdmin) and run:\n"
+                      "CREATE EXTENSION postgis;\n"
+                      "CREATE EXTENSION postgis_topology;")
                 exit()
             return
         Engine.create_table(self)
@@ -107,16 +102,15 @@ class engine(Engine):
         """Use PostgreSQL's "COPY FROM" statement to perform a bulk insert."""
         self.get_cursor()
 
-        ct = len([True for c in self.table.columns if c[1][0][:3] == "ct-"]) != 0
+        ct = len([True for c in self.table.columns if c[1][0][:3] == "ct-"
+                 ]) != 0
         is_simple_table = [
             self.table.cleanup.function,
             self.table.delimiter,
             self.table.header_rows,
         ] == [no_cleanup, ",", 1]
-        can_bulk_insert = (
-            not hasattr(self.table, "do_not_bulk_insert")
-            or not self.table.do_not_bulk_insert
-        )
+        can_bulk_insert = (not hasattr(self.table, "do_not_bulk_insert") or
+                           not self.table.do_not_bulk_insert)
 
         if is_simple_table and not self.table.fixed_width and not ct and can_bulk_insert:
             columns = self.table.get_insert_columns()
@@ -153,14 +147,16 @@ CSV HEADER;"""
         if ext:
             raster_extensions = ext
         else:
-            raster_extensions = ['.gif', '.img', '.bil',
-                                 '.jpg', '.tif', '.tiff', '.hdf', '.l1b']
+            raster_extensions = [
+                '.gif', '.img', '.bil', '.jpg', '.tif', '.tiff', '.hdf', '.l1b'
+            ]
 
         gis_files = []
         for root, _, files in os.walk(path, topdown=False):
             for names in files:
                 if os.path.splitext(names) in raster_extensions:
-                    gis_files.append(os.path.normpath(os.path.join(root, names)))
+                    gis_files.append(os.path.normpath(os.path.join(root,
+                                                                   names)))
         return gis_files
 
     def insert_raster(self, path=None, srid=4326):
@@ -187,8 +183,7 @@ CSV HEADER;"""
             DATABASE=self.opts["database"],
             PORT=self.opts["port"],
             HOST=self.opts["host"],
-            nul_dev=os.devnull
-        )
+            nul_dev=os.devnull)
 
         cmd_stmt = raster_sql + cmd_string
         if self.debug:
@@ -233,8 +228,7 @@ CSV HEADER;"""
             DATABASE=self.opts["database"],
             PORT=self.opts["port"],
             HOST=self.opts["host"],
-            nul_dev=os.devnull
-        )
+            nul_dev=os.devnull)
         cmd_stmt = vector_sql + cmd_string
         if self.debug:
             print(cmd_stmt)
@@ -270,7 +264,11 @@ CSV HEADER;"""
                              password=self.opts["password"],
                              database=self.opts["database"])
         self.set_engine_encoding()
-        encoding_lookup = {'iso-8859-1': 'Latin1', 'latin-1': 'Latin1', 'utf-8': 'UTF8'}
+        encoding_lookup = {
+            'iso-8859-1': 'Latin1',
+            'latin-1': 'Latin1',
+            'utf-8': 'UTF8'
+        }
         self.db_encoding = encoding_lookup.get(self.encoding)
         conn.set_client_encoding(self.db_encoding)
         return conn
