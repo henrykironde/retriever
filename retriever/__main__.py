@@ -107,7 +107,7 @@ def main():
 
         elif args.command == 'autocreate':
             if sum([args.f, args.d]) == 1:
-                file_flag = True if args.f else False
+                file_flag = bool(args.f)
                 create_package(args.path, args.dt, file_flag, args.o, args.skip_lines)
             else:
                 print('Please use one and only one of the flags -f -d')
@@ -219,14 +219,14 @@ def main():
                         print("{count}. {name}".format(count=count, name=script))
                         count += 1
             return
-        elif args.command == 'commit':
+        if args.command == 'commit':
             commit(
                 dataset=args.dataset,
                 path=os.path.normpath(args.path) if args.path else None,
                 commit_message=args.message,
             )
             return
-        elif args.command == 'log':
+        if args.command == 'log':
             commit_log(dataset=args.dataset)
             return
 

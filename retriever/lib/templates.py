@@ -5,7 +5,7 @@ functions available for inheritance by the scripts or datasets.
 from __future__ import print_function
 
 from retriever.engines import choose_engine
-from retriever.lib.models import *
+from retriever.lib.models import *  # pylint: disable=unused-import
 
 
 class Script(object):
