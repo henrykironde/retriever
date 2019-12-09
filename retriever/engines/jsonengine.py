@@ -105,14 +105,12 @@ class engine(Engine):
         else:
             newrows = values
         json_dumps = []
-        pretty = True if "pretty" in self.opts and self.opts[
-            "pretty"] is True else False
+        pretty = True if "pretty" in self.opts and self.opts["pretty"] is True else False
         for line_data in newrows:
             tuples = (zip(keys, line_data))
             write_data = OrderedDict(tuples)
             if not pretty:
-                json_dumps.append(
-                    json.dumps(write_data, ensure_ascii=False) + ",")
+                json_dumps.append(json.dumps(write_data, ensure_ascii=False) + ",")
             else:
                 json_dumps.append(
                     json.dumps(write_data, ensure_ascii=False, indent=2) + ",")
@@ -132,8 +130,7 @@ class engine(Engine):
             outputfile = os.path.normpath(
                 os.path.join(
                     path if path else '',
-                    os.path.splitext(os.path.basename(table_item[0]))[0] +
-                    '.csv'))
+                    os.path.splitext(os.path.basename(table_item[0]))[0] + '.csv'))
             csv_outfile = json2csv(table_item[0],
                                    output_file=outputfile,
                                    header_values=header,

@@ -128,8 +128,7 @@ class engine(Engine):
             outputfile = os.path.normpath(
                 os.path.join(
                     path if path else '',
-                    os.path.splitext(os.path.basename(table_item[0]))[0] +
-                    '.csv'))
+                    os.path.splitext(os.path.basename(table_item[0]))[0] + '.csv'))
             csv_outfile = xml2csv(table_item[0],
                                   outputfile=outputfile,
                                   header_values=header)

@@ -42,9 +42,7 @@ def create_home_dir():
 
     # create the necessary directory structure for storing scripts/raw_data
     # in the ~/.retriever directory
-    required_dirs = [
-        os.path.join(HOME_DIR, dirs) for dirs in ['', 'raw_data', 'scripts']
-    ]
+    required_dirs = [os.path.join(HOME_DIR, dirs) for dirs in ['', 'raw_data', 'scripts']]
     for dir in required_dirs:
         if not os.path.exists(dir):
             try:
@@ -107,8 +105,7 @@ def reset_retriever(scope="all", ask_permission=True):
             shutil.rmtree(dataset_path)
         script = scope.replace('-', '_')
         script_path_py = os.path.normpath(os.path.join(sc_dir, script + ".py"))
-        script_path_json = os.path.normpath(
-            os.path.join(sc_dir, script + ".json"))
+        script_path_json = os.path.normpath(os.path.join(sc_dir, script + ".json"))
         if os.path.exists(script_path_py):
             os.remove(script_path_py)
             print("successfully removed the script {scp}".format(scp=scope))
@@ -119,10 +116,7 @@ def reset_retriever(scope="all", ask_permission=True):
             print("can't find script {scp}".format(scp=scope))
 
 
-def json2csv(input_file,
-             output_file=None,
-             header_values=None,
-             encoding=ENCODING):
+def json2csv(input_file, output_file=None, header_values=None, encoding=ENCODING):
     """Convert Json file to CSV.
 
     Function is used for only testing and can handle the file of the size.
@@ -293,8 +287,7 @@ def to_str(object, object_encoding=sys.stdout, object_decoder=ENCODING):
 def set_proxy():
     """Check for proxies and makes them available to urllib."""
     proxies = [
-        "https_proxy", "http_proxy", "ftp_proxy", "HTTP_PROXY", "HTTPS_PROXY",
-        "FTP_PROXY"
+        "https_proxy", "http_proxy", "ftp_proxy", "HTTP_PROXY", "HTTPS_PROXY", "FTP_PROXY"
     ]
     for proxy in proxies:
         if os.getenv(proxy):

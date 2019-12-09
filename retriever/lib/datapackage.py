@@ -23,12 +23,10 @@ def clean_input(prompt="", split_char='', ignore_empty=False, dtype=None):
         if not is_empty(val) and dtype is not None:
             try:
                 if not type(eval(val)) == dtype:
-                    print("\tError: input doesn't match required type ", dtype,
-                          "\n")
+                    print("\tError: input doesn't match required type ", dtype, "\n")
                     continue
             except:
-                print("\tError: illegal argument. Input type should be ", dtype,
-                      "\n")
+                print("\tError: illegal argument. Input type should be ", dtype, "\n")
                 continue
         break
     return val

@@ -35,8 +35,7 @@ class engine(Engine):
 
     def create_db_statement(self):
         """Return SQL statement to create a database."""
-        create_statement = "CREATE DATABASE IF NOT EXISTS " + self.database_name(
-        )
+        create_statement = "CREATE DATABASE IF NOT EXISTS " + self.database_name()
         return create_statement
 
     def insert_data_from_file(self, filename):
@@ -46,12 +45,10 @@ class engine(Engine):
         mysql_set_autocommit_on = """SET autocommit=1;"""
 
         self.get_cursor()
-        ct = len([True for c in self.table.columns if c[1][0][:3] == "ct-"
-                 ]) != 0
-        if (self.table.cleanup.function == no_cleanup and
-                not self.table.fixed_width and not ct and
-            (not hasattr(self.table, "do_not_bulk_insert") or
-             not self.table.do_not_bulk_insert)):
+        ct = len([True for c in self.table.columns if c[1][0][:3] == "ct-"]) != 0
+        if (self.table.cleanup.function == no_cleanup and not self.table.fixed_width and
+                not ct and (not hasattr(self.table, "do_not_bulk_insert") or
+                            not self.table.do_not_bulk_insert)):
 
             print("Inserting data from " + os.path.basename(filename) + "...")
 

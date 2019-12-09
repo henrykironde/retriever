@@ -38,14 +38,11 @@ def printls(values, max_width=None, spacing=2):
         # if output to terminal or max_width is specified, use column output
         columns = None
         for cols in [
-                int((len(values) // float(i)) + 0.5)
-                for i in range(1,
-                               len(values) + 1)
+                int((len(values) // float(i)) + 0.5) for i in range(1,
+                                                                    len(values) + 1)
         ]:
             columns = get_columns(values, cols)
-            widths = [
-                max([len(c[0]) for c in column]) + spacing for column in columns
-            ]
+            widths = [max([len(c[0]) for c in column]) + spacing for column in columns]
             if sum(widths) < max_width:
                 break
         if columns:
@@ -56,8 +53,7 @@ def printls(values, max_width=None, spacing=2):
                         if dataset[1]:
                             print(dataset[0].ljust(width - 1), end=' ')
                         else:
-                            print('\033[91m' +
-                                  (dataset[0] + '*').ljust(width - 1) +
+                            print('\033[91m' + (dataset[0] + '*').ljust(width - 1) +
                                   '\033[0m',
                                   end=' ')
                 print()

@@ -28,8 +28,7 @@ else:
 MODULE_LIST = SCRIPT_LIST()
 if len(sys.argv) > 1:
     engine_list = [
-        e for e in engine_list
-        if e.name in sys.argv[1:] or e.abbreviation in sys.argv[1:]
+        e for e in engine_list if e.name in sys.argv[1:] or e.abbreviation in sys.argv[1:]
     ]
 
 if os.path.exists("test_all"):
@@ -110,8 +109,7 @@ for module in MODULE_LIST:
                     print("ERROR.")
                     errors.append((key, module.__name__, e))
             else:
-                errors.append(
-                    (key, "No connection detected......" + module.SCRIPT.name))
+                errors.append((key, "No connection detected......" + module.SCRIPT.name))
 print('')
 if errors:
     print("Engine, Dataset, Error")

@@ -95,10 +95,7 @@ def create_resources(file, skip_lines):
                     "size": ctuple[1]
                 })
         else:
-            resource_dict["schema"]["fields"].append({
-                "name": cname,
-                "type": ctuple[0]
-            })
+            resource_dict["schema"]["fields"].append({"name": cname, "type": ctuple[0]})
     resource_dict["url"] = "FILL"
     return resource_dict
 
@@ -141,8 +138,7 @@ def process_dirs(sub_dirs_path, out_path, skip_lines):
         allpacks = collections.OrderedDict()
         for file_n in files:
             if file_n:
-                try_create_dict = create_script_dict(allpacks, path, file_n,
-                                                     skip_lines)
+                try_create_dict = create_script_dict(allpacks, path, file_n, skip_lines)
                 if try_create_dict:
                     allpacks = try_create_dict
         write_out_scripts(allpacks, path, out_path)
@@ -165,16 +161,14 @@ def process_singles(single_files_path, out_path, skip_lines):
                     continue
                 allpacks = collections.OrderedDict()
                 if file_n:
-                    allpacks = create_script_dict(allpacks, path, file_n,
-                                                  skip_lines)
+                    allpacks = create_script_dict(allpacks, path, file_n, skip_lines)
                     filepath = os.path.join(path, file_n)
                     write_out_scripts(allpacks, filepath, out_path)
     else:
         directory = os.path.dirname(single_files_path)
         file_name = os.path.basename(single_files_path)
         allpacks = collections.OrderedDict()
-        allpacks = create_script_dict(allpacks, directory, file_name,
-                                      skip_lines)
+        allpacks = create_script_dict(allpacks, directory, file_name, skip_lines)
         write_out_scripts(allpacks, single_files_path, out_path)
 
 
@@ -193,8 +187,7 @@ def write_out_scripts(script_dict, path, out_path):
         print(write_path + " creation skipped because resources were empty.")
         return
     if os.path.exists(write_path):
-        choice = clean_input(write_path +
-                             " already exists. Overwrite the script? [y/n]")
+        choice = clean_input(write_path + " already exists. Overwrite the script? [y/n]")
         if choice == "n":
             print(write_path + " creation skipped.")
             return
@@ -203,8 +196,7 @@ def write_out_scripts(script_dict, path, out_path):
             sourted_dict = collections.OrderedDict(sorted(script_dict.items()))
             jsonstr = json.dumps(sourted_dict, sort_keys=True, indent=4)
             output_path.write(jsonstr)
-            print("Successfully wrote scripts to " +
-                  os.path.abspath(write_path))
+            print("Successfully wrote scripts to " + os.path.abspath(write_path))
             output_path.close()
     except Exception as e:
         print(write_path + " could not be created. {}".format(e.message))

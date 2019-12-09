@@ -41,9 +41,7 @@ def commit_info_for_commit(dataset, commit_message):
     path_to_raw_data = os.path.join(HOME_DIR, "raw_data", dataset.name)
     if os.path.exists(path_to_raw_data):
         info["md5_dataset"] = getmd5(path_to_raw_data, "dir", encoding=ENCODING)
-    info["md5_script"] = getmd5(dataset._file,
-                                data_type="file",
-                                encoding=ENCODING)
+    info["md5_script"] = getmd5(dataset._file, data_type="file", encoding=ENCODING)
     return info
 
 
@@ -55,11 +53,7 @@ def commit_writer(dataset, commit_message, path, quiet):
     raw_dir = os.path.join(HOME_DIR, "raw_data")
     data_exists = False
     if dataset.name not in os.listdir(raw_dir):
-        engine = choose_engine({
-            "command": "download",
-            "path": "./",
-            "sub_dir": ""
-        })
+        engine = choose_engine({"command": "download", "path": "./", "sub_dir": ""})
         dataset.download(engine=engine, debug=quiet)
         data_exists = True
 
@@ -72,16 +66,14 @@ def commit_writer(dataset, commit_message, path, quiet):
                 paths_to_zip["raw_data"].append(os.path.join(root, file))
 
         info = commit_info_for_commit(dataset, commit_message=commit_message)
-        zip_file_name = "{}-{}{}.zip".format(dataset.name,
-                                             info["md5_dataset"][:3],
+        zip_file_name = "{}-{}{}.zip".format(dataset.name, info["md5_dataset"][:3],
                                              info["md5_script"][:3])
 
         zip_file_path = os.path.join(path, zip_file_name)
         with ZipFile(zip_file_path, "w") as zipped:
             zipped.write(
                 paths_to_zip["script"],
-                os.path.join("script",
-                             os.path.basename(paths_to_zip["script"])),
+                os.path.join("script", os.path.basename(paths_to_zip["script"])),
             )
             for data_file in paths_to_zip["raw_data"]:
                 zipped.write(data_file, data_file.replace(raw_dir, ""))
@@ -97,11 +89,9 @@ def commit(dataset, commit_message='', path=None, quiet=False):
     """
     if isinstance(dataset, str):
         # if dataset is not a dataset script object find the right script
-        dataset = [
-            script for script in datasets()['offline'] if script.name == dataset
-        ][0]
-    dataset_provenance_path = None if path else os.path.join(
-        PROVENANCE_DIR, dataset.name)
+        dataset = [script for script in datasets()['offline'] if script.name == dataset
+                  ][0]
+    dataset_provenance_path = None if path else os.path.join(PROVENANCE_DIR, dataset.name)
     if not path and not os.path.exists(dataset_provenance_path):
         os.makedirs(dataset_provenance_path)
     path = path if path else dataset_provenance_path
@@ -148,11 +138,8 @@ def commit_info_for_installation(metadata_info):
     if not metadata_info['packages'] == package_details():
         for package in old_package_details:
             if package not in current_package_details:
-                info['package_not_found'] = {
-                    package: old_package_details[package]
-                }
-            elif old_package_details[package] != current_package_details[
-                    package]:
+                info['package_not_found'] = {package: old_package_details[package]}
+            elif old_package_details[package] != current_package_details[package]:
                 info['package_changed'] = {
                     package: {
                         'old': old_package_details[package],
@@ -176,14 +163,12 @@ def installation_details(metadata_info, quiet):
             if details["package_not_found"]:
                 print("The following packages were not found:")
                 for package in details['package_not_found']:
-                    print("{}=={}".format(
-                        package, details['package_not_found'][package]))
+                    print("{}=={}".format(package, details['package_not_found'][package]))
             if details["package_changed"]:
                 print("The following packages have different versions:")
                 for package in details['package_changed']:
                     old_version = details['package_changed'][package]['old']
-                    current_version = details['package_changed'][package][
-                        'current']
+                    current_version = details['package_changed'][package]['current']
                     message = "Required: {0}=={1}  Found: {0}=={2}"
                     print(message.format(package, old_version, current_version))
 
@@ -196,8 +181,7 @@ def get_script(path_to_archive):
         try:
             commit_details = get_metadata(path_to_archive=path_to_archive)
             workdir = mkdtemp(dir=os.path.dirname(path_to_archive))
-            archive.extract('/'.join(('script', commit_details['script_name'])),
-                            workdir)
+            archive.extract('/'.join(('script', commit_details['script_name'])), workdir)
             if commit_details['script_name'].endswith('.json'):
                 script_object = read_json(
                     os.path.join(workdir, 'script',
@@ -205,8 +189,7 @@ def get_script(path_to_archive):
             elif commit_details['script_name'].endswith('.py'):
                 spec = util.spec_from_file_location(
                     "script_module",
-                    os.path.join(workdir, 'script',
-                                 commit_details['script_name']),
+                    os.path.join(workdir, 'script', commit_details['script_name']),
                 )
                 script_module = util.module_from_spec(spec)
                 spec.loader.exec_module(script_module)
@@ -231,8 +214,7 @@ def install_committed(path_to_archive, engine, force=False, quiet=False):
             installation_details(metadata_info=metadata_info, quiet=quiet)
             if not force:
                 confirm = input(
-                    "Please enter either y to continue with installation or n to exit:"
-                )
+                    "Please enter either y to continue with installation or n to exit:")
                 while not (confirm.lower() in ['y', 'n']):
                     print("Please enter either y or n:")
                     confirm = input()
@@ -262,8 +244,7 @@ def commit_log(dataset):
         if os.path.exists(committed_dataset_path):
             log = {}
             for root, _, files in os.walk(committed_dataset_path):
-                zip_files = (
-                    file_obj for file_obj in files if file_obj.endswith(".zip"))
+                zip_files = (file_obj for file_obj in files if file_obj.endswith(".zip"))
                 for zip_file in zip_files:
                     archive_path = os.path.join(root, zip_file)
                     commit_info = get_metadata(path_to_archive=archive_path)

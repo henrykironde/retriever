@@ -21,8 +21,8 @@ from .scripts import get_dataset_names_upstream
 
 __all__ = [
     'check_for_updates', 'commit', 'commit_log', 'create_package', 'datasets',
-    'dataset_names', 'download', 'reload_scripts', 'reset_retriever',
-    'install_csv', 'install_mysql', 'install_postgres', 'install_sqlite',
-    'install_msaccess', 'install_json', 'install_xml', 'fetch',
-    'get_script_upstream', 'get_dataset_names_upstream'
+    'dataset_names', 'download', 'reload_scripts', 'reset_retriever', 'install_csv',
+    'install_mysql', 'install_postgres', 'install_sqlite', 'install_msaccess',
+    'install_json', 'install_xml', 'fetch', 'get_script_upstream',
+    'get_dataset_names_upstream'
 ]

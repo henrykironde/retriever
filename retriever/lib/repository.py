@@ -9,8 +9,8 @@ import requests
 import imp
 from tqdm import tqdm
 from pkg_resources import parse_version
-from retriever.lib.defaults import (REPOSITORY, RETRIEVER_REPOSITORY,
-                                    SCRIPT_WRITE_PATH, HOME_DIR)
+from retriever.lib.defaults import (REPOSITORY, RETRIEVER_REPOSITORY, SCRIPT_WRITE_PATH,
+                                    HOME_DIR)
 from retriever.lib.models import file_exists
 
 
@@ -43,9 +43,7 @@ def check_for_updates(repo=REPOSITORY):
 
         # create script directory if not available
         if not os.path.isdir(SCRIPT_WRITE_PATH):
-            print(
-                'No scripts are currently available. Creating scripts folder...'
-            )
+            print('No scripts are currently available. Creating scripts folder...')
             os.makedirs(SCRIPT_WRITE_PATH)
 
         scripts_type = 'upstream'
@@ -61,27 +59,23 @@ def check_for_updates(repo=REPOSITORY):
 
             script_home_path = os.path.normpath(
                 os.path.join(HOME_DIR, "scripts", script_name))
-            download_path = os.path.normpath(
-                os.path.join(SCRIPT_WRITE_PATH, script_name))
+            download_path = os.path.normpath(os.path.join(SCRIPT_WRITE_PATH, script_name))
             if not file_exists(script_home_path):
-                _download_from_repository("scripts/" + script_name,
-                                          download_path, repo)
+                _download_from_repository("scripts/" + script_name, download_path, repo)
             need_to_download = False
             try:
                 file_object, pathname, desc = imp.find_module(
                     ''.join(script_name.split('.')[:-1]), [SCRIPT_WRITE_PATH])
-                new_module = imp.load_module(script_name, file_object, pathname,
-                                             desc)
+                new_module = imp.load_module(script_name, file_object, pathname, desc)
                 m = str(new_module.SCRIPT.version)
-                need_to_download = parse_version(
-                    str(script_version)) > parse_version(m)
+                need_to_download = parse_version(str(script_version)) > parse_version(m)
             except:
                 pass
             if need_to_download:
                 try:
                     os.remove(script_home_path)
-                    _download_from_repository("scripts/" + script_name,
-                                              download_path, repo)
+                    _download_from_repository("scripts/" + script_name, download_path,
+                                              repo)
                 except Exception as e:
                     print(e)
                     pass

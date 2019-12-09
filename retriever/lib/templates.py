@@ -156,11 +156,9 @@ class BasicTextTemplate(Script):
 
     def process_spatial_insert(self, table_obj):
         if table_obj.dataset_type == "RasterDataset":
-            self.engine.insert_raster(
-                self.engine.format_filename(table_obj.path))
+            self.engine.insert_raster(self.engine.format_filename(table_obj.path))
         elif table_obj.dataset_type == "VectorDataset":
-            self.engine.insert_vector(
-                self.engine.format_filename(table_obj.path))
+            self.engine.insert_vector(self.engine.format_filename(table_obj.path))
 
     def process_tables(self, table_obj, url):
         """Obtain the clean file and create a table
@@ -172,13 +170,11 @@ class BasicTextTemplate(Script):
             src_path = self.engine.format_filename(table_obj.xls_sheets[1])
             path_to_csv = self.engine.format_filename(table_obj.path)
             self.engine.download_file(url, table_obj.xls_sheets[1])
-            self.engine.excel_to_csv(src_path, path_to_csv,
-                                     table_obj.xls_sheets, self.encoding)
+            self.engine.excel_to_csv(src_path, path_to_csv, table_obj.xls_sheets,
+                                     self.encoding)
 
         if hasattr(table_obj, "path"):
-            self.engine.auto_create_table(table_obj,
-                                          url=url,
-                                          filename=table_obj.path)
+            self.engine.auto_create_table(table_obj, url=url, filename=table_obj.path)
         else:
             self.engine.auto_create_table(table_obj, url=url)
 

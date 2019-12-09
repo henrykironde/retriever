@@ -149,9 +149,7 @@ class TabularDataset(Dataset):
         remove leading whitespaces, replace sql key words, etc.
         """
         column_name = column_name.lower().strip().replace("\n", "")
-        replace_columns = {
-            old.lower(): new.lower() for old, new in self.replace_columns
-        }
+        replace_columns = {old.lower(): new.lower() for old, new in self.replace_columns}
         column_name = str(replace_columns.get(column_name, column_name).strip())
         replace = [
             ("%", "percent"),
@@ -163,9 +161,7 @@ class TabularDataset(Dataset):
             ("@", "_at_"),
         ]
         replace += [(x, '') for x in (")", "?", "#", ";" "\n", "\r", '"', "'")]
-        replace += [
-            (x, '_') for x in (" ", "(", "/", ".", "+", "-", "*", ":", "[", "]")
-        ]
+        replace += [(x, '_') for x in (" ", "(", "/", ".", "+", "-", "*", ":", "[", "]")]
 
         column_name = reduce(lambda x, y: x.replace(*y), replace, column_name)
 
@@ -211,9 +207,7 @@ class TabularDataset(Dataset):
             writer_file = io.StringIO()
         else:
             writer_file = io.BytesIO()
-        writer = csv.writer(writer_file,
-                            dialect=dialect,
-                            delimiter=self.delimiter)
+        writer = csv.writer(writer_file, dialect=dialect, delimiter=self.delimiter)
         writer.writerow(line_as_list)
         return writer_file.getvalue()
 
@@ -245,8 +239,7 @@ class TabularDataset(Dataset):
         # make sure we have enough values by padding with None
         keys = self.get_insert_columns(join=False, create=False)
         if len(linevalues) < len(keys):
-            linevalues.extend(
-                [None for _ in range(len(keys) - len(linevalues))])
+            linevalues.extend([None for _ in range(len(keys) - len(linevalues))])
 
         return linevalues
 
@@ -262,8 +255,9 @@ class TabularDataset(Dataset):
         if not self.cleaned_columns:
             column_names = list(self.columns)
             self.columns[:] = []
-            self.columns = [(self.clean_column_name(name[0]), name[1])
-                            for name in column_names]
+            self.columns = [
+                (self.clean_column_name(name[0]), name[1]) for name in column_names
+            ]
             self.cleaned_columns = True
         for item in self.columns:
             if not create and item[1][0] == 'pk-auto':
@@ -290,11 +284,7 @@ class TabularDataset(Dataset):
 class RasterDataset(Dataset):
     """Raster table implementation"""
 
-    def __init__(self,
-                 name=None,
-                 url=None,
-                 dataset_type="RasterDataset",
-                 **kwargs):
+    def __init__(self, name=None, url=None, dataset_type="RasterDataset", **kwargs):
         self.name = name
         self.group = None
         self.relative_path = 0
@@ -315,11 +305,7 @@ class RasterDataset(Dataset):
 class VectorDataset(Dataset):
     """Vector table implementation."""
 
-    def __init__(self,
-                 name=None,
-                 url=None,
-                 dataset_type="VectorDataset",
-                 **kwargs):
+    def __init__(self, name=None, url=None, dataset_type="VectorDataset", **kwargs):
         self.name = name
         self.pk = None
         self.contains_pk = False

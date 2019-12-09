@@ -104,8 +104,7 @@ class Engine(object):
         if self.table.columns[-1][1][0][:3] == "ct-":
             # cross-tab data
             if not real_line_length:
-                real_line_length = self.get_ct_line_length(
-                    gen_from_source(data_source))
+                real_line_length = self.get_ct_line_length(gen_from_source(data_source))
 
             real_lines = self.get_ct_data(gen_from_source(data_source))
         else:
@@ -134,8 +133,8 @@ class Engine(object):
                 try:
                     clean_values = [
                         self.format_insert_value(
-                            self.table.cleanup.function(
-                                line_values[n], self.table.cleanup.args),
+                            self.table.cleanup.function(line_values[n],
+                                                        self.table.cleanup.args),
                             types[n]) for n in range(len(line_values))
                     ]
                 except Exception as e:
@@ -161,9 +160,7 @@ class Engine(object):
                             print(clean_values)
                         raise
                     try:
-                        self.executemany(insert_stmt,
-                                         multiple_values,
-                                         commit=False)
+                        self.executemany(insert_stmt, multiple_values, commit=False)
                     except BaseException:
                         print(insert_stmt)
                         raise
@@ -179,8 +176,8 @@ class Engine(object):
         """Returns the number of real lines for cross-tab data"""
         real_line_length = 0
         for values in lines:
-            initial_cols = len(self.table.columns) - (3 if hasattr(
-                self.table, "ct_names") else 2)
+            initial_cols = len(
+                self.table.columns) - (3 if hasattr(self.table, "ct_names") else 2)
             # add one if auto increment is not
             # set to get the right initial columns
             if not self.table.columns[0][1][0] == "pk-auto":
@@ -193,8 +190,8 @@ class Engine(object):
     def get_ct_data(self, lines):
         """Create cross tab data."""
         for values in lines:
-            initial_cols = len(self.table.columns) - (3 if hasattr(
-                self.table, "ct_names") else 2)
+            initial_cols = len(
+                self.table.columns) - (3 if hasattr(self.table, "ct_names") else 2)
             # add one if auto increment is not set to get the right initial columns
             if not self.table.columns[0][1][0] == "pk-auto":
                 initial_cols += 1
@@ -209,12 +206,7 @@ class Engine(object):
                     name = []
                 yield (begin + name + [item])
 
-    def auto_create_table(self,
-                          table,
-                          url=None,
-                          filename=None,
-                          pk=None,
-                          make=True):
+    def auto_create_table(self, table, url=None, filename=None, pk=None, make=True):
         """Create table automatically by analyzing a data source and
         predicting column names, data types, delimiter, etc."""
         if url and not filename:
@@ -230,15 +222,13 @@ class Engine(object):
             self.set_table_delimiter(file_path)
 
         if self.table.header_rows > 0 and not self.table.columns:
-            source = (skip_rows, (self.table.header_rows - 1,
-                                  self.load_data(file_path)))
+            source = (skip_rows, (self.table.header_rows - 1, self.load_data(file_path)))
 
             lines = gen_from_source(source)
             header = next(lines)
             lines.close()
 
-            source = (skip_rows, (self.table.header_rows,
-                                  self.load_data(file_path)))
+            source = (skip_rows, (self.table.header_rows, self.load_data(file_path)))
 
             lines = gen_from_source(source)
             columns, _ = self.table.auto_get_columns(header)
@@ -247,9 +237,9 @@ class Engine(object):
         if (self.table.columns[-1][1][0][:3] == "ct-" and
                 hasattr(self.table, "ct_names") and
                 self.table.ct_column not in [c[0] for c in self.table.columns]):
-            self.table.columns = (self.table.columns[:-1] +
-                                  [(self.table.ct_column,
-                                    ("char", 50))] + [self.table.columns[-1]])
+            self.table.columns = (self.table.columns[:-1] + [(self.table.ct_column,
+                                                              ("char", 50))] +
+                                  [self.table.columns[-1]])
         if not make:
             return self.table
         self.create_table()
@@ -277,8 +267,8 @@ class Engine(object):
                         if not val:
                             continue
                         if self.table.cleanup.function != no_cleanup:
-                            val = self.table.cleanup.function(
-                                val, self.table.cleanup.args)
+                            val = self.table.cleanup.function(val,
+                                                              self.table.cleanup.args)
 
                         if val and val.strip():
                             # Find length using val.encode() to cater for various
@@ -333,8 +323,7 @@ class Engine(object):
         """
         self.table.delimiter = "\t"
         for other_delimiter in [",", ";"]:
-            if header.count(other_delimiter) > header.count(
-                    self.table.delimiter):
+            if header.count(other_delimiter) > header.count(self.table.delimiter):
                 self.table.delimiter = other_delimiter
 
     def convert_data_type(self, datatype):
@@ -555,8 +544,8 @@ class Engine(object):
                 elif archive_type == 'gz':
                     self.extract_gz(archive_full_path, archive_dir, file_name)
                 elif archive_type == 'tar' or archive_type == 'tar.gz':
-                    self.extract_tar(archive_full_path, archive_dir,
-                                     archive_type, file_name)
+                    self.extract_tar(archive_full_path, archive_dir, archive_type,
+                                     file_name)
         return file_names
 
     def drop_statement(self, object_type, object_name):
@@ -577,11 +566,7 @@ class Engine(object):
         if commit:
             self.connection.commit()
 
-    def excel_to_csv(self,
-                     src_path,
-                     path_to_csv,
-                     excel_info=None,
-                     encoding=ENCODING):
+    def excel_to_csv(self, src_path, path_to_csv, excel_info=None, encoding=ENCODING):
         """Convert excel files to csv files."""
         if self.find_file(src_path) and excel_info:
             excel_csv(src_path, path_to_csv, excel_info, encoding)
@@ -676,8 +661,8 @@ class Engine(object):
                 open_object = True
 
             for fname in file_names:
-                self.write_fileobject(archivedir_write_path, fname, file_obj,
-                                      archive, open_object)
+                self.write_fileobject(archivedir_write_path, fname, file_obj, archive,
+                                      open_object)
             return file_names
         except zipfile.BadZipFile as e:
             print("\n{0} can't be extracted, "
@@ -838,14 +823,12 @@ class Engine(object):
         """Return SQL statement to insert a set of values."""
         columns = self.table.get_insert_columns()
         types = self.table.get_column_datatypes()
-        column_count = len(
-            self.table.get_insert_columns(join=False, create=False))
+        column_count = len(self.table.get_insert_columns(join=False, create=False))
         for row in values:
             row_length = len(row)
             # Add None with appropriate value type for empty cells
             for i in range(column_count - row_length):
-                row.append(self.format_insert_value(None,
-                                                    types[row_length + i]))
+                row.append(self.format_insert_value(None, types[row_length + i]))
 
         insert_stmt = "INSERT INTO {table}".format(table=self.table_name())
         insert_stmt += " ( {columns} )".format(columns=columns)
@@ -937,8 +920,7 @@ class Engine(object):
 
     def warning(self, warning):
         """Create a warning message using the current script and table."""
-        new_warning = Warning('%s:%s' % (self.script.name, self.table.name),
-                              warning)
+        new_warning = Warning('%s:%s' % (self.script.name, self.table.name), warning)
         self.warnings.append(new_warning)
 
     def write_fileobject(
@@ -953,8 +935,7 @@ class Engine(object):
 
         open_object flag helps up with zip files, open the zip and the file
         """
-        write_path = self.format_filename(
-            os.path.join(archivedir_write_path, file_name))
+        write_path = self.format_filename(os.path.join(archivedir_write_path, file_name))
         write_path = os.path.normpath(write_path)
         if not os.path.exists(write_path):
             # If the directory does not exits, create it
@@ -984,8 +965,7 @@ class Engine(object):
         2. Identifies the delimiter if not known
         3. Removes extra line ending
         """
-        if hasattr(self.table,
-                   "csv_extend_size") and self.table.csv_extend_size:
+        if hasattr(self.table, "csv_extend_size") and self.table.csv_extend_size:
             set_csv_field_size()
 
         if not self.table.delimiter:

@@ -86,8 +86,7 @@ def main():
                 if dataset_license:
                     print(dataset_license)
                 else:
-                    print("There is no license information for {}".format(
-                        args.dataset))
+                    print("There is no license information for {}".format(args.dataset))
             return
 
         elif args.command == 'new':
@@ -104,8 +103,7 @@ def main():
         elif args.command == 'autocreate':
             if sum([args.f, args.d]) == 1:
                 file_flag = True if args.f else False
-                create_package(args.path, args.dt, file_flag, args.o,
-                               args.skip_lines)
+                create_package(args.path, args.dt, file_flag, args.o, args.skip_lines)
             else:
                 print('Please use one and only one of the flags -f -d')
             return
@@ -123,23 +121,18 @@ def main():
                     if dataset in all_scripts['offline']:
                         continue
                     all_scripts_combined.append((dataset, False))
-                all_scripts_combined = sorted(all_scripts_combined,
-                                              key=lambda x: x[0])
-                print("Available datasets : {}\n".format(
-                    len(all_scripts_combined)))
+                all_scripts_combined = sorted(all_scripts_combined, key=lambda x: x[0])
+                print("Available datasets : {}\n".format(len(all_scripts_combined)))
                 lscolumns.printls(all_scripts_combined)
                 print("\nThe symbol * denotes the online datasets.")
-                print(
-                    "To see the full list of available online datasets, visit\n"
-                    "https://github.com/weecology/retriever-recipes.")
+                print("To see the full list of available online datasets, visit\n"
+                      "https://github.com/weecology/retriever-recipes.")
 
             elif isinstance(args.v, list):
                 online_scripts = []
                 if args.v:
                     try:
-                        all_scripts = [
-                            get_script(dataset) for dataset in args.v
-                        ]
+                        all_scripts = [get_script(dataset) for dataset in args.v]
                     except KeyError:
                         all_scripts = []
                         print("Dataset(s) is not found.")
@@ -173,8 +166,7 @@ def main():
                         continue
                     set_online_scripts.append(script)
                 if not args.v:
-                    print("Online datasets : {}\n".format(
-                        len(set_online_scripts)))
+                    print("Online datasets : {}\n".format(len(set_online_scripts)))
                 for script in set_online_scripts:
                     print("{count}. {name}".format(count=count, name=script))
                     count += 1
@@ -213,8 +205,7 @@ def main():
                         searched_scripts_online.append(script)
                     print(online_mesg.format(len(searched_scripts_online)))
                     for script in searched_scripts_online:
-                        print("{count}. {name}".format(count=count,
-                                                       name=script))
+                        print("{count}. {name}".format(count=count, name=script))
                         count += 1
             return
         elif args.command == 'commit':
@@ -260,9 +251,7 @@ def main():
                         raise
             print("Done!")
         else:
-            print(
-                "Run 'retriever ls' to see a list of currently available datasets."
-            )
+            print("Run 'retriever ls' to see a list of currently available datasets.")
 
 
 if __name__ == "__main__":
