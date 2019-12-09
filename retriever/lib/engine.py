@@ -85,7 +85,6 @@ class Engine(object):
 
         Enables commit per file object.
         """
-        pass
 
     def get_connection(self):
         """This method should be overridden by specific implementations
@@ -817,7 +816,6 @@ class Engine(object):
 
     def insert_raster(self, path=None, srid=None):
         """Base function for installing raster data from path"""
-        pass
 
     def insert_statement(self, values):
         """Return SQL statement to insert a set of values."""
@@ -843,7 +841,6 @@ class Engine(object):
 
     def insert_vector(self, path=None, srid=None):
         """Base function for installing vector data from path"""
-        pass
 
     def set_engine_encoding(self):
         """Set up the encoding to be used."""

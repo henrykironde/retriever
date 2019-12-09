@@ -1,5 +1,3 @@
-
-
 class Warning():
 
     def __init__(self, location, warning):

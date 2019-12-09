@@ -32,15 +32,10 @@ def main():
         args = parser.parse_args()
 
         reset_or_update = args.command in ["reset", "update"]
-        if (
-            not reset_or_update
-            and not os.path.isdir(SCRIPT_SEARCH_PATHS[1])
-            and not [
-                f
-                for f in os.listdir(SCRIPT_SEARCH_PATHS[-1])
+        if (not reset_or_update and not os.path.isdir(SCRIPT_SEARCH_PATHS[1]) and not [
+                f for f in os.listdir(SCRIPT_SEARCH_PATHS[-1])
                 if os.path.exists(SCRIPT_SEARCH_PATHS[-1])
-            ]
-        ):
+        ]):
             check_for_updates()
             reload_scripts()
         script_list = SCRIPT_LIST()
@@ -70,7 +65,7 @@ def main():
             reload_scripts()
             return
 
-        elif args.command == "citation":
+        if args.command == "citation":
             if args.dataset is None:
                 print("\nCitation for retriever:\n")
                 print(CITATION)
@@ -83,7 +78,7 @@ def main():
 
             return
 
-        elif args.command == 'license':
+        if args.command == 'license':
             if args.dataset is None:
                 print(LICENSE)
             else:
@@ -94,18 +89,18 @@ def main():
                     print("There is no license information for {}".format(args.dataset))
             return
 
-        elif args.command == 'new':
+        if args.command == 'new':
             f = open(args.filename, 'w')
             f.write(sample_script)
             f.close()
 
             return
 
-        elif args.command == 'reset':
+        if args.command == 'reset':
             reset_retriever(args.scope)
             return
 
-        elif args.command == 'autocreate':
+        if args.command == 'autocreate':
             if sum([args.f, args.d]) == 1:
                 file_flag = bool(args.f)
                 create_package(args.path, args.dt, file_flag, args.o, args.skip_lines)
@@ -130,10 +125,8 @@ def main():
                 print("Available datasets : {}\n".format(len(all_scripts_combined)))
                 lscolumns.printls(all_scripts_combined)
                 print("\nThe symbol * denotes the online datasets.")
-                print(
-                    "To see the full list of available online datasets, visit\n"
-                    "https://github.com/weecology/retriever-recipes."
-                )
+                print("To see the full list of available online datasets, visit\n"
+                      "https://github.com/weecology/retriever-recipes.")
 
             elif isinstance(args.v, list):
                 online_scripts = []
@@ -151,20 +144,18 @@ def main():
                 if not args.v:
                     print("Offline datasets : {}\n".format(len(all_scripts)))
                 for script in all_scripts:
-                    print(
-                        "{count}. {title}\n {name}\n"
-                        "{keywords}\n{description}\n"
-                        "{licenses}\n{citation}\n"
-                        "".format(
-                            count=count,
-                            title=script.title,
-                            name=script.name,
-                            keywords=script.keywords,
-                            description=script.description,
-                            licenses=str(script.licenses[0]['name']),
-                            citation=script.citation,
-                        )
-                    )
+                    print("{count}. {title}\n {name}\n"
+                          "{keywords}\n{description}\n"
+                          "{licenses}\n{citation}\n"
+                          "".format(
+                              count=count,
+                              title=script.title,
+                              name=script.name,
+                              keywords=script.keywords,
+                              description=script.description,
+                              licenses=str(script.licenses[0]['name']),
+                              citation=script.citation,
+                          ))
                     count += 1
 
                 count = 1
@@ -193,16 +184,14 @@ def main():
                     print(offline_mesg.format(len(searched_scripts['offline'])))
                     count = 1
                     for script in searched_scripts['offline']:
-                        print(
-                            "{count}. {title}\n{name}\n"
-                            "{keywords}\n{licenses}\n".format(
-                                count=count,
-                                title=script.title,
-                                name=script.name,
-                                keywords=script.keywords,
-                                licenses=str(script.licenses[0]['name']),
-                            )
-                        )
+                        print("{count}. {title}\n{name}\n"
+                              "{keywords}\n{licenses}\n".format(
+                                  count=count,
+                                  title=script.title,
+                                  name=script.name,
+                                  keywords=script.keywords,
+                                  licenses=str(script.licenses[0]['name']),
+                              ))
                         count += 1
 
                     count = 1

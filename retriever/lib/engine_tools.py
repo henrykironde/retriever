@@ -60,7 +60,6 @@ def create_home_dir():
 
 def final_cleanup(engine):
     """Perform final cleanup operations after all scripts have run."""
-    pass
 
 
 def reset_retriever(scope="all", ask_permission=True):

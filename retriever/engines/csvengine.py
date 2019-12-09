@@ -88,8 +88,7 @@ class engine(Engine):
                 newrows.append(insert_stmt)
                 self.auto_column_number += 1
             return newrows
-        else:
-            return values
+        return values
 
     def table_exists(self, dbname, tablename):
         """Check to see if the data file currently exists"""

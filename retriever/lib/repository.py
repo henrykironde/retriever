@@ -78,7 +78,6 @@ def check_for_updates(repo=REPOSITORY):
                                               repo)
                 except Exception as e:
                     print(e)
-                    pass
     except:
         raise
 

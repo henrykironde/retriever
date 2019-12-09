@@ -12,14 +12,10 @@ from __future__ import print_function
 
 import os
 import sys
-from imp import reload
 
 from retriever.engines import engine_list, choose_engine
 from retriever.lib.scripts import SCRIPT_LIST
 
-reload(sys)
-if hasattr(sys, 'setdefaultencoding'):
-    sys.setdefaultencoding('latin-1')
 if os.name == "nt":
     os_password = "Password12!"
 else:
@@ -92,7 +88,6 @@ for engine in engine_list:
             TEST_ENGINES[engine.abbreviation] = choose_engine(opts)
         except:
             TEST_ENGINES[engine.abbreviation] = None
-            pass
 
 errors = []
 for module in MODULE_LIST:

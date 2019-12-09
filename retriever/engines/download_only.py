@@ -53,7 +53,7 @@ class engine(Engine):
                         print("Couldn't copy file to %s" % dest_path)
         self.all_files = set()
 
-    def auto_create_table(self, table, url=None, filename=None, pk=None):
+    def auto_create_table(self, table, url=None, filename=None, pk=None, make=True):
         """Download the file if it doesn't exist"""
         if url and not filename:
             filename = filename_from_url(url)
@@ -94,7 +94,7 @@ class engine(Engine):
 
 # replace all other methods with a function that does nothing
 def dummy_method(self, *args, **kwargs):
-    pass
+    """Dummy method template to help with replacing Engine functions"""
 
 
 methods = inspect.getmembers(engine, predicate=inspect.ismethod)

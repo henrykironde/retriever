@@ -44,8 +44,7 @@ class engine(Engine):
             converted = "NUMERIC"
         elif "VARCHAR" in converted:
             try:
-                length = int(
-                    converted.split('(')[1].split(')')[0].split(',')[0])
+                length = int(converted.split('(')[1].split(')')[0].split(',')[0])
                 if length > 255:
                     converted = "TEXT"
             except BaseException:
@@ -89,16 +88,15 @@ class engine(Engine):
             if self.table.pk and not self.table.contains_pk:
                 if '.' in os.path.basename(filename):
                     proper_name = filename.split('.')
-                    newfilename = ('.'.join((proper_name[0:-1]) if len(
-                        proper_name) > 0 else proper_name[0]) + "_new." + filename.split(".")[-1])
+                    len_name = len(proper_name)
+                    newfilename = '.'.join(
+                        proper_name[0:-1] if len_name > 0 else proper_name[0]
+                    ) + "_new." + filename.split(".")[-1]
                 else:
                     newfilename = filename + "_new"
 
                 if not os.path.isfile(newfilename):
-                    print(
-                        "Adding index to " +
-                        os.path.abspath(newfilename) +
-                        "...")
+                    print("Adding index to " + os.path.abspath(newfilename) + "...")
                     read = open(filename, "rb")
                     write = open(newfilename, "wb")
                     to_write = ""
@@ -155,9 +153,6 @@ IN "''' + filepath + '''" "Text;FMT=''' + fmt + ''';HDR=''' + hdr + ''';"'''
 
         if not os.path.exists(ms_file) and ms_file.endswith('.mdb'):
             dbapi.win_create_mdb(ms_file)
-        connection_string = (
-            "DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};DBQ="
-            + os.path.abspath(ms_file).replace("/", "//")
-            + ";"
-        )
+        connection_string = ("DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=" +
+                             os.path.abspath(ms_file).replace("/", "//") + ";")
         return dbapi.connect(connection_string, autocommit=False)

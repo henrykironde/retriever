@@ -34,7 +34,7 @@ class engine(Engine):
     # default postgres encoding
     db_encoding = "Latin1"
 
-    def auto_create_table(self, table, url=None, filename=None, pk=None):
+    def auto_create_table(self, table, url=None, filename=None, pk=None, make=True):
         """Create a table automatically.
 
         Overwrites the main Engine class. Identifies the type of table to create.

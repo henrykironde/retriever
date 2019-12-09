@@ -47,7 +47,6 @@ def create_package(path, data_type, file_flag, out_path, skip_lines=None):
 
 def create_raster_datapackage():
     """Creates raster package for a path"""
-    pass
 
 
 def create_tabular_datapackage(path, file_flag, out_path, skip_lines):
@@ -60,7 +59,6 @@ def create_tabular_datapackage(path, file_flag, out_path, skip_lines):
 
 def create_vector_datapackage():
     """Creates vector package for a path"""
-    pass
 
 
 def create_resources(file, skip_lines):

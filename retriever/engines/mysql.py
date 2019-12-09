@@ -67,7 +67,7 @@ IGNORE """ + str(self.table.header_rows) + """ LINES
                 self.cursor.execute(statement)
 
                 self.cursor.execute(mysql_set_autocommit_on)
-            except Exception as e:
+            except Exception:
                 self.cursor.execute("ROLLBACK;")
                 self.disconnect(
                 )  # If the execute fails the database connection can get hung up

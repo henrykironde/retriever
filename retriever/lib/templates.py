@@ -5,7 +5,7 @@ functions available for inheritance by the scripts or datasets.
 from __future__ import print_function
 
 from retriever.engines import choose_engine
-from retriever.lib.models import *  # pylint: disable=unused-import
+# from retriever.lib.models import *
 
 
 class Script(object):
@@ -15,24 +15,12 @@ class Script(object):
     it's Unique functionality.
     """
 
-    def __init__(self,
-                 title="",
-                 description="",
-                 name="",
-                 urls=dict(),
-                 tables=dict(),
-                 ref="",
-                 public=True,
-                 addendum=None,
+    def __init__(self, title="", description="", name="", urls=dict(),
+                 tables=dict(), ref="", public=True, addendum=None,
                  citation="Not currently available",
-                 licenses=[{
-                     'name': None
-                 }],
+                 licenses=[{'name': None}],
                  retriever_minimum_version="",
-                 version="",
-                 encoding="utf-8",
-                 message="",
-                 **kwargs):
+                 version="", encoding="utf-8", message="", **kwargs):
 
         self.title = title
         self.name = name
@@ -222,8 +210,6 @@ class BasicTextTemplate(Script):
 
 class HtmlTableTemplate(Script):
     """Script template for parsing data in HTML tables."""
-
-    pass
 
 
 TEMPLATES = {"default": BasicTextTemplate, "html_table": HtmlTableTemplate}

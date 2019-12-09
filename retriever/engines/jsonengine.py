@@ -105,7 +105,8 @@ class engine(Engine):
         else:
             newrows = values
         json_dumps = []
-        pretty = True if "pretty" in self.opts and self.opts["pretty"] is True else False
+
+        pretty = bool("pretty" in self.opts and self.opts["pretty"])
         for line_data in newrows:
             tuples = (zip(keys, line_data))
             write_data = OrderedDict(tuples)
