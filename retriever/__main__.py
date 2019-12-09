@@ -31,11 +31,16 @@ def main():
         # otherwise, parse them
         args = parser.parse_args()
 
-        if (args.command not in ["reset", "update"] and
-                not os.path.isdir(SCRIPT_SEARCH_PATHS[1]) and not [
-                    f for f in os.listdir(SCRIPT_SEARCH_PATHS[-1])
-                    if os.path.exists(SCRIPT_SEARCH_PATHS[-1])
-                ]):
+        reset_or_update = args.command in ["reset", "update"]
+        if (
+            not reset_or_update
+            and not os.path.isdir(SCRIPT_SEARCH_PATHS[1])
+            and not [
+                f
+                for f in os.listdir(SCRIPT_SEARCH_PATHS[-1])
+                if os.path.exists(SCRIPT_SEARCH_PATHS[-1])
+            ]
+        ):
             check_for_updates()
             reload_scripts()
         script_list = SCRIPT_LIST()
@@ -125,8 +130,10 @@ def main():
                 print("Available datasets : {}\n".format(len(all_scripts_combined)))
                 lscolumns.printls(all_scripts_combined)
                 print("\nThe symbol * denotes the online datasets.")
-                print("To see the full list of available online datasets, visit\n"
-                      "https://github.com/weecology/retriever-recipes.")
+                print(
+                    "To see the full list of available online datasets, visit\n"
+                    "https://github.com/weecology/retriever-recipes."
+                )
 
             elif isinstance(args.v, list):
                 online_scripts = []
@@ -144,18 +151,20 @@ def main():
                 if not args.v:
                     print("Offline datasets : {}\n".format(len(all_scripts)))
                 for script in all_scripts:
-                    print("{count}. {title}\n {name}\n"
-                          "{keywords}\n{description}\n"
-                          "{licenses}\n{citation}\n"
-                          "".format(
-                              count=count,
-                              title=script.title,
-                              name=script.name,
-                              keywords=script.keywords,
-                              description=script.description,
-                              licenses=str(script.licenses[0]['name']),
-                              citation=script.citation,
-                          ))
+                    print(
+                        "{count}. {title}\n {name}\n"
+                        "{keywords}\n{description}\n"
+                        "{licenses}\n{citation}\n"
+                        "".format(
+                            count=count,
+                            title=script.title,
+                            name=script.name,
+                            keywords=script.keywords,
+                            description=script.description,
+                            licenses=str(script.licenses[0]['name']),
+                            citation=script.citation,
+                        )
+                    )
                     count += 1
 
                 count = 1
@@ -184,14 +193,16 @@ def main():
                     print(offline_mesg.format(len(searched_scripts['offline'])))
                     count = 1
                     for script in searched_scripts['offline']:
-                        print("{count}. {title}\n{name}\n"
-                              "{keywords}\n{licenses}\n".format(
-                                  count=count,
-                                  title=script.title,
-                                  name=script.name,
-                                  keywords=script.keywords,
-                                  licenses=str(script.licenses[0]['name']),
-                              ))
+                        print(
+                            "{count}. {title}\n{name}\n"
+                            "{keywords}\n{licenses}\n".format(
+                                count=count,
+                                title=script.title,
+                                name=script.name,
+                                keywords=script.keywords,
+                                licenses=str(script.licenses[0]['name']),
+                            )
+                        )
                         count += 1
 
                     count = 1
@@ -209,9 +220,11 @@ def main():
                         count += 1
             return
         elif args.command == 'commit':
-            commit(dataset=args.dataset,
-                   path=os.path.normpath(args.path) if args.path else None,
-                   commit_message=args.message)
+            commit(
+                dataset=args.dataset,
+                path=os.path.normpath(args.path) if args.path else None,
+                commit_message=args.message,
+            )
             return
         elif args.command == 'log':
             commit_log(dataset=args.dataset)
