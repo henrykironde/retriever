@@ -8,17 +8,17 @@ from retriever.engines import choose_engine
 # from retriever.lib.models import *
 
 
-class Script(object):
+class Script():
     """This class defines the properties of a generic dataset.
 
     Each Dataset inherits attributes from this class to define
     it's Unique functionality.
     """
 
-    def __init__(self, title="", description="", name="", urls=dict(),
-                 tables=dict(), ref="", public=True, addendum=None,
+    def __init__(self, title="", description="", name="", urls={},
+                 tables={}, ref="", public=True, addendum=None,
                  citation="Not currently available",
-                 licenses=[{'name': None}],
+                 licenses=None,
                  retriever_minimum_version="",
                  version="", encoding="utf-8", message="", **kwargs):
 
@@ -55,6 +55,7 @@ class Script(object):
         self.engine.create_db()
 
     def reference_url(self):
+        """Get a reference url as the parent url from data url"""
         if self.ref:
             return self.ref
         if len(self.urls) == 1:
@@ -72,6 +73,7 @@ class Script(object):
         return engine
 
     def matches_terms(self, terms):
+        """Check if the terms matches a script metadata info"""
         try:
             search_string = ' '.join([self.name, self.description, self.name] +
                                      self.keywords).upper()
@@ -136,6 +138,7 @@ class BasicTextTemplate(Script):
             self.engine.disconnect_files()
 
     def process_tabular_insert(self, table_obj, url):
+        """Process tabular data for insertion"""
         if hasattr(self, "archived") or hasattr(table_obj, "path"):
             path_to_file = self.engine.format_filename(table_obj.path)
             self.engine.insert_data_from_file(path_to_file)
@@ -143,6 +146,7 @@ class BasicTextTemplate(Script):
             self.engine.insert_data_from_url(url)
 
     def process_spatial_insert(self, table_obj):
+        """Process spatial data for insertion"""
         if table_obj.dataset_type == "RasterDataset":
             self.engine.insert_raster(self.engine.format_filename(table_obj.path))
         elif table_obj.dataset_type == "VectorDataset":

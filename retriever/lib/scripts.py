@@ -87,7 +87,7 @@ def reload_scripts():
                             continue
                     # if the script wasn't found in an early search path
                     # make sure it works and then add it
-                    new_module.SCRIPT.download
+                    bool(new_module.SCRIPT.download)
                     setattr(new_module.SCRIPT, "_file", os.path.join(search_path, script))
                     setattr(new_module.SCRIPT, "_name", script_name)
                     modules.append(new_module.SCRIPT)
@@ -389,6 +389,7 @@ def open_csvw(csv_file, encode=True):
 
 
 def to_str(object, object_encoding=sys.stdout, object_decoder=ENCODING):
+    """Convert to str"""
     enc = object_encoding.encoding
     return str(object).encode(enc, errors='backslashreplace').decode(object_decoder)
 
@@ -455,9 +456,11 @@ class StoredScripts:
         self._shared_scripts = SCRIPT_LIST()
 
     def get_scripts(self):
+        """Return shared scripts"""
         return self._shared_scripts
 
     def set_scripts(self, script_list):
+        """Set shared scripts"""
         self._shared_scripts = script_list
 
 

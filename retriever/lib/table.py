@@ -10,7 +10,7 @@ from functools import reduce
 from retriever.lib.cleanup import correct_invalid_value, Cleanup
 
 
-class Dataset(object):
+class Dataset():
     """Dataset generic properties"""
 
     def __init__(self, name=None, url=None):
@@ -212,6 +212,10 @@ class TabularDataset(Dataset):
         return writer_file.getvalue()
 
     def values_from_line(self, line):
+        """Return expected row values
+
+        Includes dynamically generated field values like auto pk
+        """
         linevalues = []
         if self.columns[0][1][0] == 'pk-auto':
             column = 1
@@ -264,7 +268,7 @@ class TabularDataset(Dataset):
                 # don't include this columns if create=False
                 continue
             thistype = item[1][0]
-            if (thistype != "skip") and (thistype != "combine"):
+            if thistype not in ('skip', 'combine'):
                 columns.append(item[0])
         if join:
             return ", ".join(columns)

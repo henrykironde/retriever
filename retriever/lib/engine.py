@@ -38,7 +38,7 @@ from urllib.request import urlretrieve
 from requests.exceptions import InvalidSchema
 
 
-class Engine(object):
+class Engine():
     """A generic database system. Specific database platforms will inherit
     from this class."""
 
@@ -203,7 +203,7 @@ class Engine(object):
                     n += 1
                 else:
                     name = []
-                yield (begin + name + [item])
+                yield begin + name + [item]
 
     def auto_create_table(self, table, url=None, filename=None, pk=None, make=True):
         """Create table automatically by analyzing a data source and
@@ -423,6 +423,7 @@ class Engine(object):
             print("Replacing existing table")
 
     def register_tables(self):
+        """Register table names of scripts"""
         if self.script.name not in self.script_table_registry:
             self.script_table_registry[self.script.name] = []
         self.script_table_registry[self.script.name].append(
@@ -520,7 +521,7 @@ class Engine(object):
 
         if not file_names:
             self.download_file(url, archive_name)
-            if archive_type == 'tar' or archive_type == 'tar.gz':
+            if archive_type in ('tar', 'tar.gz'):
                 file_names = self.extract_tar(archive_full_path, archive_dir,
                                               archive_type)
             elif archive_type == 'zip':
@@ -529,7 +530,7 @@ class Engine(object):
                 file_names = self.extract_gz(archive_full_path, archive_dir)
             return file_names
 
-        archive_downloaded = True if self.data_path else False
+        archive_downloaded = bool(self.data_path)
         for file_name in file_names:
             archive_full_path = self.format_filename(archive_name)
             if not self.find_file(os.path.join(archive_dir, file_name)):
@@ -542,7 +543,7 @@ class Engine(object):
                     self.extract_zip(archive_full_path, archive_dir, file_name)
                 elif archive_type == 'gz':
                     self.extract_gz(archive_full_path, archive_dir, file_name)
-                elif archive_type == 'tar' or archive_type == 'tar.gz':
+                elif archive_type in ('tar', 'tar.gz'):
                     self.extract_tar(archive_full_path, archive_dir, archive_type,
                                      file_name)
         return file_names
@@ -611,7 +612,7 @@ class Engine(object):
         Extracts a given file name or the file in the tar or tar.gz.
         # gzip archives can only contain a single file
         """
-        if archive_type == 'tar' or archive_type == 'tar.gz':
+        if archive_type in ('tar', 'tar.gz'):
             if file_name:
                 archive = tarfile.open(archive_path, 'r')
                 open_archive_file = archive.extractfile(file_name)
@@ -625,15 +626,15 @@ class Engine(object):
                 if 'archive' in locals():
                     archive.close()
                 return [file_name]
+
+            if archive_type == 'tar':
+                tar = tarfile.open(archive_path, 'r')
             else:
-                if archive_type == 'tar':
-                    tar = tarfile.open(archive_path, 'r')
-                else:
-                    tar = tarfile.open(archive_path, "r:gz")
-                file_names = tar.getnames()
-                tar.extractall(path=archivedir_write_path)
-                tar.close()
-                return file_names
+                tar = tarfile.open(archive_path, "r:gz")
+            file_names = tar.getnames()
+            tar.extractall(path=archivedir_write_path)
+            tar.close()
+            return file_names
 
     def extract_zip(self, archive_path, archivedir_write_path, file_name=None):
         """Extract zip files.
@@ -659,8 +660,8 @@ class Engine(object):
                 file_obj = None
                 open_object = True
 
-            for fname in file_names:
-                self.write_fileobject(archivedir_write_path, fname, file_obj, archive,
+            for f_name in file_names:
+                self.write_fileobject(archivedir_write_path, f_name, file_obj, archive,
                                       open_object)
             return file_names
         except zipfile.BadZipFile as e:
@@ -761,7 +762,7 @@ class Engine(object):
         """Manually get user input for connection information when script is
         run from terminal."""
         for opt in self.required_opts:
-            if not (opt[0] in list(self.opts.keys())):
+            if opt[0] not in list(self.opts.keys()):
                 if opt[0] == "password":
                     print(opt[1])
                     self.opts[opt[0]] = getpass.getpass(" ")

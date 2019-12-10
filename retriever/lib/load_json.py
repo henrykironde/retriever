@@ -30,7 +30,7 @@ def read_json(json_file, debug=False):
             json_file_encoding = json_object['encoding']
         file_obj.close()
     except ValueError:
-        pass
+        return None
 
     # Reload json using encoding if available
     try:
@@ -42,7 +42,7 @@ def read_json(json_file, debug=False):
         file_obj.close()
 
     except ValueError:
-        pass
+        return None
     if type(json_object) is dict and "resources" in json_object.keys():
 
         # Note::formats described by frictionlessdata data may need to change
