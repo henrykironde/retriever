@@ -1,6 +1,3 @@
-from builtins import object
-
-
 def floatable(value):
     """Check if a value can be converted to a float"""
     try:
@@ -13,11 +10,11 @@ def floatable(value):
 def correct_invalid_value(value, args):
     """This cleanup function replaces missing value indicators with None."""
     try:
-        if value in [item for item in args["missingValues"]]:
+        if value in args["missingValues"]:
             return None
-        if float(value) in [float(item)
-                            for item in args["missingValues"]
-                            if floatable(item)]:
+        if float(value) in [
+                float(item) for item in args["missingValues"] if floatable(item)
+        ]:
             return None
         return value
     except:
@@ -29,7 +26,7 @@ def no_cleanup(value, args):
     return value
 
 
-class Cleanup(object):
+class Cleanup():
     """This class represents a custom cleanup function and a dictionary of
     arguments to be passed to that function."""
 
