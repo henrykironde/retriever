@@ -67,14 +67,13 @@ IGNORE """ + str(self.table.header_rows) + """ LINES
                 self.cursor.execute(statement)
 
                 self.cursor.execute(mysql_set_autocommit_on)
+                return None
             except Exception:
                 self.cursor.execute("ROLLBACK;")
-                self.disconnect(
-                )  # If the execute fails the database connection can get hung up
+                # If the execute fails the database connection can get hung up
+                self.disconnect()
                 self.cursor.execute(mysql_set_autocommit_on)
-                return Engine.insert_data_from_file(self, filename)
-        else:
-            return Engine.insert_data_from_file(self, filename)
+        return Engine.insert_data_from_file(self, filename)
 
     def table_exists(self, dbname, tablename):
         """Check to see if the given table exists."""

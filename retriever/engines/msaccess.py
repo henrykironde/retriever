@@ -135,9 +135,9 @@ IN "''' + filepath + '''" "Text;FMT=''' + fmt + ''';HDR=''' + hdr + ''';"'''
 
             if need_to_delete:
                 os.remove(newfilename)
+            return None
 
-        else:
-            return Engine.insert_data_from_file(self, filename)
+        return Engine.insert_data_from_file(self, filename)
 
     def get_connection(self):
         """Gets the db connection."""

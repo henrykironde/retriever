@@ -16,7 +16,7 @@ class Script():
     """
 
     def __init__(self, title="", description="", name="", urls={},
-                 tables={}, ref="", public=True, addendum=None,
+                 tables=None, ref="", public=True, addendum=None,
                  citation="Not currently available",
                  licenses=None,
                  retriever_minimum_version="",

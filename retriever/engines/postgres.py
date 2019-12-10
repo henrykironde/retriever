@@ -1,4 +1,5 @@
 import os
+import sys
 import subprocess
 
 from retriever.lib.models import Engine, no_cleanup
@@ -87,7 +88,7 @@ class engine(Engine):
                       "Open Postgres CLI or GUI(PgAdmin) and run:\n"
                       "CREATE EXTENSION postgis;\n"
                       "CREATE EXTENSION postgis_topology;")
-                exit()
+                sys.exit()
             return
         Engine.create_table(self)
         self.connection.commit()
@@ -104,10 +105,10 @@ class engine(Engine):
 
         ct = len([True for c in self.table.columns if c[1][0][:3] == "ct-"]) != 0
         is_simple_table = [
-            self.table.cleanup.function,
-            self.table.delimiter,
-            self.table.header_rows,
-        ] == [no_cleanup, ",", 1]
+                              self.table.cleanup.function,
+                              self.table.delimiter,
+                              self.table.header_rows,
+                          ] == [no_cleanup, ",", 1]
         can_bulk_insert = (not hasattr(self.table, "do_not_bulk_insert") or
                            not self.table.do_not_bulk_insert)
 
@@ -123,11 +124,11 @@ CSV HEADER;"""
                 self.execute("BEGIN")
                 self.execute(statement)
                 self.execute("COMMIT")
+                return
             except BaseException:
                 self.connection.rollback()
                 return Engine.insert_data_from_file(self, filename)
-        else:
-            return Engine.insert_data_from_file(self, filename)
+        return Engine.insert_data_from_file(self, filename)
 
     def insert_statement(self, values):
         """Return SQL statement to insert a set of values."""
@@ -171,18 +172,19 @@ CSV HEADER;"""
         if not path:
             path = Engine.format_data_dir(self)
 
-        raster_sql = """raster2pgsql -Y -M -d -I -s {SRID} \"{path}\" 
-        -F -t 100x100 {SCHEMA_DBTABLE}""".format(SRID=srid,
-                                                 path=os.path.normpath(path),
-                                                 SCHEMA_DBTABLE=self.table_name())
+        raster_sql = "raster2pgsql -Y -M -d -I -s {SRID} \"{path}\"" \
+                     " -F -t 100x100 {SCHEMA_DBTABLE}".format(
+            SRID=srid,
+            path=os.path.normpath(path),
+            SCHEMA_DBTABLE=self.table_name())
 
-        cmd_string = """ | psql -U {USER} -d {DATABASE} 
-        --port {PORT} --host {HOST} > {nul_dev} """.format(
+        cmd_string = """ | psql -U {USER} -d {DATABASE} --port {PORT}
+         --host {HOST} > {nul_dev} """.format(
             USER=self.opts["user"],
             DATABASE=self.opts["database"],
             PORT=self.opts["port"],
             HOST=self.opts["host"],
-            nul_dev=os.devnull,
+            nul_dev=os.devnull
         )
 
         cmd_stmt = raster_sql + cmd_string
@@ -191,7 +193,7 @@ CSV HEADER;"""
         Engine.register_tables(self)
         try:
             subprocess.call(cmd_stmt, shell=True)
-        except BaseException as e:
+        except BaseException:
             pass
 
     def insert_vector(self, path=None, srid=4326):
@@ -217,14 +219,16 @@ CSV HEADER;"""
          """
         if not path:
             path = Engine.format_data_dir(self)
-        vector_sql = "shp2pgsql -d -I -W \"{encd}\"  -s {SRID} \"{path}\" \"{SCHEMA_DBTABLE}\"".format(
+        vector_sql = "shp2pgsql -d -I -W \"{encd}\"  -s {SRID}" \
+                     " \"{path}\" \"{SCHEMA_DBTABLE}\"".format(
             encd=self.encoding,
             SRID=srid,
             path=os.path.normpath(path),
             SCHEMA_DBTABLE=self.table_name(),
         )
 
-        cmd_string = """ | psql -U {USER} -d {DATABASE} --port {PORT} --host {HOST} > {nul_dev} """.format(
+        cmd_string = """ | psql -U {USER} -d {DATABASE} --port {PORT}
+         --host {HOST} > {nul_dev} """.format(
             USER=self.opts["user"],
             DATABASE=self.opts["database"],
             PORT=self.opts["port"],

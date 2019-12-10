@@ -241,7 +241,7 @@ class Engine():
                                   [self.table.columns[-1]])
         if not make:
             return self.table
-        self.create_table()
+        return self.create_table()
 
     def auto_get_datatypes(self, pk, source, columns):
         """Determine data types for each column.
@@ -668,7 +668,7 @@ class Engine():
             print("\n{0} can't be extracted, "
                   "may be corrupt \n{1}".format(file_name, e))
 
-    def fetch_tables(self, table_names):
+    def fetch_tables(self, dataset, table_names):
         """This can be overriden to return the tables of sqlite db
         as pandas data frame. Return False by default.
         """

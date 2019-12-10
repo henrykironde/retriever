@@ -198,10 +198,10 @@ def get_script(path_to_archive):
                 spec.loader.exec_module(script_module)
                 script_object = script_module.SCRIPT
             rmtree(workdir)
+            return script_object
         except Exception as e:
             print(e)
-            return
-        return script_object
+            return None
 
 
 def install_committed(path_to_archive, engine, force=False, quiet=False):
@@ -229,13 +229,13 @@ def install_committed(path_to_archive, engine, force=False, quiet=False):
                         archive.extract(filename, workdir)
                 engine.script_table_registry = OrderedDict()
                 script_object.download(engine)
+            return engine
         except Exception as e:
             print(e)
-            return
+            return None
         finally:
             engine.data_path = None
             rmtree(workdir)
-        return engine
 
 
 def commit_log(dataset):
