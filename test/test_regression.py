@@ -1,14 +1,10 @@
-from __future__ import absolute_import
-
 import imp
 import os
 import shlex
 import shutil
 import subprocess
-import sys
 import time
 from distutils.dir_util import copy_tree
-from imp import reload
 
 import retriever as rt
 from retriever.lib.defaults import DATA_DIR

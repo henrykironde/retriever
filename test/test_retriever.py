@@ -1,8 +1,5 @@
 # -*- coding: latin-1  -*-
 """Tests for the Data Retriever"""
-from future import standard_library
-
-standard_library.install_aliases()
 import os
 import subprocess
 import random
