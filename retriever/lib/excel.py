@@ -3,9 +3,6 @@
 This module contains optional functions for importing data from Excel.
 
 """
-from builtins import str
-
-
 class Excel():
 
     @staticmethod

@@ -1,10 +1,7 @@
 # -*- coding: utf-8  -*-
 # """Integrations tests for Data Retriever"""
-from __future__ import print_function
-
 import json
 import os
-import sys
 import shlex
 import shutil
 import subprocess

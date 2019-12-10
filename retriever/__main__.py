@@ -2,12 +2,8 @@
 
 This module handles the CLI for the Data retriever.
 """
-from __future__ import absolute_import
-from __future__ import print_function
-
 import os
 import sys
-from builtins import input
 
 from retriever.engines import engine_list, choose_engine
 from retriever.lib.datasets import datasets, dataset_names, license

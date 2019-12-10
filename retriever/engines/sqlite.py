@@ -1,6 +1,5 @@
 import os
 import pandas as pd
-from builtins import range
 from collections import OrderedDict
 
 from retriever.lib.defaults import DATA_DIR

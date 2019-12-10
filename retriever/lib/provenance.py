@@ -13,8 +13,7 @@ from retriever.engines import choose_engine
 from retriever.lib.datasets import datasets
 from retriever.lib.defaults import ENCODING, HOME_DIR, PROVENANCE_DIR
 from retriever.lib.engine_tools import getmd5
-from retriever.lib.load_json import read_json
-
+from retriever.lib.provance_tools import get_metadata, get_script_provanace
 
 def package_details():
     """
@@ -113,19 +112,6 @@ def commit(dataset, commit_message='', path=None, quiet=False):
         return
 
 
-def get_metadata(path_to_archive):
-    """
-    Returns a dictionary after reading metadata.json file of a committed dataset
-    """
-    with ZipFile(os.path.normpath(path_to_archive), 'r') as archive:
-        try:
-            metadata = json.loads(archive.read('metadata.json').decode('utf-8'))
-        except Exception as e:
-            print(e)
-            return None
-    return metadata
-
-
 def commit_info_for_installation(metadata_info):
     """
     Returns a dictionary with commit info and changes in old and current environment
@@ -176,34 +162,6 @@ def installation_details(metadata_info, quiet):
                     print(message.format(package, old_version, current_version))
 
 
-def get_script(path_to_archive):
-    """
-    Reads script from archive.
-    """
-    with ZipFile(os.path.normpath(path_to_archive), 'r') as archive:
-        try:
-            commit_details = get_metadata(path_to_archive=path_to_archive)
-            workdir = mkdtemp(dir=os.path.dirname(path_to_archive))
-            archive.extract('/'.join(('script', commit_details['script_name'])), workdir)
-            if commit_details['script_name'].endswith('.json'):
-                script_object = read_json(
-                    os.path.join(workdir, 'script',
-                                 commit_details['script_name'].split('.')[0]))
-            elif commit_details['script_name'].endswith('.py'):
-                spec = util.spec_from_file_location(
-                    "script_module",
-                    os.path.join(workdir, 'script', commit_details['script_name']),
-                )
-                script_module = util.module_from_spec(spec)
-                spec.loader.exec_module(script_module)
-                script_object = script_module.SCRIPT
-            rmtree(workdir)
-            return script_object
-        except Exception as e:
-            print(e)
-            return None
-
-
 def install_committed(path_to_archive, engine, force=False, quiet=False):
     """
     Installs the committed dataset
@@ -212,7 +170,7 @@ def install_committed(path_to_archive, engine, force=False, quiet=False):
         try:
             workdir = mkdtemp(dir=os.path.dirname(path_to_archive))
             engine.data_path = os.path.join(workdir)
-            script_object = get_script(path_to_archive=path_to_archive)
+            script_object = get_script_provanace(path_to_archive=path_to_archive)
             metadata_info = get_metadata(path_to_archive=path_to_archive)
             installation_details(metadata_info=metadata_info, quiet=quiet)
             if not force:

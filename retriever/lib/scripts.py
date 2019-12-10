@@ -1,8 +1,3 @@
-from __future__ import print_function
-
-from future import standard_library
-
-standard_library.install_aliases()
 import csv
 import imp
 import io
@@ -23,6 +18,7 @@ from retriever.lib.defaults import (SCRIPT_SEARCH_PATHS, VERSION, ENCODING,
 from retriever.lib.defaults import (REPOSITORY, RETRIEVER_REPOSITORY, RETRIEVER_SCRIPTS,
                                     RETRIEVER_DATASETS)
 from retriever.lib.load_json import read_json
+from retriever.lib.provance_tools import get_script_provanace
 
 global_script_list = None
 
@@ -120,9 +116,7 @@ def name_matches(scripts, arg):
     if not arg:
         raise ValueError("No dataset name specified")
     if arg.endswith(".zip"):
-        from retriever.lib.provenance import get_script
-
-        script = get_script(arg)
+        script = get_script_provanace(arg)
         return [script]
 
     arg = arg.strip().lower()

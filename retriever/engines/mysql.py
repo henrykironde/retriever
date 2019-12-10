@@ -1,7 +1,4 @@
-from __future__ import print_function
-
 import os
-from builtins import str
 
 from retriever.lib.defaults import ENCODING
 from retriever.lib.models import Engine, no_cleanup

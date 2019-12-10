@@ -1,7 +1,6 @@
 """Engine for writing data to a JSON file"""
 import json
 import os
-from builtins import zip
 from collections import OrderedDict
 
 from retriever.lib.defaults import DATA_DIR

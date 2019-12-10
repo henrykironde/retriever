@@ -4,12 +4,6 @@ This module contains miscellaneous classes and functions used in Retriever
 scripts.
 
 """
-from __future__ import print_function
-
-from future import standard_library
-
-standard_library.install_aliases()
-
 import json
 import platform
 import shutil
@@ -276,11 +270,11 @@ def file_2list(input_file):
     return abs_list
 
 
-def to_str(object, object_encoding=sys.stdout, object_decoder=ENCODING):
+def to_str(object_value, object_encoding=sys.stdout, object_decoder=ENCODING):
     # if os.name == "nt":
     #     enc = object_encoding.encoding
     #     return str(object).encode(enc, errors='backslashreplace').decode(object_decoder)
-    return str(object)
+    return str(object_value)
 
 
 def set_proxy():
