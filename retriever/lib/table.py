@@ -30,6 +30,7 @@ class TabularDataset(Dataset):
                  replace_columns=[],
                  missingValues=None,
                  cleaned_columns=False, **kwargs):
+                 number_of_records=None,
 
         self.name = name
         self.url = url
@@ -46,6 +47,7 @@ class TabularDataset(Dataset):
         self.missingValues = missingValues
         self.cleaned_columns = cleaned_columns
         self.dataset_type = "TabularDataset"
+        self.number_of_records = number_of_records
         for key in kwargs:
             if hasattr(self, key):
                 self.key = kwargs[key]
