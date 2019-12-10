@@ -929,22 +929,20 @@ class Engine(object):
         1. Works on both delimited (csv module)
         and fixed width data (extract_fixed_width)
         2. Identifies the delimiter if not known
-        3. Removes extra line endings
-
+        3. Removes extra line ending
         """
+        if hasattr(self.table, "csv_extend_size") and self.table.csv_extend_size:
+            set_csv_field_size()
+
         if not self.table.delimiter:
             self.set_table_delimiter(filename)
-        if os.name == "nt":
-            dataset_file = open_fr(filename)
-        else:
-            dataset_file = open_fr(filename, encoding=self.encoding)
+        dataset_file = open_fr(filename, encoding=self.encoding)
         if self.table.fixed_width:
             for row in dataset_file:
                 yield self.extract_fixed_width(row)
         else:
             reg = re.compile("\\r\\n|\n|\r")
-            for row in csv.reader(dataset_file,
-                                  delimiter=self.table.delimiter):
+            for row in csv.reader(dataset_file, delimiter=self.table.delimiter):
                 yield [reg.sub(" ", values) for values in row]
 
     def extract_fixed_width(self, line):
@@ -955,6 +953,19 @@ class Engine(object):
             values.append(line[pos:pos + width].strip())
             pos += width
         return values
+
+
+def set_csv_field_size():
+    """Set the CSV size limit based on the available resources"""
+    maxInt = sys.maxsize
+    decrement = True
+    while decrement:
+        try:
+            csv.field_size_limit(maxInt)
+            decrement = False
+        except OverflowError:
+            maxInt = int(maxInt / 10)
+    return maxInt
 
 
 def skip_rows(rows, source):
