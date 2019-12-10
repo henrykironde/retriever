@@ -15,10 +15,10 @@ class Script():
     it's Unique functionality.
     """
 
-    def __init__(self, title="", description="", name="", urls={},
-                 tables=None, ref="", public=True, addendum=None,
+    def __init__(self, title="", description="", name="", urls=dict(),
+                 tables=dict(), ref="", public=True, addendum=None,
                  citation="Not currently available",
-                 licenses=None,
+                 licenses=[{'name': None}],
                  retriever_minimum_version="",
                  version="", encoding="utf-8", message="", **kwargs):
 
