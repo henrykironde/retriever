@@ -21,7 +21,7 @@ def package_details():
     Returns a dictionary with details of installed packages in the current environment
     """
     details = {}
-    packages = dict(pkg_resources.working_set)
+    packages = pkg_resources.working_set
     for package in packages:
         details[package.project_name] = package.version
     return details

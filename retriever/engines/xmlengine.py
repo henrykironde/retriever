@@ -24,12 +24,8 @@ class engine(Engine):
     }
     insert_limit = 1000
     required_opts = [
-        ("table_name",
-         "Format of table name",
-         "{db}_{table}.xml"),
-        ("data_dir",
-         "Install directory",
-         DATA_DIR),
+        ("table_name", "Format of table name", "{db}_{table}.xml"),
+        ("data_dir", "Install directory", DATA_DIR),
     ]
     table_names = []
 
@@ -119,8 +115,10 @@ class engine(Engine):
 
     def _format_single_row(self, keys, line_data):
         """Create an xml string from the keys and line_data values."""
-        row_values = ['    <{key}>{value}</{key}>\n'.format(key=key, value=value)
-                      for key, value in zip(keys, line_data)]
+        row_values = [
+            '    <{key}>{value}</{key}>\n'.format(key=key, value=value)
+            for key, value in zip(keys, line_data)
+        ]
         return ''.join(row_values)
 
     def to_csv(self, sort=True, path=None, select_columns=None):
@@ -128,9 +126,13 @@ class engine(Engine):
         for table_item in self.script_table_registry[self.script.name]:
             header = table_item[1].get_insert_columns(join=False, create=True)
             outputfile = os.path.normpath(
-                os.path.join(path if path else '', os.path.splitext(os.path.basename(table_item[0]))[0] + '.csv'))
-            csv_outfile = xml2csv(table_item[0], outputfile=outputfile, header_values=header)
-            sort_csv(csv_outfile)
+                os.path.join(
+                    path if path else '',
+                    os.path.splitext(os.path.basename(table_item[0]))[0] + '.csv'))
+            csv_outfile = xml2csv(table_item[0],
+                                  outputfile=outputfile,
+                                  header_values=header)
+            sort_csv(csv_outfile, encoding=self.encoding)
 
     def get_connection(self):
         """Get db connection."""
