@@ -82,7 +82,7 @@ def reload_scripts():
                             continue
                     # if the script wasn't found in an early search path
                     # make sure it works and then add it
-                    new_module.SCRIPT.download
+                    new_module.SCRIPT.download  # pylint: disable=W0104
                     setattr(new_module.SCRIPT, "_file", os.path.join(search_path, script))
                     setattr(new_module.SCRIPT, "_name", script_name)
                     modules.append(new_module.SCRIPT)
@@ -445,6 +445,7 @@ def get_retriever_script_versions():
 
 
 class StoredScripts:
+    """Stored scripts class"""
 
     def __init__(self):
         self._shared_scripts = SCRIPT_LIST()

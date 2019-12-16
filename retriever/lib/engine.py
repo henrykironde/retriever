@@ -255,7 +255,7 @@ class Engine():
                         val = str(values[i]).strip()
                         if not val:
                             continue
-                        if self.table.cleanup.function != no_cleanup:
+                        if self.table.cleanup.function != no_cleanup:  # pylint: disable=W0143
                             val = self.table.cleanup.function(val,
                                                               self.table.cleanup.args)
 
@@ -320,7 +320,8 @@ class Engine():
 
         # Determine if the dataset includes cross-tab data
         ct = len([True for c in self.table.columns if c[1][0][:3] == "ct-"]) != 0
-        if (self.table.cleanup.function == no_cleanup and not self.table.fixed_width and
+        if (self.table.cleanup.function == no_cleanup  # pylint: disable=W0143
+                and not self.table.fixed_width and
                 not ct and (not hasattr(self.table, "do_not_bulk_insert") or
                             not self.table.do_not_bulk_insert)):
             return True
@@ -668,7 +669,7 @@ class Engine():
             print("\n{0} can't be extracted, "
                   "may be corrupt \n{1}".format(file_name, e))
 
-    def fetch_tables(self, dataset, table_names):  # pylint: disable=W0613
+    def fetch_tables(self, dataset, table_names):  # pylint: disable=W0613,R0201
         """This can be overridden to return the tables of sqlite db
         as pandas data frame. Return False by default.
         """
@@ -706,7 +707,7 @@ class Engine():
         """Return full path of a file in the archive directory."""
         return os.path.join(self.format_data_dir(), filename)
 
-    def format_insert_value(self, value, datatype):
+    def format_insert_value(self, value, datatype):  # pylint: disable=R0201
         """Format a value for an insert statement based on data type.
 
         Different data types need to be formated differently to be properly

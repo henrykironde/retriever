@@ -2,7 +2,6 @@ import json
 import os
 from collections import OrderedDict
 from datetime import datetime, timezone
-from importlib import util
 from shutil import rmtree
 from tempfile import mkdtemp
 from zipfile import ZipFile
@@ -22,7 +21,7 @@ def package_details():
     """
     details = {}
     packages = pkg_resources.working_set
-    for package in packages:
+    for package in packages:  # pylint: disable=E1133
         details[package.project_name] = package.version
     return details
 

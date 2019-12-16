@@ -1,7 +1,7 @@
 import os
 
 from retriever.lib.defaults import ENCODING
-from retriever.lib.models import Engine, no_cleanup
+from retriever.lib.models import Engine
 
 
 class engine(Engine):

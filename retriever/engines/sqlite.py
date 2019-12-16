@@ -3,7 +3,7 @@ import pandas as pd
 from collections import OrderedDict
 
 from retriever.lib.defaults import DATA_DIR
-from retriever.lib.models import Engine, no_cleanup
+from retriever.lib.models import Engine
 
 
 class engine(Engine):

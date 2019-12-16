@@ -2,7 +2,7 @@ import os
 import platform
 
 from retriever.lib.defaults import DATA_DIR
-from retriever.lib.models import Engine, no_cleanup
+from retriever.lib.models import Engine
 
 
 class engine(Engine):
@@ -135,7 +135,7 @@ IN "''' + filepath + '''" "Text;FMT=''' + fmt + ''';HDR=''' + hdr + ''';"'''
         current_platform = platform.system().lower()
         if current_platform != "windows":
             raise Exception("MS Access can only be used in Windows.")
-        import pypyodbc as dbapi
+        import pypyodbc as dbapi  # pylint: disable=E0401
 
         self.get_input()
         file_name = self.opts["file"]

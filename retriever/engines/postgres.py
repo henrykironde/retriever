@@ -2,7 +2,7 @@ import os
 import sys
 import subprocess
 
-from retriever.lib.models import Engine, no_cleanup
+from retriever.lib.models import Engine
 
 
 class engine(Engine):

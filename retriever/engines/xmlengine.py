@@ -108,18 +108,10 @@ class engine(Engine):
             newrows = values
 
         xml_lines = [
-            '\n<row>\n{}</row>'.format(self._format_single_row(keys, line_data))
+            '\n<row>\n{}</row>'.format(format_single_row(keys, line_data))
             for line_data in newrows
         ]
         return xml_lines
-
-    def _format_single_row(self, keys, line_data):
-        """Create an xml string from the keys and line_data values."""
-        row_values = [
-            '    <{key}>{value}</{key}>\n'.format(key=key, value=value)
-            for key, value in zip(keys, line_data)
-        ]
-        return ''.join(row_values)
 
     def to_csv(self, sort=True, path=None, select_columns=None):
         """Export table from xml engine to CSV file."""
@@ -138,3 +130,12 @@ class engine(Engine):
         """Get db connection."""
         self.get_input()
         return DummyConnection()
+
+
+def format_single_row(keys, line_data):
+    """Create an xml string from the keys and line_data values."""
+    row_values = [
+        '    <{key}>{value}</{key}>\n'.format(key=key, value=value)
+        for key, value in zip(keys, line_data)
+    ]
+    return ''.join(row_values)

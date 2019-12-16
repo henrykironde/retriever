@@ -5,7 +5,8 @@ This module contains optional functions for importing data from Excel.
 """
 
 
-class Excel():
+class Excel:
+    """Excel class to handle excel values"""
 
     @staticmethod
     def empty_cell(cell):
