@@ -45,5 +45,6 @@ services:
     depends_on:
       - mysqldb_retriever
       - pgdb_retriever
+
     ports:
       - 5001:80
