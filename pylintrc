@@ -41,7 +41,7 @@ unsafe-load-any-extension=no
 
 disable=
     C0413,
-    #C0111, #(all  C0114-C0116)
+    #C0111, #(all C0114-C0116)
     #C0115, # missing-class-docstring
     #W0143: Comparing against a callable, did you omit the parenthesis? (comparison-with-callable)
     #W0611, # unused-import
@@ -54,7 +54,7 @@ disable=
     R0911, # cyclic imports
     R0914, # too-many-locals
     W0102, # dangerous-default-value)
-    W0201, # attribute-defined-outside-init 
+    W0201, # attribute-defined-outside-init
     W0614, # unused-wildcard-import
     W0622, # Redefining built-in 'type' (redefined-builtin)
     W0702, # bare-except

@@ -62,12 +62,19 @@ def reload_scripts():
                     modules.append(read_script)
                     loaded_files.append(script_name)
                     loaded_scripts.append(read_script.name.lower())
-        files = [
-            file for file in os.listdir(search_path)
-            if file[-3:] == ".py" and file[0] != "_" and ("#retriever" in " ".join(
-                open_fr(join(search_path, file), encoding=ENCODING).readlines()
-                [:2]).lower())
-        ]
+
+        files = []
+        for file in os.listdir(search_path):
+            if file[-3:] == ".py" and file[0] != "_":
+                try:
+
+                    if "#retriever" in " ".join(
+                            open_fr(join(search_path, file),
+                                    encoding=ENCODING).readlines()[:2]).lower():
+                        files.append(file)
+                except:
+                    continue
+
         for script in files:
             script_name = ".".join(script.split(".")[:-1])
             if script_name not in loaded_files:
