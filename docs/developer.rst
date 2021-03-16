@@ -2,46 +2,150 @@
 Developer's guide
 =================
 
-Required Modules
-================
+1. Quick start by forking the main repository https://github.com/weecology/retriever
+2. Clone your copy of the repository 
 
-If you are installing from source you will need a Python 3.6.8+ installation and the following modules:
+    - Using https ``git clone https://github.com/henrykironde/retriever.git``
+    - Using ssh ``git clone git@github.com:henrykironde/retriever.git``
+    
+3. Link or point your cloned copy to the main repository. (I alway name it upstream)
+
+    - ``git remote add upstream https://github.com/weecology/retriever.git``
+
+5. Check/confirm your settings using ``git remote -v``
 
 ::
 
-  setuptools
-  xlrd
-  Sphinx
+    origin	git@github.com:henrykironde/retriever.git (fetch)
+    origin	git@github.com:henrykironde/retriever.git (push)
+    upstream	https://github.com/weecology/retriever.git (fetch)
+    upstream	https://github.com/weecology/retriever.git (push)
 
+6. Install the package from the main directory use `-U or --upgrade` to upgrade or overwrite any previously installed versions. ``pip install . -U``
+
+7. Check if the package was installed
+
+::
+
+    retriever ls
+    retriever -v
+
+8. Run sample test on  CSV engine only, with option `-k`
+
+::
+
+   pip install pytest
+   pytest -k "CSV" -v
+
+
+Required Modules
+================
+
+You will need Python 3.6.8+
+Make sure the requirement modules are installed: ``Pip install -r requirements.txt``
+ 
+Developers need to install these extra packages.
+
+::
+
+   pip install codecov
+   pip install pytest-cov
+   pip install pytest-xdist
+   pip install pytest
+   pip install yapf
+   pip install pylint
+   pip install flake8
+   Pip install pypyodbc # For only Windows(MS Access)
 
 Setting up servers
 ==================
 
 You need to install all the database infrastructures to enable local testing.
 
-
 `PostgresSQL`_
 `MySQL`_
 `SQLite`_
-MSAccess
+MSAccess (For only Windows, MS Access)
 
-You will also need the following modules:
+After installation, configure passworless access to MySQL and PostgresSQL Servers
+
+Passwordless configuration
+--------------------------
+
+To avoid supplying the passwords when using the tool, use the config files
+`.pgpass`(`pgpass.conf` for Microsoft Windows) for Postgres and `.my.cnf`
+for MySQL. 
+
+Create if not exists, and add/append the configuration details as below.
+PostgresSQL conf file `~/.pgpass` file.
 
 ::
 
-  mysqldb (MySQL)
-  psycopg2-binary (PostgreSQL)
-  pypyodbc (MS Access)
+  localhost:*:testdb_retriever:postgres:Password12!
 
-Style Guide for Python Code
-===========================
+**Postgress:**
+ 
+(Linux / Macos):- A `.pgpass` file in your HOME directory(~)
 
-Run ``pep8`` on the given file to make sure the file follows the right style.
-In some cases we do tend to work outside the ``pep8`` requirements.
-The compromise on ``pep8``  may be a result of enforcing better code readability.
-In some cases ``pep`` shows errors for long lines, but that can be ignored.
+(WINDOWS 10-) - A `pgpass.conf` in your HOME directory(~)
 
-``pep8 pythonfile.py``
+(WINDOWS 10+):- Entering `%APPDATA%` will take you to `C:/\Users/\username/\AppData/\Roaming`.
+
+In this directory create a new subdirectory named `postgresql`. Then create the `pgpass.conf` file inside it. On Microsoft Windows, it is assumed that the file is stored in a directory that is secure, hence no special permissions setting needed.
+
+Make sure you set the file permissions to 600
+
+::
+
+  # Linux / Macos
+  chmod 600 ~/.pgpass
+  chmod 600 ~/.my.cnf
+
+For most of the recent versions of **Postgress server 10+**, you need to find `pg_hba.conf`. This file is located in the installed Postgres directory.
+One way to find the location of the file `pg_hba.conf` is using ``psql -t -P format=unaligned -c 'show hba_file';``
+To allow passwordless login to Postgres, change peer to `trust` in `pg_hba.conf` file.
+
+::
+
+  # Database administrative login by Unix domain socket
+  local   all             postgres                                trust
+
+Run commands in terminal to create user
+::
+
+  PostgreSQL
+  ----------
+  psql -c "CREATE USER postgres WITH PASSWORD 'Password12!'"
+  psql -c 'CREATE DATABASE testdb_retriever'
+  psql -c 'GRANT ALL PRIVILEGES ON DATABASE testdb_retriever to postgres'
+
+Restart the server and test Postgress passwordless setup using retriever without providing the password
+
+``retriever install postgres iris``
+
+**MySQL:** Create if not exists `.my.cnf` in your HOME directory(~).
+Add the configuration info to the MySQL conf file `~.my.cnf` file.
+
+::
+
+  [client]
+  user="travis"
+  password="Password12!"
+  host="mysqldb"
+  port="3306"
+
+Run commands in terminal to create user
+::
+
+  MySQL
+  -----
+  mysql -e "CREATE USER 'travis'@'localhost';" -uroot
+  mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'travis'@'localhost';" -uroot
+  mysql -e "GRANT FILE ON *.* TO 'travis'@'localhost';" -uroot
+
+ Restart the server and test Postgress passwordless setup using retriever without providing the password
+
+``retriever install mysql iris``
 
 Testing
 =======
@@ -83,100 +187,26 @@ Running tests locally
 Services Used
 -------------
 
-Check the services' home pages in case you have to add the same capabilities to your main branch.
+`Read The Docs`_,
+`codecov`_, 
+`AppVeyor`_
 
-::
-
-  AppVeyor
-  readthedocs
-  codecov
-
-
-links `Read The Docs`_, `codecov`_, `AppVeyor`_
-
-To run the tests you will need to have all of the relevant database management systems and associated
-modules installed (see ``Setting up servers``). For PostgresSQL installation refer to `Spatial database setup`_.
-Create the appropriate permissions for the tests to access
-the databases. You can do this by running the following commands in MySQL and
-PostgreSQL and creating the .pgpass(pgpass.conf for Microsoft Windows) file as described below:
-
-Passwordless configuration
---------------------------
-
-To avoid supplying the passwords when using the tool, use the config files
-`.pgpass`(`pgpass.conf` for Microsoft Windows) for Postgres and `.my.cnf`
-for MySQL. The files are kept in the HOME directory(~/.pgpass, ~/.my.cnf).
-Make sure you set the file permissions to 600. For Postgres, on Microsoft
-Windows, entering `%APPDATA%` will take you to `C:\Users\username\AppData\Roaming`.
-In this directory create a new subdirectory named `postgresql`. Then create the
-`pgpass.conf` file inside it. On Microsoft Windows, it is assumed that the file
-is stored in a directory that is secure, so no special permissions check is made.
-
-::
-
-  chmod 600 ~/.pgpass
-  chmod 600 ~/.my.cnf
-
-::
-
-  MySQL
-  -----
-  mysql -e "CREATE USER 'travis'@'localhost';" -uroot
-  mysql -e "GRANT ALL PRIVILEGES ON *.* TO 'travis'@'localhost';" -uroot
-  mysql -e "GRANT FILE ON *.* TO 'travis'@'localhost';" -uroot
-
-MySQL conf file `~.my.cnf` file.
-
-::
-
-  [client]
-  user="travis"
-  password="Password12!"
-  host="mysqldb"
-  port="3306"
-
-::
-
-  PostgreSQL
-  ----------
-  psql -c "CREATE USER postgres WITH PASSWORD 'Password12!'"
-  psql -c 'CREATE DATABASE testdb_retriever'
-  psql -c 'GRANT ALL PRIVILEGES ON DATABASE testdb_retriever to postgres'
-
-PostgresSQL conf file `~/.pgpass` file.
-
-::
-
-  localhost:*:testdb_retriever:postgres:Password12!
-
-Find the installed Postgres directory and
-In order to allow passwordless login to Postgres, you should change peer to `trust` in `pg_hba.conf`
-Find the `pg_hba.conf` file in the postgres directory.
-One way to find the file `pg_hba.conf` is using `psql -t -P format=unaligned -c 'show hba_file';`
-
-::
-
-  # Database administrative login by Unix domain socket
-  local   all             postgres                                trust
-
-To run tests we use pytest.
-From the source top level directory, run
+From the source top level directory, Use Pytest as examples below 
 
 .. code-block:: sh
 
-  $   py.test
-
-
-To run tests on a specific test category add the path of the test module to the end of the py.test command: 
-
-.. code-block:: sh
-
-  $   py.test ./test/test_retriever.py
-
-This will only run test_retriever.py
+  $   py.test -v # All tests
+  $   py.test -v -k"csv" # Specific test with expression csv 
+  $   py.test ./test/test_retriever.py # Specific file
 
 In case ``py.test`` requests for Password (even after Passwordless configuration), change the owner and group
-from the permissions of the files ``~/.pgpass, ~/.my.cnf``
+permissions for the config files ``~/.pgpass, ~/.my.cnf``
+
+Style Guide for Python Code
+===========================
+
+Use ``yapf -d --recursive retriever/ --style=.style.yapf`` to check style.
+Use ``yapf -i --recursive retriever/ --style=.style.yapf`` refactor style
 
 Continuous Integration
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -401,7 +431,8 @@ From your local branch of retriever, commit to your origin.
 Once tests have passed you can then make a pull request to the retriever main (upstream)
 For each commit, add the issue number at the end of the description with the tag ``fixes #[issue_number]``.
 
-Example::
+Example
+::
 
   Add version number to postgres.py to enable tracking
 
@@ -410,8 +441,8 @@ Example::
 
 **Clean histroy**
 
-We try to make one commit for each issue.
-As you work on an issue, try adding all the commits into one general commit rather than several commits.
+Make one commit for each issue.
+As you work on a particular issue, try adding all the commits into one general commit rather than several commits.
 
 Use ``git commit --amend`` to add new changes to a branch.
 
