@@ -48,6 +48,7 @@ services:
     build: .
     depends_on:
       - mysqldb_retriever
-      - pgdb_retriever
+      pgdb_retriever:
+        condition: service_healthy
     ports:
       - 5001:80
