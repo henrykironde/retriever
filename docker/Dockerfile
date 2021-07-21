@@ -12,6 +12,10 @@ RUN apt-get install -y --force-yes build-essential wget git locales locales-all 
     apt-get install -y --force-yes postgresql-client mariadb-client > /dev/null &&\
     apt-get install -y --force-yes libpq-dev
 
+# Installing GDAL
+RUN apt-add-repository ppa:ubuntugis/ubuntugis-unstable &&\
+    apt install -y gdal-bin python-gdal python3-gdal
+
 # Set encoding
 ENV LC_ALL en_US.UTF-8
 ENV LANG en_US.UTF-8
