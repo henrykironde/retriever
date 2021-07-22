@@ -33,7 +33,7 @@
           {
             "name": "raster_bio1clip",
             "format": "raster",
-            "path":"test_raster_bio1clip.tif",
+            "path":"bio1clip.tif",
             "extent": {
                 "xMin": 75.00,
                 "xMax": 125.00,
