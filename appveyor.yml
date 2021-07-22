@@ -26,22 +26,22 @@ environment:
           GIS_INTERNALS: "release-1911-x64-gdal-2-4-3-mapserver-7-4-2.zip"
           GIS_INTERNALS_LIBS: "release-1911-x64-gdal-2-4-3-mapserver-7-4-2-libs.zip"
 
-        - PYTHON: "C:\\Python38-x64"
-          PYTHON_VERSION: "3.8"
-          PYTHON_ARCH: "64"
-          GDAL_VERSION: "3.0.4"
-          GIS_INTERNALS: "release-1911-x64-gdal-3-0-4-mapserver-7-4-3.zip"
-          GIS_INTERNALS_LIBS: "release-1911-x64-gdal-3-0-4-mapserver-7-4-3-libs.zip"
-          PROJ_LIB: "C:\\gdal\\bin\\proj6\\share"
+#         - PYTHON: "C:\\Python38-x64"
+#           PYTHON_VERSION: "3.8"
+#           PYTHON_ARCH: "64"
+#           GDAL_VERSION: "3.0.4"
+#           GIS_INTERNALS: "release-1911-x64-gdal-3-0-4-mapserver-7-4-3.zip"
+#           GIS_INTERNALS_LIBS: "release-1911-x64-gdal-3-0-4-mapserver-7-4-3-libs.zip"
+#           PROJ_LIB: "C:\\gdal\\bin\\proj6\\share"
 
-        # Test all supported python versions with latest stable gdal release
-        - PYTHON: "C:\\Python36-x64"
-          PYTHON_VERSION: "3.6"
-          PYTHON_ARCH: "64"
-          GDAL_VERSION: "3.1.2"
-          GIS_INTERNALS: "release-1911-x64-gdal-3-1-2-mapserver-7-6-1.zip"
-          GIS_INTERNALS_LIBS: "release-1911-x64-gdal-3-1-2-mapserver-7-6-1-libs.zip"
-          PROJ_LIB: "C:\\gdal\\bin\\proj6\\share"
+#         # Test all supported python versions with latest stable gdal release
+#         - PYTHON: "C:\\Python36-x64"
+#           PYTHON_VERSION: "3.6"
+#           PYTHON_ARCH: "64"
+#           GDAL_VERSION: "3.1.2"
+#           GIS_INTERNALS: "release-1911-x64-gdal-3-1-2-mapserver-7-6-1.zip"
+#           GIS_INTERNALS_LIBS: "release-1911-x64-gdal-3-1-2-mapserver-7-6-1-libs.zip"
+#           PROJ_LIB: "C:\\gdal\\bin\\proj6\\share"
 
   # postgres
   POSTGRES_PORT: tcp://localhost:5432
