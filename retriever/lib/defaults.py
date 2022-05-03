@@ -13,22 +13,23 @@ from retriever._version import __version__
 VERSION = __version__
 COPYRIGHT = "Copyright (C) 2011-2016 Weecology University of Florida"
 LICENSE = "MIT"
-REPO_URL = "https://raw.githubusercontent.com/weecology/retriever-recipes/"
-RETRIEVER_REPO_URL = "https://raw.githubusercontent.com/weecology/retriever/"
-MAIN_BRANCH = REPO_URL + "main/"
-RETRIEVER_MAIN_BRANCH = RETRIEVER_REPO_URL + "main/"
-REPOSITORY = MAIN_BRANCH
-RETRIEVER_REPOSITORY = RETRIEVER_MAIN_BRANCH
+
+RETRIEVER_REPO_URL = "https://raw.githubusercontent.com/weecology/retriever"
+RETRIEVER_RECIPE = RETRIEVER_REPO_URL + "-recipes/"
+RETRIEVER_RECIPE_MAIN = RETRIEVER_RECIPE + "main/"
+RETRIEVER_REPO_MAIN = RETRIEVER_REPO_URL + "main/"
+REPOSITORY = RETRIEVER_REPO_MAIN
 RDATASETS_URL = "https://github.com/vincentarelbundock/Rdatasets/raw/master/datasets.csv"
 ENCODING = 'utf-8'
 HOME_DIR = os.path.expanduser('~/.retriever/')
 KAGGLE_TOKEN_PATH = os.path.expanduser('~/.kaggle/kaggle.json')
 SOCRATA_BASE_URL = "http://api.us.socrata.com/api/catalog/v1"
 RETRIEVER_DIR = 'retriever'
+RETRIEVER_RECIPES_DIR = 'retriever-recipes'
 if os.path.exists(os.path.join(HOME_DIR, 'retriever_path.txt')):
     with open(os.path.join(HOME_DIR, 'retriever_path.txt'), 'r') as f:
         RETRIEVER_DIR = f.read()
-RETRIEVER_RECIPES_DIR = 'retriever-recipes'
+
 if os.path.exists(os.path.join(HOME_DIR, 'retriever_recipes_path.txt')):
     with open(os.path.join(HOME_DIR, 'retriever_recipes_path.txt'), 'r') as f:
         RETRIEVER_RECIPES_DIR = f.read()
