@@ -27,6 +27,8 @@ def check_retriever_minimum_version(module):
     than the retriever's version."""
     mod_ver = module.retriever_minimum_version
     m = module.name
+    if not mod_ver: #skip for scripts with no ver
+      return True
 
     if hasattr(module, "retriever_minimum_version"):
         if mod_ver.strip() and not parse_version(VERSION) >= parse_version("{}".format(mod_ver)):
